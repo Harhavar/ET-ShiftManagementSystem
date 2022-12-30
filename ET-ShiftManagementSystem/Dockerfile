@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["ET-ShiftManagementSystem/ET-ShiftManagementSystem.csproj", "ET-ShiftManagementSystem/"]
+COPY "ET-ShiftManagementSystem.csproj", "ET-ShiftManagementSystem/"
 COPY ["ShiftManagementServises/ShiftManagementServises.csproj", "ShiftManagementServises/"]
 COPY ["ShiftMgtDbContext/ShiftMgtDbContext.csproj", "ShiftMgtDbContext/"]
 RUN dotnet restore "ET-ShiftManagementSystem/ET-ShiftManagementSystem.csproj"
