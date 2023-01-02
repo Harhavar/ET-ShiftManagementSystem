@@ -2,7 +2,7 @@
 using ShiftMgtDbContext.Entities;
 using Microsoft.EntityFrameworkCore;
 using ShiftManagementServises.Servises;
-
+using System.Security.Cryptography.X509Certificates;
 
 namespace ShiftManagementServises.Servises
 {
@@ -11,6 +11,9 @@ namespace ShiftManagementServises.Servises
         Task<User> AuthenticateAsync(string username, string password);
 
         Task<User> RegisterAsync(User user);
+
+        Task<User> ForgotPasswordAsync(string Email);
+        Task<User> FindByEmailAsync(string email);
     }
     public class UserRepository : IUserRepository
 
@@ -49,6 +52,36 @@ namespace ShiftManagementServises.Servises
             user.password = null;
             return user;
         }
+
+        public async Task<User> FindByEmailAsync(string email)
+        {
+            var user = await _ShiftManagementDbContext.users.FirstOrDefaultAsync(e => e.Email == email);
+            if (user == null)
+            {
+                return null;
+
+            }
+
+            return user;
+        }
+
+        public Task<User> ForgotPasswordAsync(string Email)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public async Task<User> ForgotPasswordAsync(string email)
+        //{
+        //    var user = await _ShiftManagementDbContext.users.FirstOrDefaultAsync( e => e.Email == email);
+        //    if (user == null)
+        //    {
+        //        return null;
+
+        //    }
+        //    var token = await _ShiftManagementDbContext.GeneratePasswordResetAsync(user);
+
+
+        //}
 
         public async Task<User> RegisterAsync(User user /*,Role AssignRole*/ )
         {

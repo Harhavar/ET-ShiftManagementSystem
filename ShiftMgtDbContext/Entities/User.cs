@@ -49,7 +49,7 @@ namespace ShiftMgtDbContext.Entities
 
         public string username { get; set; }
 
-        public string Email { get; set; }
+        public string Email { get; set; }               
 
         public string password { get; set; }
 
@@ -65,6 +65,6 @@ namespace ShiftMgtDbContext.Entities
         public List<User_Role> UserRoles { get; set; }
 
         //navigaion property 
-        public Project Project { get; set; }
+       // public Project Project { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿
 using ShiftManagementServises.Servises;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using ET_ShiftManagementSystem.Models;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -77,6 +79,38 @@ namespace ET_ShiftManagementSystem.Controllers
 
             return BadRequest("user name or password is incurrect");
         }
+
+        [HttpPost]
+        [Route("api/forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] forgotPasswordRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //// Check if the email is valid
+            //if (!IsValidEmail(model.Email))
+            //{
+            //    return BadRequest(new { error = "Invalid email address" });
+            //}
+
+            // Check if the email belongs to a registered user
+            var user = await userRepository.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return BadRequest(new { error = "Email not found" });
+            }
+
+            // Generate a reset token and send it to the user's email
+            var Token = await tokenHandler.CreateToken(user);
+            return Ok(Token);
+
+            // ...
+
+
+        }
+
     }
 }
 
