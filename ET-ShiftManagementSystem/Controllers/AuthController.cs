@@ -3,6 +3,7 @@ using ShiftManagementServises.Servises;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ET_ShiftManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -20,6 +21,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpPost]
         [Route("Register")]
+        //[Authorize(Roles = "SuperAdmin")] SUPER ADMIN ADDING USER TO THE PROJECT
         public async Task<IActionResult> Register(Models.RegisterRequest registerRequest)
         {
             //request DTO to Domine Model
@@ -29,7 +31,10 @@ namespace ET_ShiftManagementSystem.Controllers
                 FirstName = registerRequest.FirstName,
                 LastName = registerRequest.LastName,
                 Email = registerRequest.Email,
-                password = registerRequest.password
+                password = registerRequest.password,
+                ContactNumber= registerRequest.ContactNumber,
+                AlternateContactNumber= registerRequest.AlternateContactNumber,
+                
             };
 
             // pass details to repository 
@@ -45,7 +50,9 @@ namespace ET_ShiftManagementSystem.Controllers
                 Email = user.Email,
                 LastName = user.LastName,
                 password = user.password,
-                IsActive = user.IsActive
+                IsActive = user.IsActive,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber= registerRequest.AlternateContactNumber,
             };
 
             return CreatedAtAction(nameof(LoginAync), new { id = UserDTO.id }, UserDTO);
@@ -96,7 +103,7 @@ namespace ET_ShiftManagementSystem.Controllers
             //}
 
             // Check if the email belongs to a registered user
-            var user = await userRepository.FindByEmailAsync(model.Email);
+            var user = await userRepository.FindByEmailAsync(model.username);
             if (user == null)
             {
                 return BadRequest(new { error = "Email not found" });
@@ -104,12 +111,31 @@ namespace ET_ShiftManagementSystem.Controllers
 
             // Generate a reset token and send it to the user's email
             var Token = await tokenHandler.CreateToken(user);
+
+            if (Token != null)
+            {
+                //add new password 
+
+                // confirm password 
+
+            }
             return Ok(Token);
 
-            // ...
-
+            //
 
         }
+
+        //
+        //public async Task<IActionResult> ResetPassword([FromBody] forgotPasswordRequest model)
+        //{
+        //    var user = await userRepository.FindByUserNameAsync(model.username);
+        //    if(user != null)
+        //    {
+        //        return StatusCode(StatusCodes.Status404NotFound);
+
+        //    }
+        //    var token = await userRepository.ForgotPasswordAsync(userRepository);
+        //}
 
     }
 }

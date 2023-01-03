@@ -64,7 +64,12 @@ namespace ShiftMgtDbContext.Entities
 
         public List<User_Role> UserRoles { get; set; }
 
+
+        public int ContactNumber { get; set; }
+
+        public int AlternateContactNumber { get; set; }
+
         //navigaion property 
-       // public Project Project { get; set; }
+        // public Project Project { get; set; }
     }
 }

@@ -1,7 +1,21 @@
-﻿namespace ET_ShiftManagementSystem.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ET_ShiftManagementSystem.Models
 {
     public class forgotPasswordRequest
     {
-        public string Email { get; set; }
+        [Required(ErrorMessage = " User name is required ")]
+        public string username { get; set; }
+
+
+
+        [Required(ErrorMessage = "new password is required ")]
+        public string NewPassword { get; set; }
+
+
+        [Required(ErrorMessage = "confirm password is required ")]
+        public string ConfirmPassword { get; set; }
+
+        public string Token { get; set; }
     }
 }

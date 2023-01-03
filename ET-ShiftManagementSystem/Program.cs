@@ -55,6 +55,8 @@ builder.Services.AddScoped<IShiftServices, ShiftServices>();
 builder.Services.AddScoped<ICommentServices, CommentServices>();
 //builder.Services.AddScoped<ICredentialServices, CredentialServices>();
 
+builder.Services.AddScoped<IEmailServices, EmailServices>();
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
 
@@ -102,7 +104,15 @@ builder.Services.AddScoped<ITokenHandler, ShiftManagementServises.Servises.Token
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IDocumentServices, DocumentServices>();
 
+builder.Services.AddScoped<ITaskServices , TaskServices>();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    //reset token time span 1 hr 
+    options.TokenLifespan = TimeSpan.FromHours(1);
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
 {

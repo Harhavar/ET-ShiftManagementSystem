@@ -17,5 +17,9 @@ namespace ET_ShiftManagementSystem.Models
         public string LastName { get; set; } = string.Empty;
 
         public bool IsActive { get; set; }
+
+        public int ContactNumber { get; set; }
+
+        public int AlternateContactNumber { get; set; }
     }
 }

@@ -88,7 +88,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "SuperAdmin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteShiftAsync(int Id)
         {
             var delete = await shiftServices.DeleteShiftAsync(Id);

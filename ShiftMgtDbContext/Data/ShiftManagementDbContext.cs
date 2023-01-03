@@ -49,5 +49,11 @@ namespace ShiftMgtDbContext.Data
 
         public DbSet<User_Role> usersRoles { get; set; }
 
+        public DbSet<Doc> Docs { get; set; }
+
+        public DbSet<TaskDetail> taskDetails { get; set; }
+
+        public DbSet<Email> emails { get; set; }
+
     }
 }

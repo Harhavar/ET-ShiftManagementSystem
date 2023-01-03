@@ -1,4 +1,6 @@
-﻿namespace ET_ShiftManagementSystem.Models
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace ET_ShiftManagementSystem.Models
 {
     public class RegisterRequest
     {
@@ -13,5 +15,9 @@
         public string FirstName { get; set; }
 
         public string LastName { get; set; } = string.Empty;
+
+        public int ContactNumber { get; set; }
+
+        public int AlternateContactNumber { get; set; }
     }
 }
