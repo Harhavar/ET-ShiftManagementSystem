@@ -8,7 +8,7 @@ namespace ShiftManagementServises.Servises
 {
     public interface IUserRepository
     {
-        Task<User> AuthenticateAsync(string username, string password);
+        User AuthenticateAsync(string username, string password);
 
         Task<User> RegisterAsync(User user);
 
@@ -24,16 +24,16 @@ namespace ShiftManagementServises.Servises
         {
             this._ShiftManagementDbContext = ShiftManagementDbContext;
         }
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public  User AuthenticateAsync(string username, string password)
         {
-            var user = await _ShiftManagementDbContext.users.FirstOrDefaultAsync(x => x.username.ToLower() == username.ToLower() && x.password == password);
+            var user =  _ShiftManagementDbContext.users.FirstOrDefault(x => x.username.ToLower() == username.ToLower() && x.password == password);
 
             if (user == null)
             {
                 return null;
             }
 
-            var userRoles = await _ShiftManagementDbContext.usersRoles.Where(x => x.Userid == user.id).ToListAsync();
+            var userRoles =  _ShiftManagementDbContext.usersRoles.Where(x => x.Userid == user.id).ToList();
 
             //user.Roles=  _ShiftManagementDbContext.roles.Where(x => x.Id == user.id).Select(a=>a.Id.ToString()).ToList();
             if (userRoles.Any())
@@ -41,7 +41,7 @@ namespace ShiftManagementServises.Servises
                 user.Roles = new List<string>();
                 foreach (var item in userRoles)
                 {
-                    var role = await _ShiftManagementDbContext.roles.FirstOrDefaultAsync(x => x.Id == item.RoleId);
+                    var role = _ShiftManagementDbContext.roles.FirstOrDefault(x => x.Id == item.RoleId);
                     if (role != null)
                     {
                         user.Roles.Add(role.Name);

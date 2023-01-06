@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
+using ShiftMgtDbContext.Entities;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -64,7 +65,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         [Route("Login")]
         [ActionName("LoginAync")]
-        public async Task<IActionResult> LoginAync(Models.LoginRequest loginRequest)
+        public  IActionResult LoginAync(Models.LoginRequest loginRequest)
         {
             //verify the incoming request 
             //if (loginRequest == null)
@@ -74,56 +75,109 @@ namespace ET_ShiftManagementSystem.Controllers
             //}
             //check user is authenticated 
             // check user name and password 
-            var user = await userRepository.AuthenticateAsync(loginRequest.username, loginRequest.password);
+            var user =  userRepository.AuthenticateAsync(loginRequest.username, loginRequest.password);
 
             if (user != null)
             {
                 //generate token 
-                var Token = await tokenHandler.CreateToken(user);
+                var Token = tokenHandler.CreateToken(user);
                 return Ok(Token);
 
             }
 
             return BadRequest("user name or password is incurrect");
         }
+        //[HttpPost]
+        //[Route("reset-password")]
+        //public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        //{
+        //    // Check if the provided email address corresponds to a user in the database
+        //    var user = await    .FindByEmailAsync(request.Email);
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-        [HttpPost]
-        [Route("api/forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] forgotPasswordRequest model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //    // Generate a password reset token and send an email to the user
+        //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //    var resetUrl = Url.Action("ResetPassword", "Account", new { token = token }, Request.Scheme);
+        //    await _emailSender.SendEmailAsync(request.Email, "Reset your password",
+        //        $"Please reset your password by <a href='{resetUrl}'>clicking here</a>.");
 
-            //// Check if the email is valid
-            //if (!IsValidEmail(model.Email))
-            //{
-            //    return BadRequest(new { error = "Invalid email address" });
-            //}
+        //    return Ok();
+        //}
+        //[HttpGet]
+        //[Route("reset-password")]
+        //public IActionResult ResetPassword(string token)
+        //{
+        //    // Verify that the provided token is valid
+        //    var result = _userManager.VerifyUserTokenAsync(user, "Default", "ResetPassword", token);
+        //    if (!result.Result.Succeeded)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            // Check if the email belongs to a registered user
-            var user = await userRepository.FindByEmailAsync(model.username);
-            if (user == null)
-            {
-                return BadRequest(new { error = "Email not found" });
-            }
+        //    return View();
+        //}
 
-            // Generate a reset token and send it to the user's email
-            var Token = await tokenHandler.CreateToken(user);
+        //[HttpPost]
+        //[Route("reset-password")]
+        //public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        //{
+        //    // Verify that the provided token is valid
+        //    var user = await _userManager.FindByEmailAsync(model.Email);
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (Token != null)
-            {
-                //add new password 
+        //    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+        //    if (!result.Succeeded)
+        //    {
+        //        return BadRequest();
+        //    }
 
-                // confirm password 
+        //    return Ok();
+        //}
 
-            }
-            return Ok(Token);
 
-            //
+        //[HttpPost]
+        //[Route("/forgot-password")]
+        //public async Task<IActionResult> ForgotPassword([FromBody] forgotPasswordRequest model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-        }
+        //    //// Check if the email is valid
+        //    //if (!IsValidEmail(model.Email))
+        //    //{
+        //    //    return BadRequest(new { error = "Invalid email address" });
+        //    //}
+
+        //    // Check if the email belongs to a registered user
+        //    var user = await userRepository.FindByEmailAsync(model.username);
+        //    if (user == null)
+        //    {
+        //        return BadRequest(new { error = "Email not found" });
+        //    }
+
+        //    // Generate a reset token and send it to the user's email
+        //    var Token = await tokenHandler.CreateToken(user);
+
+        //    if (Token != null)
+        //    {
+        //        //add new password 
+
+        //        // confirm password 
+
+        //    }
+        //    return Ok(Token);
+
+        //    //
+
+        //}
 
         //
         //public async Task<IActionResult> ResetPassword([FromBody] forgotPasswordRequest model)

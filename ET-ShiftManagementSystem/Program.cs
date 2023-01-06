@@ -89,14 +89,21 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 //for entity framework
-builder.Services.AddDbContext<ShiftManagementDbContext>(option =>
+//builder.Services.AddDbContext<ShiftManagementDbContext>(option =>
+//{
+//    option.UseSqlServer
+//    (builder.Configuration.GetConnectionString("ProjectAPIConnectioString"),
+//    sqlServerOptionsAction: sqlOperation =>
+//    {
+//        sqlOperation.EnableRetryOnFailure();
+//    });
+
+//});
+
+var asd = builder.Configuration.GetConnectionString("ProjectAPIConnectioString");
+builder.Services.AddDbContext<ShiftManagementDbContext>(options =>
 {
-    option.UseSqlServer
-    (builder.Configuration.GetConnectionString("ProjectAPIConnectioString"),
-    sqlServerOptionsAction: sqlOperation =>
-    {
-        sqlOperation.EnableRetryOnFailure();
-    });
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectAPIConnectioString"));
 
 });
 

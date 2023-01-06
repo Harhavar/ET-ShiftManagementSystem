@@ -53,7 +53,7 @@ namespace ShiftMgtDbContext.Data
 
         public DbSet<TaskDetail> taskDetails { get; set; }
 
-        public DbSet<Email> emails { get; set; }
+        public DbSet<Email> Emails { get; set; }
 
     }
 }
