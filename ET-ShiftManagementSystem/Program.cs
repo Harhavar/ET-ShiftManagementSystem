@@ -1,8 +1,7 @@
-using ShiftMgtDbContext.Data;
 using Microsoft.EntityFrameworkCore;
 using Servises.ProjectServises;
 using Microsoft.EntityFrameworkCore.SqlServer;
-using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -11,6 +10,8 @@ using ShiftMgtDbContext.Entities;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using ET_ShiftManagementSystem.Servises;
+using ET_ShiftManagementSystem.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,8 @@ builder.Services.AddScoped<ICommentServices, CommentServices>();
 //builder.Services.AddScoped<ICredentialServices, CredentialServices>();
 
 builder.Services.AddScoped<IEmailServices, EmailServices>();
+
+builder.Services.AddScoped<IEmailSender , EmailSender>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
@@ -107,7 +110,7 @@ builder.Services.AddDbContext<ShiftManagementDbContext>(options =>
 
 });
 
-builder.Services.AddScoped<ITokenHandler, ShiftManagementServises.Servises.TokenHandler>();
+builder.Services.AddScoped<ITokenHandler, ET_ShiftManagementSystem.Servises.TokenHandler>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

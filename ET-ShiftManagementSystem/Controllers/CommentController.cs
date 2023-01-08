@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
-using ShiftMgtDbContext.Data;
-using ShiftMgtDbContext.Entities;
+using ET_ShiftManagementSystem.Servises;
+using ET_ShiftManagementSystem.Data;
 using System.Data;
 using System.Drawing.Drawing2D;
 
@@ -90,13 +90,13 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         //[Authorize(Roles = "Admin")]
-        public IActionResult AddComment(ShiftMgtDbContext.Entities.Comment comment)
+        public IActionResult AddComment(Comment comment)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var com = new ShiftMgtDbContext.Entities.Comment()
+            var com = new ET_ShiftManagementSystem.Entities.Comment()
             {
                 ShiftID= comment.ShiftID,
                 CommentText = comment.CommentText,
@@ -161,7 +161,7 @@ namespace ET_ShiftManagementSystem.Controllers
         //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateComment(int id ,Models.UpdateCommentRequest comment)
         {
-            var com = new ShiftMgtDbContext.Entities.Comment()
+            var com = new ET_ShiftManagementSystem.Entities.Comment()
             {
                 CommentID= comment.CommentID,
                 CommentText = comment.CommentText,

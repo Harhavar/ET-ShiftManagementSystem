@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using ShiftMgtDbContext.Entities;
+﻿using ET_ShiftManagementSystem.Entities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Text.Json.Nodes;
 
 namespace ET_ShiftManagementSystem.Models
 {
-    
+
     public class ProjectDetailsDTO
     {
         public int ProjectDetailsID { get; set; }

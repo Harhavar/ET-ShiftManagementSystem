@@ -2,12 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Servises.ProjectServises;
 using ShiftMgtDbContext.Entities;
-using ShiftMgtDbContext.Data;
+using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Models;
-using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Servises;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using ET_ShiftManagementSystem.Entities;
 
 namespace ET_ShiftManagementSystem.Controllers
 {

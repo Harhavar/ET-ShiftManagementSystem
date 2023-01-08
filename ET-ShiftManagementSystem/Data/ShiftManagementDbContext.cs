@@ -1,4 +1,5 @@
 ﻿//using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Entities;
 using Microsoft.EntityFrameworkCore;
 using ShiftMgtDbContext.Entities;
 using System;
@@ -7,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShiftMgtDbContext.Data
+namespace ET_ShiftManagementSystem.Data
 {
     public class ShiftManagementDbContext : DbContext
     {
-        public ShiftManagementDbContext(DbContextOptions options) : base(options)  
-        
+        public ShiftManagementDbContext(DbContextOptions options) : base(options)
+
         {
-                
+
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,7 +36,7 @@ namespace ShiftMgtDbContext.Data
 
         public DbSet<Shift> Shifts { get; set; }
 
-       
+
         public DbSet<Comment> Comments { get; set; }
 
         public DbSet<User> users { get; set; }
@@ -49,6 +50,8 @@ namespace ShiftMgtDbContext.Data
         public DbSet<TaskDetail> taskDetails { get; set; }
 
         public DbSet<Email> Emails { get; set; }
+
+        public DbSet<Token> Tokens { get; set; }
 
     }
 }

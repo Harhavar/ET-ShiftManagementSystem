@@ -1,10 +1,12 @@
 ﻿
-using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using ShiftMgtDbContext.Entities;
+using ET_ShiftManagementSystem.Servises;
+using ET_ShiftManagementSystem.Entities;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -14,11 +16,17 @@ namespace ET_ShiftManagementSystem.Controllers
     {
         private readonly IUserRepository userRepository;
         private readonly ITokenHandler tokenHandler;
+        private readonly IEmailSender emailSender;
 
-        public AuthController(IUserRepository userRepository, ITokenHandler tokenHandler)
+        //private readonly IEmailServices emailServices;
+
+
+        public AuthController(IUserRepository userRepository, ITokenHandler tokenHandler, IEmailSender emailSender)
         {
             this.userRepository = userRepository;
             this.tokenHandler = tokenHandler;
+            this.emailSender = emailSender;
+            //this.emailServices = emailServices;
         }
         [HttpPost]
         [Route("Register")]
@@ -67,14 +75,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [ActionName("LoginAync")]
         public  IActionResult LoginAync(Models.LoginRequest loginRequest)
         {
-            //verify the incoming request 
-            //if (loginRequest == null)
-            //{
-            //    return BadRequest();
-
-            //}
-            //check user is authenticated 
-            // check user name and password 
+            
             var user =  userRepository.AuthenticateAsync(loginRequest.username, loginRequest.password);
 
             if (user != null)
@@ -87,58 +88,68 @@ namespace ET_ShiftManagementSystem.Controllers
 
             return BadRequest("user name or password is incurrect");
         }
-        //[HttpPost]
-        //[Route("reset-password")]
-        //public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
-        //{
-        //    // Check if the provided email address corresponds to a user in the database
-        //    var user = await    .FindByEmailAsync(request.Email);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    // Generate a password reset token and send an email to the user
-        //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        //    var resetUrl = Url.Action("ResetPassword", "Account", new { token = token }, Request.Scheme);
-        //    await _emailSender.SendEmailAsync(request.Email, "Reset your password",
-        //        $"Please reset your password by <a href='{resetUrl}'>clicking here</a>.");
 
-        //    return Ok();
-        //}
-        //[HttpGet]
-        //[Route("reset-password")]
-        //public IActionResult ResetPassword(string token)
-        //{
-        //    // Verify that the provided token is valid
-        //    var result = _userManager.VerifyUserTokenAsync(user, "Default", "ResetPassword", token);
-        //    if (!result.Result.Succeeded)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpPost]
+        [Route("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody] forgotPasswordRequest request)
+        {
+            // Check if the provided email address corresponds to a user in the database
+            var user = await userRepository.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        //    return View();
-        //}
+            // Generate a password reset token and send an email to the user
 
-        //[HttpPost]
-        //[Route("reset-password")]
-        //public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-        //{
-        //    // Verify that the provided token is valid
-        //    var user = await _userManager.FindByEmailAsync(model.Email);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var token = Guid.NewGuid();
+            var save = new Token
+            {
+                Useremail = user.Email,
+                UserId = user.id,
+                UserToken = token.ToString(),
+                ExpirationDate = DateTime.UtcNow.AddDays(1),
+                TokenUsed=false
+                
+            };
+            tokenHandler.SaveToken(save);
+            
+            var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email= user.Email }, Request.Scheme);
+            await emailSender.SendEmailAsync(request.Email, "Reset your password",
+                $"Please reset your password by <a href='{resetUrl}'>clicking here</a>.");
 
-        //    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-        //    if (!result.Succeeded)
-        //    {
-        //        return BadRequest();
-        //    }
+            return Ok();
+        }
 
-        //    return Ok();
-        //}
+        [HttpGet]
+        [Route("ResetPassword")]
+        public IActionResult ResetPassword(Guid token,string email)
+        {
+            // Verify that the provided token is valid
+
+            var result = tokenHandler.VerifyUserToken(token.ToString(),email);
+            if (result.ExpirationDate<= DateTime.Now)
+            {
+                return BadRequest("Token expired.");
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (model.Password != model.ConfirmPassword)
+            {
+                return BadRequest("Password must be same");
+            }
+            // Verify that the provided token is valid
+            userRepository.UpdateUser(model.UserId,model.Password);
+            return Ok("Password updated succesfully");
+
+        }
 
 
         //[HttpPost]

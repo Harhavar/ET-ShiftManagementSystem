@@ -6,7 +6,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public ProjectProfiles()
         {
-            CreateMap<ShiftMgtDbContext.Entities.Project , Models.ProjectDto>().ReverseMap();
+            CreateMap<ET_ShiftManagementSystem.Entities.Project , Models.ProjectDto>().ReverseMap();
         }
     }
 }

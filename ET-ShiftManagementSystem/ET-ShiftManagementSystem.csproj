@@ -36,9 +36,4 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ShiftManagementServises\ShiftManagementServises.csproj" />
-    <ProjectReference Include="..\ShiftMgtDbContext\ShiftMgtDbContext.csproj" />
-  </ItemGroup>
-
 </Project>

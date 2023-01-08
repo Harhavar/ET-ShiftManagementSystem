@@ -21,8 +21,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ShiftManagementServises\ShiftManagementServises.csproj" />
-  </ItemGroup>
-
 </Project>

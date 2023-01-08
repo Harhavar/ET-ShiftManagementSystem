@@ -1,10 +1,10 @@
 ﻿using ET_ShiftManagementSystem.Models;
+using ET_ShiftManagementSystem.Servises;
 using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using MimeKit.Text;
-using ShiftManagementServises.Servises;
-using ShiftMgtDbContext.Entities;
+using ET_ShiftManagementSystem.Entities;
 
 namespace ET_ShiftManagementSystem.Controllers
 {

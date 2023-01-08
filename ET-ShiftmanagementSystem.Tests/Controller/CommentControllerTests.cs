@@ -8,12 +8,12 @@ using AutoFixture;
 using Moq;
 using FluentAssertions;
 using Xunit;
-using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Controllers;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using ShiftMgtDbContext.Entities;
 using ET_ShiftManagementSystem.Models;
+using ET_ShiftManagementSystem.Entities;
 
 namespace ET_ShiftmanagementSystem.Tests.Controller
 {
@@ -37,7 +37,7 @@ namespace ET_ShiftmanagementSystem.Tests.Controller
         public async Task GetComments_ShouldReturnOkResponce_WhenData_isFound()
         {
             //Arrange 
-            var CommentMock = _fixture.Create<IEnumerable<ShiftMgtDbContext.Entities.Comment>>();
+            var CommentMock = _fixture.Create<IEnumerable<Comment>>();
             _service.Setup(p => p.GetAllCommentsAsync()).ReturnsAsync(CommentMock);
 
             //Act
@@ -59,7 +59,7 @@ namespace ET_ShiftmanagementSystem.Tests.Controller
         public async Task GetComments_ShouldReturnOkResponce_WhenData_isNotFound()
         {
             //arrange
-            List<ShiftMgtDbContext.Entities.Comment> responce = null;
+            List<Comment> responce = null;
             _service.Setup(x => x.GetAllCommentsAsync()).ReturnsAsync(responce);
 
             //act 
@@ -77,7 +77,7 @@ namespace ET_ShiftmanagementSystem.Tests.Controller
         public async Task Get_CommentsBy_Id_ShouldReturnOKresponce_WhenValidInput()
         {
             //arrange
-            var CommentMock = _fixture.Create<ShiftMgtDbContext.Entities.Comment>();
+            var CommentMock = _fixture.Create<Comment>();
             var id = _fixture.Create<int>();
             _service.Setup(x => x.GetCommentByID(id)).ReturnsAsync(CommentMock);
 
@@ -98,7 +98,7 @@ namespace ET_ShiftmanagementSystem.Tests.Controller
 
         public async Task Get_CommentsBy_Id_ShouldReturnOKresponce_When_InValidInput()
         {
-            ShiftMgtDbContext.Entities.Comment responce = null;
+            Comment responce = null;
             var id = _fixture.Create<int>();
             _service.Setup(x => x.GetCommentByID(id)).ReturnsAsync(responce);
 
@@ -117,7 +117,7 @@ namespace ET_ShiftmanagementSystem.Tests.Controller
 
         public async Task Get_CommentsBy_Id_ShouldReturnOKresponce_When_Input_IsZERO()
         {
-            ShiftMgtDbContext.Entities.Comment responce = null;
+            Comment responce = null;
             var id = 0;
             _service.Setup(x => x.GetCommentByID(id)).ReturnsAsync(responce);
 
@@ -136,8 +136,8 @@ namespace ET_ShiftmanagementSystem.Tests.Controller
         public async Task CreateComment_ShouldReturnOKresponce_when_ValidRequest()
         {
             //Arange
-            var request = _fixture.Create<ShiftMgtDbContext.Entities.Comment>();
-            var responce = _fixture.Create<ShiftMgtDbContext.Entities.Comment>();
+            var request = _fixture.Create<Comment>();
+            var responce = _fixture.Create<Comment>();
             //_service.Setup(x => x.AddComment(request)).Returns(responce);
 
             //act 

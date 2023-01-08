@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
 using ShiftMgtDbContext.Entities;
 using System.Data;
 

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
-using ShiftMgtDbContext.Entities;
+using ET_ShiftManagementSystem.Servises;
 using System.Data;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -73,7 +73,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public async Task<IActionResult> UpdateShift(int id,Models.UpdateShiftRequest shiftDTO)
         {
-            var shift = new ShiftMgtDbContext.Entities.Shift()
+            var shift = new ET_ShiftManagementSystem.Entities.Shift()
             {
                 ShiftId = shiftDTO.ShiftId,
                 ShiftName = shiftDTO.ShiftName,

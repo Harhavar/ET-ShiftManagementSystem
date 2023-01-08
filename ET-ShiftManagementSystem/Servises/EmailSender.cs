@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShiftManagementServises.Servises
+namespace ET_ShiftManagementSystem.Servises
 {
     public interface IEmailSender
     {
@@ -45,8 +45,8 @@ namespace ShiftManagementServises.Servises
 
                 using (var client = new SmtpClient())
                 {
-                    client.Connect(_configuration.GetSection("EmailHost").Value, 587, true);
-                    client.AuthenticationMechanisms.Remove("XOAUTH2");
+                    client.Connect(_configuration.GetSection("EmailHost").Value, 587, MailKit.Security.SecureSocketOptions.StartTls);
+                    //client.AuthenticationMechanisms.Remove("XOAUTH2");
                     client.Authenticate(_configuration.GetSection("EmailUserName").Value, _configuration.GetSection("EmailPassword").Value);
 
                     await client.SendAsync(mimeMessage);

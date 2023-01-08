@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Servises;
 using System.Security.Cryptography.X509Certificates;
 
 namespace ET_ShiftManagementSystem.Controllers
