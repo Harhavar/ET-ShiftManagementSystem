@@ -57,13 +57,13 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("/allComment")]
+        [Route("allComment")]
         //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetAllComments()
         {
             var comment = await commentServices.GetAllCommentsAsync();
 
-            //retur dto regions
+            //retur dto Comments
             var RegionDTO = new List<Models.CommentDTO>();
             comment.ToList().ForEach(comment =>
             {

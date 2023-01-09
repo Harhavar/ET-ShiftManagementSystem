@@ -60,6 +60,8 @@ builder.Services.AddScoped<IEmailServices, EmailServices>();
 
 builder.Services.AddScoped<IEmailSender , EmailSender>();
 
+builder.Services.AddScoped<ISREDetiles , SREservices>();
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
 

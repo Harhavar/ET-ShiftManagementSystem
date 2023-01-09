@@ -31,8 +31,6 @@ namespace ET_ShiftManagementSystem.Servises
         public Task<string> CreateToken(User user)
         {
 
-
-
             //create claims
             var Claims = new List<Claim>();
             Claims.Add(new Claim(ClaimTypes.GivenName, user.FirstName));

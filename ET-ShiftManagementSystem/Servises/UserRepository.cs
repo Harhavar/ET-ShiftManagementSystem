@@ -13,7 +13,7 @@ namespace ET_ShiftManagementSystem.Servises
 
         Task<User> RegisterAsync(User user);
 
-        Task<User> ForgotPasswordAsync(string Email);
+       
         Task<User> FindByEmailAsync(string email);
         void UpdateUser(Guid userId, string pasword);
     }
@@ -67,23 +67,7 @@ namespace ET_ShiftManagementSystem.Servises
             return user;
         }
 
-        public Task<User> ForgotPasswordAsync(string Email)
-        {
-            throw new NotImplementedException();
-        }
-
-        //public async Task<User> ForgotPasswordAsync(string email)
-        //{
-        //    var user = await _ShiftManagementDbContext.users.FirstOrDefaultAsync( e => e.Email == email);
-        //    if (user == null)
-        //    {
-        //        return null;
-
-        //    }
-        //    var token = await _ShiftManagementDbContext.GeneratePasswordResetAsync(user);
-
-
-        //}
+      
 
         public async Task<User> RegisterAsync(User user)
         {

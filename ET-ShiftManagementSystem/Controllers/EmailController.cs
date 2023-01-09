@@ -23,18 +23,6 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             emailServices.sendEmail(request);
 
-            //var email = new MimeMessage();
-            //email.From.Add(MailboxAddress.Parse("harshavardhan78143@gmail.com"));
-            //email.To.Add(MailboxAddress.Parse("harshavardhan78143@gmail.com"));
-            //email.Subject = "SRE Activation";
-            //email.Body = new TextPart(TextFormat.Plain) { Text = body };
-
-            //using var SMTP = new SmtpClient();
-            //SMTP.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            //SMTP.Authenticate("harshavardhan78143@gmail.com", "jrifllvwkowgswfo");
-            //SMTP.Send(email);
-            //SMTP.Disconnect(true);
-
             return Ok();
         }
     }

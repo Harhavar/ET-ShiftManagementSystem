@@ -9,6 +9,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using ET_ShiftManagementSystem.Entities;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using System.Net.WebSockets;
+using System.Formats.Asn1;
+using System.Runtime.Intrinsics.X86;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -22,8 +26,9 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IShiftServices _shiftServices;
         private readonly ICommentServices _commentServices;
         private readonly IMapper mapper;
+        private readonly ISREDetiles _sreDetails;
 
-        public ProjectController(IProjectServises projectServices, IProjectDatailServises projectDatailServises, /*IUserServices userServices*/ IShiftServices shiftServices, ICommentServices commentServices , IMapper mapper)
+        public ProjectController(IProjectServises projectServices, IProjectDatailServises projectDatailServises, /*IUserServices userServices*/ IShiftServices shiftServices, ICommentServices commentServices , IMapper mapper , ISREDetiles SreDetails)
         {
             _projectServices = projectServices;
             _projectDatailServises = projectDatailServises;
@@ -31,6 +36,7 @@ namespace ET_ShiftManagementSystem.Controllers
             _shiftServices = shiftServices;
             _commentServices = commentServices;
             this.mapper = mapper;
+            _sreDetails = SreDetails;
         }
         //[Route("Details/{projectId}")]
         //[HttpGet]
@@ -96,7 +102,7 @@ namespace ET_ShiftManagementSystem.Controllers
         //}
 
         [HttpGet]
-        [Route("/allProject")]
+        [Route("allProject/")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllProjects()
         {
@@ -109,7 +115,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("/singleProject")]
+        [Route("singleProject/")]
         [ActionName("GetProjectAsync")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProjectAsync(int id)
@@ -144,21 +150,6 @@ namespace ET_ShiftManagementSystem.Controllers
 
              _projectServices.AddProjectAsync(Proj); 
 
-            ////Conevrt back to dto
-            //var projectDTO = new Models.ProjectDto()
-            //{
-            //    ProjectId = Proj.ProjectId,
-            //    ProjectName = Proj.ProjectName,
-            //    Description = Proj.Description,
-            //    ClientName = Proj.ClientName,
-            //    CreatedBy = Proj.CreatedBy,
-            //    ModifieBy= Proj.ModifieBy,
-            //    IsActive    = Proj.IsActive,
-
-
-            //}
-
-            //return CreatedAtAction(nameof())
             return Ok(Proj);
         }
       
@@ -212,6 +203,89 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(DeleteDTO);
         }
 
-        
+        [HttpGet]
+        [Route("GetSRE")]
+        public async Task<IActionResult> GetSRE()
+        {
+            var sre = await _sreDetails.GetAllSRE();
+
+            var SREDto = new List<Models.SREdetailsDTO>();
+
+            sre.ToList().ForEach(sre =>
+            {
+                var SreDTO = new Models.SREdetailsDTO()
+                {
+                    MobileNumber = sre.MobileNumber,  
+                    SRE = sre.SRE,
+                    Email= sre.Email,
+
+                };
+                SREDto.Add(SreDTO);
+
+
+            });
+
+            return Ok(SREDto);
+        }
+
+        [HttpPost]
+        [Route("AddSRE")]
+        public IActionResult AddSRE(SREDetile sRE)
+        {
+
+            var SRE = new SREDetile()
+            {
+                SRE = sRE.SRE,
+                MobileNumber = sRE.MobileNumber,
+                Email = sRE.Email,
+                IsActive= sRE.IsActive,
+            };
+
+            _sreDetails.AddSRE(SRE);
+
+            return Ok(SRE);
+
+        }
+
+        [HttpPut]
+        [Route("UpdateSRE")]
+        public async Task<IActionResult> ModifySRE(int Id, SREdetailsDTO Sredetail)
+        {
+            var SRE = new SREDetile()
+            {
+                SRE = Sredetail.SRE,
+                MobileNumber = Sredetail.MobileNumber,
+                Email = Sredetail.Email,
+                //IsActive = Sredetail.IsActive,
+            };
+
+            await _sreDetails.UpdateSRE(Id , SRE);
+
+            return Ok(SRE);
+        }
+
+        [HttpDelete]
+        [Route("DeleteSRE")]
+        public async Task<IActionResult> DeleteSRE(int Id)
+        {
+            var Delete =await  _sreDetails.DeleteSRE(Id);
+
+            if( Delete == null)
+            {
+                return BadRequest("data not fond");
+            }
+
+            var DeleteDTO = new SREDetile()
+            {
+                Id = Delete.Id,
+                SRE = Delete.SRE,
+                MobileNumber = Delete.MobileNumber,
+                Email = Delete.Email,
+                IsActive = Delete.IsActive,
+            };
+
+            return Ok(DeleteDTO);
+        }
+
     }
 }

@@ -49,9 +49,11 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<TaskDetail> taskDetails { get; set; }
 
-        public DbSet<Email> Emails { get; set; }
+        //public DbSet<Email> Emails { get; set; }
 
         public DbSet<Token> Tokens { get; set; }
+
+        public DbSet<SREDetile> SREDetiles { get; set; }
 
     }
 }
