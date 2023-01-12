@@ -6,13 +6,13 @@ namespace ET_ShiftManagementSystem.Servises
 {
     public interface ISREDetiles
     {
-        Task<IEnumerable<SREDetile>> GetAllSRE();
+        Task<IEnumerable<SREDetaile>> GetAllSRE();
 
-        long AddSRE(SREDetile sre);
+        long AddSRE(SREDetaile sre);
 
-        Task<SREDetile> UpdateSRE(int Id , SREDetile sre);
+        Task<SREDetaile> UpdateSRE(int Id , SREDetaile sre);
 
-        Task<SREDetile> DeleteSRE(int Id);
+        Task<SREDetaile> DeleteSRE(int Id);
     }
     public class SREservices : ISREDetiles
     {
@@ -23,14 +23,14 @@ namespace ET_ShiftManagementSystem.Servises
             _shiftManagementDb = shiftManagementDb;
         }
 
-        public long AddSRE(SREDetile sre)
+        public long AddSRE(SREDetaile sre)
         {
             _shiftManagementDb.SREDetiles.Add(sre);
             _shiftManagementDb.SaveChanges();
             return sre.Id;
         }
 
-        public async Task<SREDetile> DeleteSRE(int Id)
+        public async Task<SREDetaile> DeleteSRE(int Id)
         {
             var SRE = await _shiftManagementDb.SREDetiles.FirstOrDefaultAsync(sre => sre.Id == Id);
 
@@ -45,12 +45,12 @@ namespace ET_ShiftManagementSystem.Servises
             return SRE;
         }
 
-        public async Task<IEnumerable<SREDetile>> GetAllSRE()
+        public async Task<IEnumerable<SREDetaile>> GetAllSRE()
         {
             return await _shiftManagementDb.SREDetiles.ToListAsync();
         }
 
-        public async  Task<SREDetile> UpdateSRE(int Id , SREDetile sre)
+        public async  Task<SREDetaile> UpdateSRE(int Id , SREDetaile sre)
         {
             var abc = await _shiftManagementDb.SREDetiles.FirstOrDefaultAsync(x => x.Id == Id);
 

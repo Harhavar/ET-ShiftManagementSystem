@@ -27,8 +27,10 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly ICommentServices _commentServices;
         private readonly IMapper mapper;
         private readonly ISREDetiles _sreDetails;
+        private readonly IUserRepository userRepsository;
+        private readonly IProjectUserRepository _projectUser;
 
-        public ProjectController(IProjectServises projectServices, IProjectDatailServises projectDatailServises, /*IUserServices userServices*/ IShiftServices shiftServices, ICommentServices commentServices , IMapper mapper , ISREDetiles SreDetails)
+        public ProjectController(IProjectServises projectServices, IProjectDatailServises projectDatailServises, /*IUserServices userServices*/ IShiftServices shiftServices, ICommentServices commentServices , IMapper mapper , ISREDetiles SreDetails ,IUserRepository userRepository , IProjectUserRepository projectUser)
         {
             _projectServices = projectServices;
             _projectDatailServises = projectDatailServises;
@@ -37,6 +39,8 @@ namespace ET_ShiftManagementSystem.Controllers
             _commentServices = commentServices;
             this.mapper = mapper;
             _sreDetails = SreDetails;
+            this.userRepsository = userRepository;
+            this._projectUser = projectUser;
         }
         //[Route("Details/{projectId}")]
         //[HttpGet]
@@ -203,6 +207,47 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(DeleteDTO);
         }
 
+        [HttpPost]
+        [Route("AddUserToProject")]
+        public Task AddUserToProject(Guid userId, int projectId)
+        {
+            var user = userRepsository.Get(userId);
+            var project = _projectUser.GetProject(projectId);
+            if (user == null || project == null)
+            {
+                return null ;
+            }
+            var projectUser = new Entities.ProjectUser()
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                ProjectId = projectId,
+            };
+             
+            
+            var abc = _projectUser.Update(projectUser);
+
+            return abc;
+        }
+
+        [HttpPost]
+        [Route("RemoveUserFromProject")]
+        public IActionResult RemoveUserFromProject(Guid userId, int projectId)
+        {
+            var user = _projectUser.GetUserId(userId);
+            var project = _projectUser.GetProjectId(projectId);
+            if (user == null || project == null)
+            {
+                return null;
+            }
+            
+
+
+            var abc = _projectUser.Remove(user);
+
+            return Ok(abc);
+        }
+
         [HttpGet]
         [Route("GetSRE")]
         public async Task<IActionResult> GetSRE()
@@ -230,17 +275,17 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("AddSRE")]
-        public IActionResult AddSRE(SREDetile sRE)
+        public IActionResult AddSRE(SREDetaile sRE)
         {
 
-            var SRE = new SREDetile()
+            var SRE = new SREDetaile()
             {
                 SRE = sRE.SRE,
                 MobileNumber = sRE.MobileNumber,
                 Email = sRE.Email,
                 IsActive= sRE.IsActive,
             };
-
+             
             _sreDetails.AddSRE(SRE);
 
             return Ok(SRE);
@@ -248,10 +293,10 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPut]
-        [Route("UpdateSRE")]
+        [Route("ModifySRE")]
         public async Task<IActionResult> ModifySRE(int Id, SREdetailsDTO Sredetail)
         {
-            var SRE = new SREDetile()
+            var SRE = new SREDetaile()
             {
                 SRE = Sredetail.SRE,
                 MobileNumber = Sredetail.MobileNumber,
@@ -275,7 +320,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return BadRequest("data not fond");
             }
 
-            var DeleteDTO = new SREDetile()
+            var DeleteDTO = new SREDetaile()
             {
                 Id = Delete.Id,
                 SRE = Delete.SRE,

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShiftMgtDbContext.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -28,13 +29,11 @@ namespace ET_ShiftManagementSystem.Entities
         public DateTime ModifieDate { get;set; }
 
         public bool IsActive { get; set; }
-        //[ForeignKey("ProjectId")]
-        //public virtual ProjectDetail ProjectDetail { get; set; }
 
-        //navigation property
-        //public IEnumerable<ProjectDetail> projectDetails { get; set; }
+        //public List<ProjectUser> ProjectUsers { get; set; }
 
-        
+        //public ICollection<User> users { get; set; }
+
 
     }
 }

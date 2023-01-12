@@ -2,7 +2,7 @@
 
 namespace ET_ShiftManagementSystem.Entities
 {
-    public class SREDetile
+    public class SREDetaile
     {
         public int Id { get; set; }
 

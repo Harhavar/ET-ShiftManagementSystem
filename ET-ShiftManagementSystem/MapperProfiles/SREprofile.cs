@@ -6,7 +6,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public SREprofile()
         {
-                CreateMap<ET_ShiftManagementSystem.Entities.SREDetile ,ET_ShiftManagementSystem.Models.SREdetailsDTO>().ReverseMap();
+                CreateMap<ET_ShiftManagementSystem.Entities.SREDetaile ,ET_ShiftManagementSystem.Models.SREdetailsDTO>().ReverseMap();
         }
     }
 }

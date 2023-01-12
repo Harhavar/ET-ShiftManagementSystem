@@ -68,6 +68,98 @@ namespace ET_ShiftManagementSystem.Controllers
 
         }
 
+        [HttpPost]
+        [Route("AddingUser")]
+        //[Authorize(Roles = "SuperAdmin,Admin")] SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
+        public async Task<IActionResult> AddingUser(Models.RegisterRequest registerRequest)
+        {
+            //request DTO to Domine Model
+            var user = new ShiftMgtDbContext.Entities.User()
+            {
+                username = registerRequest.username,
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
+                Email = registerRequest.Email,
+                password = registerRequest.password,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber = registerRequest.AlternateContactNumber,
+
+            };
+
+            // pass details to repository 
+
+            user = await userRepository.RegisterUserAsync(user);
+
+            //convert back to DTO
+            var UserDTO = new Models.UserDto
+            {
+                id = user.id,
+                username = user.username,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                LastName = user.LastName,
+                password = user.password,
+                IsActive = user.IsActive,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber = registerRequest.AlternateContactNumber,
+            };
+
+            var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
+
+
+            await emailSender.SendEmailAsync(registerRequest.Email, $"Invitation To Project",
+                $"{user.FirstName + " " + user.LastName} added to the project . use this credential to login UserId :{user.username} password is :{user.password} \n Please login by <h1><a href='{resetUrl}'>clicking here</a></h1>.");
+
+            return CreatedAtAction(nameof(LoginAync), new { id = UserDTO.id }, UserDTO);
+
+        }
+
+
+        [HttpPost]
+        [Route("AddingAdmin")]
+        //[Authorize(Roles = "SuperAdmin")] SUPER ADMIN ADDING ADMIN TO THE PROJECT
+        public async Task<IActionResult> AddingAdmin(Models.RegisterRequest registerRequest)
+        {
+            //request DTO to Domine Model
+            var user = new ShiftMgtDbContext.Entities.User()
+            {
+                username = registerRequest.username,
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
+                Email = registerRequest.Email,
+                password = registerRequest.password,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber = registerRequest.AlternateContactNumber,
+
+            };
+
+            // pass details to repository 
+
+            user = await userRepository.RegisterAdminAsync(user);
+
+            //convert back to DTO
+            var UserDTO = new Models.UserDto
+            {
+                id = user.id,
+                username = user.username,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                LastName = user.LastName,
+                password = user.password,
+                IsActive = user.IsActive,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber = registerRequest.AlternateContactNumber,
+            };
+
+            var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
+
+
+            await emailSender.SendEmailAsync(registerRequest.Email, $"Invitation To Project",
+                $"{user.FirstName + " " + user.LastName} added to the project . use this credential to login UserId :{user.username} password is :{user.password} \n Please login by <h1><a href='{resetUrl}'>clicking here</a></h1>.");
+
+            return CreatedAtAction(nameof(LoginAync), new { id = UserDTO.id }, UserDTO);
+
+        }
 
 
         [HttpPost]
@@ -150,57 +242,6 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok("Password updated succesfully");
 
         }
-
-
-        //[HttpPost]
-        //[Route("/forgot-password")]
-        //public async Task<IActionResult> ForgotPassword([FromBody] forgotPasswordRequest model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    //// Check if the email is valid
-        //    //if (!IsValidEmail(model.Email))
-        //    //{
-        //    //    return BadRequest(new { error = "Invalid email address" });
-        //    //}
-
-        //    // Check if the email belongs to a registered user
-        //    var user = await userRepository.FindByEmailAsync(model.username);
-        //    if (user == null)
-        //    {
-        //        return BadRequest(new { error = "Email not found" });
-        //    }
-
-        //    // Generate a reset token and send it to the user's email
-        //    var Token = await tokenHandler.CreateToken(user);
-
-        //    if (Token != null)
-        //    {
-        //        //add new password 
-
-        //        // confirm password 
-
-        //    }
-        //    return Ok(Token);
-
-        //    //
-
-        //}
-
-        //
-        //public async Task<IActionResult> ResetPassword([FromBody] forgotPasswordRequest model)
-        //{
-        //    var user = await userRepository.FindByUserNameAsync(model.username);
-        //    if(user != null)
-        //    {
-        //        return StatusCode(StatusCodes.Status404NotFound);
-
-        //    }
-        //    var token = await userRepository.ForgotPasswordAsync(userRepository);
-        //}
 
     }
 }

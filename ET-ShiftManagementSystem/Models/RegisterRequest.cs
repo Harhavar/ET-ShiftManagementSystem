@@ -14,10 +14,10 @@ namespace ET_ShiftManagementSystem.Models
 
         public string FirstName { get; set; }
 
-        public string LastName { get; set; } = string.Empty;
+        public string LastName { get; set; }
 
-        public int ContactNumber { get; set; }
+        public string ContactNumber { get; set; }
 
-        public int AlternateContactNumber { get; set; }
+        public string AlternateContactNumber { get; set; }
     }
 }

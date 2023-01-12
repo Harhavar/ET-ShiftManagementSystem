@@ -12,8 +12,14 @@ namespace ET_ShiftManagementSystem.Servises
         User AuthenticateAsync(string username, string password);
 
         Task<User> RegisterAsync(User user);
+        Task<User> RegisterUserAsync(User user);
 
-       
+        User Get(Guid userId);
+        Task<User> RegisterAdminAsync(User user);
+
+        Task Update(User user);
+
+
         Task<User> FindByEmailAsync(string email);
         void UpdateUser(Guid userId, string pasword);
     }
@@ -54,6 +60,13 @@ namespace ET_ShiftManagementSystem.Servises
             user.password = null;
             return user;
         }
+        public  User Get(Guid userId)
+        {
+            
+            var abc =  _ShiftManagementDbContext.users.FirstOrDefault(u => u.id == userId);
+
+            return abc;
+        }
 
         public async Task<User> FindByEmailAsync(string email)
         {
@@ -90,6 +103,46 @@ namespace ET_ShiftManagementSystem.Servises
             
         }
 
+        public async Task<User> RegisterUserAsync(User user)
+        {
+            user.id = Guid.NewGuid();
+            await _ShiftManagementDbContext.users.AddAsync(user);
+            await _ShiftManagementDbContext.SaveChangesAsync();
+            var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "User").Select(a => a.Id).FirstOrDefault();
+            if (!string.IsNullOrEmpty(roleID.ToString()))
+            {
+                var role = new User_Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Userid = user.id,
+                    RoleId = roleID
+                };
+                await _ShiftManagementDbContext.usersRoles.AddAsync(role);
+                await _ShiftManagementDbContext.SaveChangesAsync();
+            }
+            return user;
+        }
+
+        public async Task<User> RegisterAdminAsync(User user)
+        {
+            user.id = Guid.NewGuid();
+            await _ShiftManagementDbContext.users.AddAsync(user);
+            await _ShiftManagementDbContext.SaveChangesAsync();
+            var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "Admin").Select(a => a.Id).FirstOrDefault();
+            if (!string.IsNullOrEmpty(roleID.ToString()))
+            {
+                var role = new User_Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Userid = user.id,
+                    RoleId = roleID
+                };
+                await _ShiftManagementDbContext.usersRoles.AddAsync(role);
+                await _ShiftManagementDbContext.SaveChangesAsync();
+            }
+            return user;
+        }
+
         public void UpdateUser(Guid userId, string pasword)
         {
             var user=_ShiftManagementDbContext.users.FirstOrDefault(a => a.id == userId);
@@ -98,6 +151,12 @@ namespace ET_ShiftManagementSystem.Servises
                 user.password = pasword;
                 _ShiftManagementDbContext.SaveChanges();
             }
+        }
+
+        public async Task Update(User user)
+        {
+            _ShiftManagementDbContext.users.Update(user);
+            await _ShiftManagementDbContext.SaveChangesAsync();
         }
     }
 }

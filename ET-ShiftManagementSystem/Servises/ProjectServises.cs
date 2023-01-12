@@ -27,6 +27,7 @@ namespace Servises.ProjectServises
             _shiftDbContext = shiftDbContext;
         }
 
+
         public  long AddProjectAsync(Project project)
         {
             
@@ -63,7 +64,8 @@ namespace Servises.ProjectServises
 
         public async Task<Project> GetProject(int ProjectId)
         {
-            return await _shiftDbContext.projects.AsNoTracking().FirstOrDefaultAsync(a => a.ProjectId == ProjectId);
+            var abc = await _shiftDbContext.projects.AsNoTracking().FirstOrDefaultAsync(a => a.ProjectId == ProjectId);
+            return abc;
         }
 
         public async Task<Project> GetProjectAsync(int id)

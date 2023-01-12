@@ -27,6 +27,22 @@ namespace ET_ShiftManagementSystem.Data
                 .HasOne(x => x.User)
                 .WithMany(y => y.UserRoles)
                 .HasForeignKey(x => x.Userid);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(x => x.project)
+            //    .WithMany(x => x.Projects).
+            //    HasForeignKey(x => x.ProjectId);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(x => x.User)
+            //    .WithMany(y => y.Projects).
+            //    HasForeignKey(x => x.userid);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(u => u.project)
+            //    .WithMany(p => p.ProjectUsers)
+            //    .HasForeignKey(u => u.ProjectId);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(u => u.User)
+            //    .WithMany(p => p.ProjectUsers)
+            //    .HasForeignKey(u => u.UserId);
 
         }
 
@@ -49,11 +65,11 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<TaskDetail> taskDetails { get; set; }
 
-        //public DbSet<Email> Emails { get; set; }
-
         public DbSet<Token> Tokens { get; set; }
 
-        public DbSet<SREDetile> SREDetiles { get; set; }
+        public DbSet<SREDetaile> SREDetiles { get; set; }
+
+        public DbSet<ProjectUser> projectUsers { get; set; }
 
     }
 }

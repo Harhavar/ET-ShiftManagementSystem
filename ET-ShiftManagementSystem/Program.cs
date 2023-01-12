@@ -65,30 +65,6 @@ builder.Services.AddScoped<ISREDetiles , SREservices>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
 
-//for Authentication 
-//builder.Services.AddAuthentication(option =>
-//       {
-//           option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//           option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//           option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//       }).AddJwtBearer(options =>
-//       {
-//           options.TokenValidationParameters = new TokenValidationParameters
-//           {
-//               ValidateIssuer = true,
-//               ValidateAudience = true,
-//               ValidateLifetime = true,
-//               ValidateIssuerSigningKey = true,
-//               ValidIssuer = builder.Configuration["Jwt:Issuer"],
-//               ValidAudience = builder.Configuration["Jwt:Audience"],
-//               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-//           };
-//       });
-
-
-
-
-
 //var JwtSetting = System.Configuration.GetSection("Jwt");
 //builder.Services.Configure<JwtBearerDefaults>(JwtSetting);
 
@@ -119,6 +95,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDocumentServices, DocumentServices>();
 
 builder.Services.AddScoped<ITaskServices , TaskServices>();
+
+builder.Services.AddScoped<IProjectUserRepository , ProjectUserRepository>();
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
