@@ -17,7 +17,7 @@ namespace ET_ShiftManagementSystem.Servises
         User Get(Guid userId);
         Task<User> RegisterAdminAsync(User user);
 
-        Task Update(User user);
+        //Task Update(User user);
 
 
         Task<User> FindByEmailAsync(string email);
@@ -151,12 +151,13 @@ namespace ET_ShiftManagementSystem.Servises
                 user.password = pasword;
                 _ShiftManagementDbContext.SaveChanges();
             }
+            
         }
 
-        public async Task Update(User user)
-        {
-            _ShiftManagementDbContext.users.Update(user);
-            await _ShiftManagementDbContext.SaveChangesAsync();
-        }
+        //public async Task Update(User user)
+        //{
+        //    _ShiftManagementDbContext.users.Update(user);
+        //    await _ShiftManagementDbContext.SaveChangesAsync();
+        //}
     }
 }

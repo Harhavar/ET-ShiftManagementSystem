@@ -106,11 +106,16 @@ namespace ET_ShiftManagementSystem.Controllers
         //}
 
         [HttpGet]
-        [Route("allProject/")]
+        //[Route("allProject/")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllProjects()
         {
             var project = await _projectServices.GetAllAsync();
+
+            if(project == null)
+            {
+                return NotFound();
+            }
 
            var ProjectDTO = mapper.Map<List<Models.ProjectDto>>(project);
 
@@ -119,7 +124,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("singleProject/")]
+        [Route("{id}")]
         [ActionName("GetProjectAsync")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetProjectAsync(int id)
@@ -140,6 +145,10 @@ namespace ET_ShiftManagementSystem.Controllers
         //[Authorize(Roles = "SuperAdmin")]
         public  IActionResult AddProjectASync(Project projectDto)
         {
+            try
+            {
+
+            
             var Proj = new Project()
             {
                 ProjectName = projectDto.ProjectName,
@@ -155,6 +164,11 @@ namespace ET_ShiftManagementSystem.Controllers
              _projectServices.AddProjectAsync(Proj); 
 
             return Ok(Proj);
+            }
+            catch (Exception ex) 
+            { 
+                return BadRequest(ex.Message);
+            }
         }
       
 
@@ -162,6 +176,10 @@ namespace ET_ShiftManagementSystem.Controllers
         //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateProject(int id , Project ProjectDto) 
         {
+            try
+            {
+
+           
             var Project = new Project()
             {
                 ProjectName = ProjectDto.ProjectName,
@@ -177,6 +195,11 @@ namespace ET_ShiftManagementSystem.Controllers
             await _projectServices.UpdateAsync(id ,Project);
 
             return Ok(Project);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
@@ -209,31 +232,46 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("AddUserToProject")]
-        public Task AddUserToProject(Guid userId, int projectId)
+        public IActionResult AddUserToProject(Guid userId, int projectId)
         {
-            var user = userRepsository.Get(userId);
-            var project = _projectUser.GetProject(projectId);
-            if (user == null || project == null)
+            try
             {
-                return null ;
-            }
-            var projectUser = new Entities.ProjectUser()
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                ProjectId = projectId,
-            };
-             
-            
-            var abc = _projectUser.Update(projectUser);
+                var user = userRepsository.Get(userId);
+                var project = _projectUser.GetProject(projectId);
+                if (user == null || project == null)
+                {
+                    //if((project). >= 1)
+                    //{
+                    //    return BadRequest("already in project");
+                    //}
+                    return null;
+                }
+                var projectUser = new Entities.ProjectUser()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    ProjectId = projectId,
+                };
 
-            return abc;
+
+                var abc = _projectUser.Update(projectUser);
+
+                return Ok(abc);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
         [Route("RemoveUserFromProject")]
         public IActionResult RemoveUserFromProject(Guid userId, int projectId)
         {
+            try
+            {
+
+           
             var user = _projectUser.GetUserId(userId);
             var project = _projectUser.GetProjectId(projectId);
             if (user == null || project == null)
@@ -241,11 +279,14 @@ namespace ET_ShiftManagementSystem.Controllers
                 return null;
             }
             
-
-
             var abc = _projectUser.Remove(user);
 
             return Ok(abc);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -254,6 +295,10 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var sre = await _sreDetails.GetAllSRE();
 
+            if (sre == null)
+            {
+                return NotFound();
+            }
             var SREDto = new List<Models.SREdetailsDTO>();
 
             sre.ToList().ForEach(sre =>
@@ -277,7 +322,10 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("AddSRE")]
         public IActionResult AddSRE(SREDetaile sRE)
         {
+            try
+            {
 
+           
             var SRE = new SREDetaile()
             {
                 SRE = sRE.SRE,
@@ -289,6 +337,11 @@ namespace ET_ShiftManagementSystem.Controllers
             _sreDetails.AddSRE(SRE);
 
             return Ok(SRE);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -296,6 +349,10 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("ModifySRE")]
         public async Task<IActionResult> ModifySRE(int Id, SREdetailsDTO Sredetail)
         {
+            try
+            {
+
+           
             var SRE = new SREDetaile()
             {
                 SRE = Sredetail.SRE,
@@ -307,6 +364,11 @@ namespace ET_ShiftManagementSystem.Controllers
             await _sreDetails.UpdateSRE(Id , SRE);
 
             return Ok(SRE);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
@@ -317,7 +379,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
             if( Delete == null)
             {
-                return BadRequest("data not fond");
+                return NotFound();
             }
 
             var DeleteDTO = new SREDetaile()

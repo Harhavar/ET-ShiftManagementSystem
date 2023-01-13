@@ -11,7 +11,7 @@ namespace ET_ShiftManagementSystem.Servises
         ProjectUser GetProjectId(int ProjectId);
         Project GetProject(int ProjectId);
 
-        Task<ProjectUser> Update(ProjectUser user);
+        ProjectUser Update(ProjectUser user);
         ProjectUser Remove(ProjectUser user);
 
         //ProjectUser 
@@ -49,10 +49,10 @@ namespace ET_ShiftManagementSystem.Servises
             return user;
         }
 
-        public async Task<ProjectUser> Update(ProjectUser user)
+        public ProjectUser Update(ProjectUser user)
         {
             shiftManagementDb.projectUsers.Add(user);
-            await shiftManagementDb.SaveChangesAsync();
+             shiftManagementDb.SaveChangesAsync();
 
             return user;
         }

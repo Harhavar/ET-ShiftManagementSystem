@@ -33,6 +33,7 @@ namespace ET_ShiftManagementSystem.Controllers
         //[Authorize(Roles = "SuperAdmin")] SUPER ADMIN ADDING USER TO THE PROJECT
         public async Task<IActionResult> Register(Models.RegisterRequest registerRequest)
         {
+            try { 
             //request DTO to Domine Model
             var user = new ShiftMgtDbContext.Entities.User()
             {
@@ -65,7 +66,11 @@ namespace ET_ShiftManagementSystem.Controllers
             };
 
             return CreatedAtAction(nameof(LoginAync), new { id = UserDTO.id }, UserDTO);
-
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]

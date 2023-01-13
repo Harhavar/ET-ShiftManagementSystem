@@ -21,9 +21,18 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         public IActionResult SendMail(Email request)
         {
+            try
+            {
+
+            
             emailServices.sendEmail(request);
 
             return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

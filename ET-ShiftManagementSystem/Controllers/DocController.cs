@@ -26,6 +26,11 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var Doc = await documentServices.GetallDocument();
 
+            if(Doc == null)
+            {
+                return NotFound();
+            }
+
             var DocDTO = mapper.Map<List<Models.DocDTO>>(Doc);
 
             return Ok(DocDTO);
@@ -35,26 +40,39 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public IActionResult AddDocs(Doc doc)
         {
-            var Document = new Doc
+            try
             {
-                // Id= doc.Id,
-                Docs = doc.Docs,
-                CreatedBy = doc.CreatedBy,
-                CreatedDate = doc.CreatedDate,
-                modifiedBy = doc.modifiedBy,
-                ModifiedDate = doc.ModifiedDate,
-                isActive = doc.isActive,
 
-            };
 
-            documentServices.AddDocs(Document);
-            return Ok(Document);
+                var Document = new Doc
+                {
+                    // Id= doc.Id,
+                    Docs = doc.Docs,
+                    CreatedBy = doc.CreatedBy,
+                    CreatedDate = doc.CreatedDate,
+                    modifiedBy = doc.modifiedBy,
+                    ModifiedDate = doc.ModifiedDate,
+                    isActive = doc.isActive,
+
+                };
+
+                documentServices.AddDocs(Document);
+                return Ok(Document);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDoc(int id)
         {
+            try
+            {
+
+           
             var delete = await documentServices.DeleteDoc(id);
 
             if (delete == null)
@@ -74,6 +92,11 @@ namespace ET_ShiftManagementSystem.Controllers
 
             };
             return Ok(DeleteDTO);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

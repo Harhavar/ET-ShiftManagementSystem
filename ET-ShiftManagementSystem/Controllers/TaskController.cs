@@ -27,6 +27,11 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var task = await taskServices.GetTasks();
 
+            if (task == null)
+            {
+                return NotFound();
+            }
+
             var TaskDTO = mapper.Map<List<Models.TaskDTO>>(task); 
 
             return Ok(TaskDTO);
@@ -35,6 +40,10 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         public IActionResult AddTask(TaskDetail taskDetail)
         {
+            try
+            {
+
+            
             var taskDtl = new TaskDetail()
             {
                 TaskComment = taskDetail.TaskComment,
@@ -48,32 +57,46 @@ namespace ET_ShiftManagementSystem.Controllers
             };
             taskServices.AddTask(taskDtl);
             return Ok(taskDtl);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         public async  Task<IActionResult> DeleteTask(int id)
         {
-            var delete = await taskServices.DeleteTask(id);
-
-            if (delete == null)
+            try
             {
-               return NotFound();
 
+
+                var delete = await taskServices.DeleteTask(id);
+
+                if (delete == null)
+                {
+                    return NotFound();
+
+                }
+
+                var DeleteDto = new Models.TaskDTO()
+                {
+                    Id = delete.Id,
+                    TaskComment = delete.TaskComment,
+                    CreatedBy = delete.CreatedBy,
+                    ModifiedBy = delete.ModifiedBy,
+                    ModifiedDate = delete.ModifiedDate,
+                    CreatedDate = delete.CreatedDate,
+                    isActive = delete.isActive,
+
+                };
+                return Ok(DeleteDto);
             }
-
-            var DeleteDto = new Models.TaskDTO()
+            catch (Exception ex)
             {
-                Id = delete.Id,
-                TaskComment = delete.TaskComment,
-                CreatedBy = delete.CreatedBy,
-                ModifiedBy = delete.ModifiedBy,
-                ModifiedDate = delete.ModifiedDate,
-                CreatedDate = delete.CreatedDate,
-                isActive = delete.isActive,
-
-            };
-            return Ok(DeleteDto);
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -28,6 +28,11 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var shift =  await shiftServices.GetAllShiftAsync();
 
+            if(shift == null)
+            {
+                return BadRequest();
+            }
+
             var ShiftDTO = mapper.Map<List<Models.ShiftDTO>>(shift);
 
             return Ok(ShiftDTO);
@@ -39,6 +44,11 @@ namespace ET_ShiftManagementSystem.Controllers
         public async Task<IActionResult> GetShiftByID(int id)
         {
             var shift = await shiftServices.GetShiftById(id);
+
+            if(shift == null)
+            {
+                return BadRequest();
+            }
 
             var ShiftDTO = mapper.Map<Models.ShiftDTO>(shift);
 
@@ -53,7 +63,10 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 return BadRequest();
             }
+            try
+            {
 
+            
 
             var shift = new Shift()
             {
@@ -65,6 +78,11 @@ namespace ET_ShiftManagementSystem.Controllers
             shiftServices.AddSift(shift);
 
             return Ok(shift);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -73,6 +91,10 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public async Task<IActionResult> UpdateShift(int id,Models.UpdateShiftRequest shiftDTO)
         {
+            try
+            {
+
+            
             var shift = new ET_ShiftManagementSystem.Entities.Shift()
             {
                 ShiftId = shiftDTO.ShiftId,
@@ -85,12 +107,21 @@ namespace ET_ShiftManagementSystem.Controllers
             await shiftServices.UpdateShiftAsync(id, shift);
 
             return Ok(shift);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteShiftAsync(int Id)
         {
+            try
+            {
+
+            
             var delete = await shiftServices.DeleteShiftAsync(Id);
 
             if (delete == null)
@@ -109,7 +140,13 @@ namespace ET_ShiftManagementSystem.Controllers
             };
 
             return Ok(DeleteDTO);
-        
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
         }
     }
 }

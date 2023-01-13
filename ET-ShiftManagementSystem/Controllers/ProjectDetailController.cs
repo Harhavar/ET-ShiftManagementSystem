@@ -23,7 +23,16 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         public async  Task<IActionResult> GetProjectDetails()
         {
+            try
+            {
+
+           
             var project = await  projectDatailServises.GetProjecDetails();
+
+                if(project == null)
+                {
+                    return NotFound();
+                }
 
             var ProjectDetailDTO = new List<Models.ProjectDetailsDTO>();
             project.ToList().ForEach(project =>
@@ -57,6 +66,11 @@ namespace ET_ShiftManagementSystem.Controllers
             //var ProjectDetailDTO = mapper.Map<List<Models.ProjectDetailsDTO>>(project);
 
             return Ok(ProjectDetailDTO);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
