@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ET_ShiftManagementSystem.Servises;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -21,6 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async  Task<IActionResult> GetProjectDetails()
         {
             try

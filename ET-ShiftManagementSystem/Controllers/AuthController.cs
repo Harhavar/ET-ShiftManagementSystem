@@ -1,5 +1,4 @@
-﻿
-using ET_ShiftManagementSystem.Servises;
+﻿using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using ET_ShiftManagementSystem.Models;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using ShiftMgtDbContext.Entities;
 using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Entities;
+using System.Data;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -30,7 +30,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpPost]
         [Route("Register")]
-        //[Authorize(Roles = "SuperAdmin")] SUPER ADMIN ADDING USER TO THE PROJECT
+        [Authorize(Roles = "SuperAdmin")] //SUPER ADMIN ADDING USER TO THE PROJECT
         public async Task<IActionResult> Register(Models.RegisterRequest registerRequest)
         {
             try { 
@@ -75,7 +75,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("AddingUser")]
-        //[Authorize(Roles = "SuperAdmin,Admin")] SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
+        [Authorize(Roles = "SuperAdmin,Admin")] //SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
         public async Task<IActionResult> AddingUser(Models.RegisterRequest registerRequest)
         {
             //request DTO to Domine Model
@@ -122,7 +122,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("AddingAdmin")]
-        //[Authorize(Roles = "SuperAdmin")] SUPER ADMIN ADDING ADMIN TO THE PROJECT
+        [Authorize(Roles = "SuperAdmin")] // SUPER ADMIN ADDING ADMIN TO THE PROJECT
         public async Task<IActionResult> AddingAdmin(Models.RegisterRequest registerRequest)
         {
             //request DTO to Domine Model
@@ -170,6 +170,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         [Route("Login")]
         [ActionName("LoginAync")]
+        //[Authorize(Roles= "SuperAdmin,Admin,User")]
         public  IActionResult LoginAync(Models.LoginRequest loginRequest)
         {
             
@@ -189,6 +190,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("ForgetPassword")]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> ForgetPassword([FromBody] forgotPasswordRequest request)
         {
             // Check if the provided email address corresponds to a user in the database
@@ -221,6 +223,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("ResetPassword")]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public IActionResult ResetPassword(Guid token,string email)
         {
             // Verify that the provided token is valid
@@ -236,6 +239,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("ResetPassword")]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (model.Password != model.ConfirmPassword)

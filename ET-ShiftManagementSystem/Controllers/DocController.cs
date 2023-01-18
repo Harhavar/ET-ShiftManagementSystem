@@ -22,6 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetAllDocs()
         {
             var Doc = await documentServices.GetallDocument();
@@ -37,7 +38,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public IActionResult AddDocs(Doc doc)
         {
             try
@@ -66,7 +67,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<IActionResult> DeleteDoc(int id)
         {
             try

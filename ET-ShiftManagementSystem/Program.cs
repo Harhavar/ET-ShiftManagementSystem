@@ -96,6 +96,8 @@ builder.Services.AddScoped<IDocumentServices, DocumentServices>();
 
 builder.Services.AddScoped<ITaskServices , TaskServices>();
 
+builder.Services.AddScoped<IAlertServices, AlertServices>();
+
 builder.Services.AddScoped<IProjectUserRepository , ProjectUserRepository>();
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>

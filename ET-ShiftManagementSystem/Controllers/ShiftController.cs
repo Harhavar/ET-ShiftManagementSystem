@@ -22,7 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("All/")]
+        //[Route("All/")]
        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllShifts()
         {
@@ -39,8 +39,9 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("single/")]
-       // [Authorize(Roles = "Admin")]
+        [Route("{id}")]
+        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetShiftByID(int id)
         {
             var shift = await shiftServices.GetShiftById(id);
@@ -56,7 +57,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         public IActionResult AddShift(Shift shiftDTO)
         {
             if (shiftDTO == null)
@@ -87,8 +88,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPut]
-       // [Authorize(Roles = "SuperAdmin")]
-
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateShift(int id,Models.UpdateShiftRequest shiftDTO)
         {
             try
@@ -115,7 +115,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteShiftAsync(int Id)
         {
             try

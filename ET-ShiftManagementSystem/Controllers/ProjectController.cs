@@ -108,6 +108,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         //[Route("allProject/")]
         //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetAllProjects()
         {
             var project = await _projectServices.GetAllAsync();
@@ -127,6 +128,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("{id}")]
         [ActionName("GetProjectAsync")]
         //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetProjectAsync(int id)
         {
             var project = await _projectServices.GetProjectAsync(id);
@@ -142,7 +144,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         public  IActionResult AddProjectASync(Project projectDto)
         {
             try
@@ -173,7 +175,7 @@ namespace ET_ShiftManagementSystem.Controllers
       
 
         [HttpPut]
-        //[Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateProject(int id , Project ProjectDto) 
         {
             try
@@ -203,7 +205,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteProject(int id)
         {
             var delete = await _projectServices.DeleteProjectAsync(id);
@@ -232,6 +234,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("AddUserToProject")]
+        [Authorize(Roles = "SuperAdmin")]
         public IActionResult AddUserToProject(Guid userId, int projectId)
         {
             try
@@ -266,6 +269,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("RemoveUserFromProject")]
+        [Authorize(Roles = "SuperAdmin")]
         public IActionResult RemoveUserFromProject(Guid userId, int projectId)
         {
             try

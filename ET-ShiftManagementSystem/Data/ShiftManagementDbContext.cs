@@ -71,5 +71,7 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<ProjectUser> projectUsers { get; set; }
 
+        public DbSet<Alert> alerts { get; set; }
+
     }
 }

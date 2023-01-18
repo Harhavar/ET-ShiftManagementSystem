@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using MimeKit;
 using MimeKit.Text;
 using ET_ShiftManagementSystem.Entities;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -19,13 +21,14 @@ namespace ET_ShiftManagementSystem.Controllers
             this.emailServices = emailServices;
         }
         [HttpPost]
+        [Authorize(Roles = "SuperAdmin,Admin")]
         public IActionResult SendMail(Email request)
         {
             try
             {
 
             
-            emailServices.sendEmail(request);
+                emailServices.sendEmail(request);
 
             return Ok();
             }
