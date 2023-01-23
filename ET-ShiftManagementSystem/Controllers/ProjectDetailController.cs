@@ -22,7 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async  Task<IActionResult> GetProjectDetails()
         {
             try

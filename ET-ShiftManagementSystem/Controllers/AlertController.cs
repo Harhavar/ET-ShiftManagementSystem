@@ -15,7 +15,7 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IAlertServices alertServices;
         private readonly IMapper mapper;
 
-        public AlertController(IAlertServices alertServices , IMapper mapper )
+        public AlertController(IAlertServices alertServices, IMapper mapper)
         {
             this.alertServices = alertServices;
             this.mapper = mapper;
@@ -23,20 +23,20 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("filter")]
-        public IActionResult GetAlert(string alertname , DateTime from , DateTime to)
+        public IActionResult GetAlert(string alertname, DateTime from, DateTime? to)
         {
             try
             {
 
-            
-            var alert = alertServices.GetAlertByFilter(alertname, from, to);
 
-            if(alert == null)
-            {
-                return NotFound();
-            }
+                var alert = alertServices.GetAlertByFilter(alertname, from, to);
 
-            return Ok(alert);
+                if (alert == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(alert);
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var alert = await alertServices.GetAlertAsync();
 
-            if(alert == null)
+            if (alert == null)
             {
                 return BadRequest();
             }
@@ -60,14 +60,14 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 var alertDTO = new Models.AlertsDTO()
                 {
-                    CreatedDate= alert.CreatedDate,
+                    CreatedDate = alert.CreatedDate,
                     AlertName = alert.AlertName,
-                    RCA= alert.RCA,
-                    TriggeredTime= alert.TriggeredTime,
+                    RCA = alert.RCA,
+                    TriggeredTime = alert.TriggeredTime,
                     Description = alert.Description,
-                    ReportedBy= alert.ReportedBy,
-                    ReportedTo  = alert.ReportedTo,
-                    Id= alert.Id,
+                    ReportedBy = alert.ReportedBy,
+                    ReportedTo = alert.ReportedTo,
+                    Id = alert.Id,
 
                 };
                 AlertDto.Add(alertDTO);
@@ -76,43 +76,83 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(AlertDto);
         }
 
-        [HttpPost]
-        
-        public IActionResult addAlert( Alert alert )
+        [HttpGet]
+        [Route("all")]
+        public async Task<ActionResult<IEnumerable<Alert>>> GetAllalert()
         {
             try
             {
 
-            
-            if ( alert == null )
-            {
-                return BadRequest();
+                var alert = await alertServices.GetAllAlert();
+
+                if (alert == null)
+                {
+                    return BadRequest();
+                }
+
+                var AlertDto = new List<Models.AlertsDTO>();
+                alert.ToList().ForEach(alert =>
+                {
+                    var alertDTO = new Models.AlertsDTO()
+                    {
+                        CreatedDate = alert.CreatedDate,
+                        AlertName = alert.AlertName,
+                        RCA = alert.RCA,
+                        TriggeredTime = alert.TriggeredTime,
+                        Description = alert.Description,
+                        ReportedBy = alert.ReportedBy,
+                        ReportedTo = alert.ReportedTo,
+                        Id = alert.Id,
+
+                    };
+                    AlertDto.Add(alertDTO);
+
+                });
+                return Ok(AlertDto);
             }
-
-            var aler = new Alert
+            catch (Exception ex)
             {
-                AlertName = alert.AlertName,
-                //Id = alert.Id,
-                RCA = alert.RCA,
-                Description = alert.Description,
-                ReportedBy = alert.ReportedBy,
-                ReportedTo = alert.ReportedTo,
-                TriggeredTime = alert.TriggeredTime,
-                CreatedDate= DateTime.Now
-            };
-
-            var alertDTO = alertServices.AddAlert( aler );
-
-            return Ok(alertDTO);
+                return BadRequest(ex.Message);
             }
-            catch(Exception ex )
+        }
+
+        [HttpPost]
+
+        public IActionResult addAlert(Alert alert)
+        {
+            try
+            {
+
+
+                if (alert == null)
+                {
+                    return BadRequest();
+                }
+
+                var aler = new Alert
+                {
+                    AlertName = alert.AlertName,
+                    //Id = alert.Id,
+                    RCA = alert.RCA,
+                    Description = alert.Description,
+                    ReportedBy = alert.ReportedBy,
+                    ReportedTo = alert.ReportedTo,
+                    TriggeredTime = alert.TriggeredTime,
+                    CreatedDate = DateTime.Now
+                };
+
+                var alertDTO = alertServices.AddAlert(aler);
+
+                return Ok(alertDTO);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
         [HttpDelete]
-        public async Task<ActionResult> deleteAlert(int id )
+        public async Task<ActionResult> deleteAlert(int id)
         {
             var delete = await alertServices.DeleteAlertAsync(id);
 

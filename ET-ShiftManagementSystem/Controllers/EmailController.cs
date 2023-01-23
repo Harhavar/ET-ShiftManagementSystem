@@ -26,8 +26,6 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-
-            
                 emailServices.sendEmail(request);
 
             return Ok();

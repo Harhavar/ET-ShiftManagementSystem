@@ -22,7 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+       // [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetTask()
         {
             var task = await taskServices.GetTasks();
@@ -38,7 +38,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        //[Authorize(Roles = "SuperAdmin,Admin")]
         public IActionResult AddTask(TaskDetail taskDetail)
         {
             try
@@ -67,7 +67,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpDelete]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        //[Authorize(Roles = "SuperAdmin,Admin")]
         public async  Task<IActionResult> DeleteTask(int id)
         {
             try

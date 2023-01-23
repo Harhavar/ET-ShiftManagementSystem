@@ -17,7 +17,7 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly ICommentServices commentServices;
         //private readonly IMapper mapper;
 
-        public CommentController(ICommentServices commentServices )
+        public CommentController(ICommentServices commentServices)
         {
             this.commentServices = commentServices;
             //this.mapper = mapper;
@@ -25,7 +25,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<ActionResult<Comment>> GetCommentDetails(int id)
         {
             var comment = await commentServices.GetCommentByID(id);
@@ -37,18 +37,18 @@ namespace ET_ShiftManagementSystem.Controllers
             //var RegionDTO = new Models.CommentDTO();
             //comment.ToList().ForEach(comment =>
             //{
-                var regionDTO = new Models.CommentDTO()
-                {
-                    CommentID = comment.CommentID,
-                    CommentText = comment.CommentText,
-                    CreatedDate = comment.CreatedDate,
-                    Shared = comment.Shared,
-                    ShiftID = comment.ShiftID,
-                    UserID = comment.UserID,
-                    //Population = regions.Population
+            var regionDTO = new Models.CommentDTO()
+            {
+                CommentID = comment.CommentID,
+                CommentText = comment.CommentText,
+                CreatedDate = comment.CreatedDate,
+                Shared = comment.Shared,
+                ShiftID = comment.ShiftID,
+                UserID = comment.UserID,
+                //Population = regions.Population
 
-                };
-                //Add(regionDTO);
+            };
+            //Add(regionDTO);
 
 
             //});
@@ -59,11 +59,11 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         //[Route("allComment")]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetAllComments()
         {
             var comment = await commentServices.GetAllCommentsAsync();
-            if(comment == null)
+            if (comment == null)
             {
                 return NotFound();
             }
@@ -77,7 +77,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     CommentText = comment.CommentText,
                     CreatedDate = comment.CreatedDate,
                     Shared = comment.Shared,
-                    ShiftID  = comment.ShiftID,
+                    ShiftID = comment.ShiftID,
                     UserID = comment.UserID,
                     //Population = regions.Population
 
@@ -93,7 +93,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public IActionResult AddComment(Comment comment)
         {
             try
@@ -144,7 +144,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> DeleteComment(int id)
         {
             var delete = await commentServices.DeleteCommentAsync(id);
@@ -171,8 +171,8 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
-        public async Task<IActionResult> UpdateComment(int id ,Models.UpdateCommentRequest comment)
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
+        public async Task<IActionResult> UpdateComment(int id, Models.UpdateCommentRequest comment)
         {
             try
             {

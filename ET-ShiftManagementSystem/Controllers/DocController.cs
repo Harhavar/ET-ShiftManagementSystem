@@ -15,19 +15,19 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IDocumentServices documentServices;
         private readonly IMapper mapper;
 
-        public DocController(IDocumentServices documentServices , IMapper mapper)
+        public DocController(IDocumentServices documentServices, IMapper mapper)
         {
             this.documentServices = documentServices;
             this.mapper = mapper;
         }
 
         [HttpGet]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetAllDocs()
         {
             var Doc = await documentServices.GetallDocument();
 
-            if(Doc == null)
+            if (Doc == null)
             {
                 return NotFound();
             }
@@ -38,7 +38,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin,Admin,User")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public IActionResult AddDocs(Doc doc)
         {
             try
@@ -67,34 +67,33 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        //[Authorize(Roles = "SuperAdmin,Admin")]
         public async Task<IActionResult> DeleteDoc(int id)
         {
             try
             {
 
-           
-            var delete = await documentServices.DeleteDoc(id);
+                var delete = await documentServices.DeleteDoc(id);
 
-            if (delete == null)
-            {
-                return NotFound();
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+
+                var DeleteDTO = new Models.DocDTO()
+                {
+                    Id = id,
+                    Docs = delete.Docs,
+                    CreatedBy = delete.CreatedBy,
+                    modifiedBy = delete.modifiedBy,
+                    ModifiedDate = delete.ModifiedDate,
+                    isActive = delete.isActive,
+                    CreatedDate = delete.CreatedDate,
+
+                };
+                return Ok(DeleteDTO);
             }
-
-            var DeleteDTO = new Models.DocDTO()
-            {
-                Id = id,
-                Docs = delete.Docs,
-                CreatedBy = delete.CreatedBy,
-                modifiedBy = delete.modifiedBy,
-                ModifiedDate = delete.ModifiedDate,
-                isActive = delete.isActive,
-                CreatedDate = delete.CreatedDate,
-
-            };
-            return Ok(DeleteDTO);
-            }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
