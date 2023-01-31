@@ -13,7 +13,6 @@ namespace ET_ShiftManagementSystem.Data
     public class ShiftManagementDbContext : DbContext
     {
         public ShiftManagementDbContext(DbContextOptions options) : base(options)
-
         {
 
         }
@@ -52,7 +51,6 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<Shift> Shifts { get; set; }
 
-
         public DbSet<Comment> Comments { get; set; }
 
         public DbSet<User> users { get; set; }
@@ -70,6 +68,8 @@ namespace ET_ShiftManagementSystem.Data
         public DbSet<SREDetaile> SREDetiles { get; set; }
 
         public DbSet<ProjectUser> projectUsers { get; set; }
+
+        public DbSet<Subscription> Subscriptions { get; set; }
 
         public DbSet<Alert> alerts { get; set; }
 

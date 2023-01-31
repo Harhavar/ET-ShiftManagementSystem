@@ -37,14 +37,14 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(DocDTO);
         }
 
+        //[HttpGet]
+        
         [HttpPost]
         //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public IActionResult AddDocs(Doc doc)
         {
             try
             {
-
-
                 var Document = new Doc
                 {
                     // Id= doc.Id,

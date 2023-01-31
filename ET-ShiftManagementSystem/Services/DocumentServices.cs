@@ -14,6 +14,7 @@ namespace ET_ShiftManagementSystem.Servises
     {
         Task<IEnumerable<Doc>> GetallDocument();
 
+       
         long AddDocs(Doc doc);
 
         Task<Doc> DeleteDoc(int id);
@@ -48,6 +49,12 @@ namespace ET_ShiftManagementSystem.Servises
             docServises.Docs.Remove(Doc);
             await docServises.SaveChangesAsync();
 
+            return Doc;
+        }
+
+        public async Task<Doc> FindAsync(int id)
+        {
+            var Doc = await docServises.Docs.FirstOrDefaultAsync(x => x.Id == id);
             return Doc;
         }
 

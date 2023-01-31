@@ -176,8 +176,6 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-
-
                 var com = new ET_ShiftManagementSystem.Entities.Comment()
                 {
                     CommentID = comment.CommentID,

@@ -12,9 +12,9 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Data;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Add services to the container.
 
@@ -46,7 +46,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
     
-
 builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
 
 builder.Services.AddScoped<IProjectServises, ProjectServises>();
@@ -61,6 +60,7 @@ builder.Services.AddScoped<IEmailServices, EmailServices>();
 builder.Services.AddScoped<IEmailSender , EmailSender>();
 
 builder.Services.AddScoped<ISREDetiles , SREservices>();
+
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
@@ -87,6 +87,7 @@ builder.Services.AddDbContext<ShiftManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectAPIConnectioString"));
 
 });
+builder.Services.AddScoped<ISubscriptionRepo, SubscriptionRepo>();
 
 builder.Services.AddScoped<ITokenHandler, ET_ShiftManagementSystem.Servises.TokenHandler>();
 
@@ -120,7 +121,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 
 var app = builder.Build();
-
+//cors (cross origin request service we need when we access from front end application
+//for single domine one url in origin , for two or more known domine we need to include , * for any domine (url)
+//builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
+//{
+//    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+//}));
+//middleware 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -128,7 +135,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+//app.UseCors("CorePolicy");
 
 app.UseHttpsRedirection();
 

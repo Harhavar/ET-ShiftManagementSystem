@@ -74,6 +74,52 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
+        [Route("AddingSubsriber")]
+        //[Authorize(Roles = "SuperAdmin,Admin")] //SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
+        public async Task<IActionResult> AddingSubscriber(Models.RegisterRequest registerRequest)
+        {
+            //request DTO to Domine Model
+            var user = new ShiftMgtDbContext.Entities.User()
+            {
+                username = registerRequest.username,
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
+                Email = registerRequest.Email,
+                password = registerRequest.password,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber = registerRequest.AlternateContactNumber,
+
+            };
+
+            // pass details to repository 
+
+            user = await userRepository.RegisterSubscriber(user);
+
+            //convert back to DTO
+            var UserDTO = new Models.UserDto
+            {
+                id = user.id,
+                username = user.username,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                LastName = user.LastName,
+                password = user.password,
+                IsActive = user.IsActive,
+                ContactNumber = registerRequest.ContactNumber,
+                AlternateContactNumber = registerRequest.AlternateContactNumber,
+            };
+
+            var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
+
+
+            await emailSender.SendEmailAsync(registerRequest.Email, $"Invitation To Project",
+                $"{user.FirstName + " " + user.LastName} added to the project . use this credential to login UserId :{user.username} password is :{user.password} \n Please login by <h1><a href='{resetUrl}'>clicking here</a></h1>.");
+
+            return CreatedAtAction(nameof(LoginAync), new { id = UserDTO.id }, UserDTO);
+
+        }
+
+        [HttpPost]
         [Route("AddingUser")]
         //[Authorize(Roles = "SuperAdmin,Admin")] //SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
         public async Task<IActionResult> AddingUser(Models.RegisterRequest registerRequest)

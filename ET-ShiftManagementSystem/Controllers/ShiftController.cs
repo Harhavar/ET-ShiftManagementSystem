@@ -15,7 +15,7 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IShiftServices shiftServices;
         private readonly IMapper mapper;
 
-        public ShiftController(IShiftServices shiftServices , IMapper mapper)
+        public ShiftController(IShiftServices shiftServices, IMapper mapper)
         {
             this.shiftServices = shiftServices;
             this.mapper = mapper;
@@ -23,14 +23,14 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         //[Route("All/")]
-       // [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllShifts()
         {
-            var shift =  await shiftServices.GetAllShiftAsync();
+            var shift = await shiftServices.GetAllShiftAsync();
 
-            if(shift == null)
+            if (shift == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var ShiftDTO = mapper.Map<List<Models.ShiftDTO>>(shift);
@@ -46,9 +46,9 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var shift = await shiftServices.GetShiftById(id);
 
-            if(shift == null)
+            if (shift == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var ShiftDTO = mapper.Map<Models.ShiftDTO>(shift);
@@ -62,25 +62,23 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             if (shiftDTO == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             try
             {
 
-            
+                var shift = new Shift()
+                {
+                    ShiftName = shiftDTO.ShiftName,
+                    StartTime = shiftDTO.StartTime,
+                    EndTime = shiftDTO.EndTime,
 
-            var shift = new Shift()
-            {
-                ShiftName = shiftDTO.ShiftName,
-                StartTime    = DateTime.Now,
-                EndTime = DateTime.Now,
+                };
+                shiftServices.AddSift(shift);
 
-            };
-            shiftServices.AddSift(shift);
-
-            return Ok(shift);
+                return Ok(shift);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -89,26 +87,30 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPut]
         //[Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> UpdateShift(int id,Models.UpdateShiftRequest shiftDTO)
+        public async Task<IActionResult> UpdateShift(int id, Models.UpdateShiftRequest shiftDTO)
         {
+            if (id != shiftDTO.ShiftId)
+            {
+                return BadRequest();
+            }
             try
             {
 
-            
-            var shift = new ET_ShiftManagementSystem.Entities.Shift()
-            {
-                ShiftId = shiftDTO.ShiftId,
-                ShiftName = shiftDTO.ShiftName,
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now
-                
-            };
 
-            await shiftServices.UpdateShiftAsync(id, shift);
+                var shift = new ET_ShiftManagementSystem.Entities.Shift()
+                {
+                    ShiftId = shiftDTO.ShiftId,
+                    ShiftName = shiftDTO.ShiftName,
+                    StartTime = shiftDTO.StartTime,
+                    EndTime = shiftDTO.EndTime
 
-            return Ok(shift);
+                };
+
+                await shiftServices.UpdateShiftAsync(id, shift);
+
+                return Ok(shift);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -121,27 +123,27 @@ namespace ET_ShiftManagementSystem.Controllers
             try
             {
 
-            
-            var delete = await shiftServices.DeleteShiftAsync(Id);
 
-            if (delete == null)
-            {
-                return NotFound();
+                var delete = await shiftServices.DeleteShiftAsync(Id);
+
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+
+                var DeleteDTO = new Models.ShiftDTO()
+                {
+
+                    ShiftId = delete.ShiftId,
+                    ShiftName = delete.ShiftName,
+                    StartTime = delete.StartTime,
+                    EndTime = delete.EndTime,
+
+                };
+
+                return Ok(DeleteDTO);
             }
-
-            var DeleteDTO = new Models.ShiftDTO()
-            {
-
-                ShiftId  = delete.ShiftId,
-                ShiftName = delete.ShiftName,
-                StartTime = delete.StartTime,
-                EndTime = delete.EndTime,
-                
-            };
-
-            return Ok(DeleteDTO);
-            }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

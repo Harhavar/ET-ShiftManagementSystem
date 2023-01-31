@@ -14,8 +14,10 @@ namespace ET_ShiftManagementSystem.Entities
         public string CommentText { get; set; }
 
         [Required]
+        //it should automaticaly select by time 
         public int ShiftID { get; set; }
 
+        //it should automaticaly select by who is using based on authentication 
         public int UserID { get; set; }
 
         public bool Shared { get; set; }

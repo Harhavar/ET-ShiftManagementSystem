@@ -20,6 +20,13 @@ namespace ET_ShiftManagementSystem.Controllers
             this.alertServices = alertServices;
             this.mapper = mapper;
         }
+        [HttpGet]
+        [Route("TimeWarp")]
+        public IActionResult GetAlerts(DateTime start, DateTime end)
+        {
+            var alerts = alertServices.GetAlertByFilter(start, end);
+            return Ok(alerts);
+        }
 
         [HttpGet]
         [Route("filter")]
@@ -27,8 +34,6 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-
-
                 var alert = alertServices.GetAlertByFilter(alertname, from, to);
 
                 if (alert == null)
@@ -43,9 +48,22 @@ namespace ET_ShiftManagementSystem.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        //[HttpGet]
+        //[Route("Download")]
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> Download(int id)
+        //{
+        //    var file = await alertServices.FindAsync(id);
+        //    if (file == null)
+        //        return NotFound();
+
+        //    var memory = new MemoryStream();
+        //    await memory.WriteAsync(file.Content, 0, file.Content.Length);
+        //    memory.Position = 0;
+        //    return File(memory, file.ContentType, file.FileName);
+        //}
 
         [HttpGet]
-
         public async Task<ActionResult<IEnumerable<Alert>>> Get()
         {
             var alert = await alertServices.GetAlertAsync();
@@ -68,7 +86,6 @@ namespace ET_ShiftManagementSystem.Controllers
                     ReportedBy = alert.ReportedBy,
                     ReportedTo = alert.ReportedTo,
                     Id = alert.Id,
-
                 };
                 AlertDto.Add(alertDTO);
 
@@ -122,7 +139,6 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-
 
                 if (alert == null)
                 {

@@ -22,7 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-       // [Authorize(Roles = "SuperAdmin,Admin,User")]
+        // [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetTask()
         {
             var task = await taskServices.GetTasks();
@@ -32,7 +32,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var TaskDTO = mapper.Map<List<Models.TaskDTO>>(task); 
+            var TaskDTO = mapper.Map<List<Models.TaskDTO>>(task);
 
             return Ok(TaskDTO);
         }
@@ -44,20 +44,17 @@ namespace ET_ShiftManagementSystem.Controllers
             try
             {
 
-            
-            var taskDtl = new TaskDetail()
-            {
-                TaskComment = taskDetail.TaskComment,
-                CreatedBy = taskDetail.CreatedBy,
-                CreatedDate = taskDetail.CreatedDate,
-                ModifiedBy = taskDetail.ModifiedBy,
-                ModifiedDate = taskDetail.ModifiedDate,
-                isActive = taskDetail.isActive,
-
-
-            };
-            taskServices.AddTask(taskDtl);
-            return Ok(taskDtl);
+                var taskDtl = new TaskDetail()
+                {
+                    TaskComment = taskDetail.TaskComment,
+                    CreatedBy = taskDetail.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = taskDetail.ModifiedBy,
+                    ModifiedDate = taskDetail.ModifiedDate,
+                    isActive = taskDetail.isActive,
+                };
+                taskServices.AddTask(taskDtl);
+                return Ok(taskDtl);
             }
             catch (Exception ex)
             {
@@ -68,7 +65,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpDelete]
         //[Authorize(Roles = "Admin")]
         //[Authorize(Roles = "SuperAdmin,Admin")]
-        public async  Task<IActionResult> DeleteTask(int id)
+        public async Task<IActionResult> DeleteTask(int id)
         {
             try
             {

@@ -12,11 +12,11 @@ namespace ET_ShiftManagementSystem.Servises
         Task<IEnumerable<Alert>> GetAllAlert();
 
         Task<IEnumerable<Alert>> GetAlertByFilter(string AlertName, DateTime from, DateTime? To);
+        Task<IEnumerable<Alert>> GetAlertByFilter( DateTime from, DateTime To);
 
         long AddAlert(Alert alert);
 
         Task<Alert> DeleteAlertAsync(int id);
-
 
     }
     public class AlertServices : IAlertServices
@@ -77,6 +77,14 @@ namespace ET_ShiftManagementSystem.Servises
             //.ToList() ;
 
             return filterAlerts.ToList();
+        }
+
+        public async Task<IEnumerable<Alert>> GetAlertByFilter(DateTime from, DateTime To)
+        {
+            var alert = _shiftManagementDb.alerts
+                .Where(a => a.TriggeredTime >= from && a.TriggeredTime < To);
+
+            return alert.ToList();
         }
     }
 }
