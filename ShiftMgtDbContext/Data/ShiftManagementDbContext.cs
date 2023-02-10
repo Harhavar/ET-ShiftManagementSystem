@@ -31,8 +31,6 @@ namespace ShiftMgtDbContext.Data
 
         public DbSet<Project> projects { get; set; }
 
-        //public DbSet<User> users { get; set; }
-
         public DbSet<ProjectDetail> projectDetails { get; set; }
 
         public DbSet<Shift> Shifts { get; set; }
@@ -40,9 +38,6 @@ namespace ShiftMgtDbContext.Data
        
         public DbSet<Comment> Comments { get; set; }
 
-        // public DbSet<UserCredential> UserCredentials { get; set; }
-
-        //public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<User> users { get; set; }
 
         public DbSet<Role> roles { get; set; }

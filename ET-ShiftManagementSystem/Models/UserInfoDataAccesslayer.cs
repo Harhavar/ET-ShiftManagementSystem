@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using ET_ShiftManagementSystem.Entities;
+using Microsoft.Data.SqlClient;
 using ShiftMgtDbContext.Entities;
 
 namespace ET_ShiftManagementSystem.Models

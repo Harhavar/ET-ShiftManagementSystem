@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Entities;
 
 namespace ET_ShiftManagementSystem.MapperProfiles
 {
@@ -6,7 +7,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public ShiftProfile()
         {
-            CreateMap<ShiftMgtDbContext.Entities.Shift , Models.ShiftDTO>().ReverseMap();
+            CreateMap<Shift, Models.ShiftDTO>().ReverseMap();
         }
     }
 }

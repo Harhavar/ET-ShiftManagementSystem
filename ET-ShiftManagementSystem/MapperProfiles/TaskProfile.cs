@@ -6,7 +6,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public TaskProfile()
         {
-            CreateMap<ShiftMgtDbContext.Entities.TaskDetail, Models.TaskDTO>().ReverseMap();
+            CreateMap<ET_ShiftManagementSystem.Entities.TaskDetail, Models.TaskDTO>().ReverseMap();
         }
     }
 }

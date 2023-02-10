@@ -21,8 +21,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ShiftMgtDbContext\ShiftMgtDbContext.csproj" />
-  </ItemGroup>
-
 </Project>

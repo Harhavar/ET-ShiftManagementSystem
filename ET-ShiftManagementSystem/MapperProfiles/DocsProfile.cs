@@ -6,7 +6,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public DocsProfile()
         {
-            CreateMap<ShiftMgtDbContext.Entities.Doc, Models.DocDTO>().ReverseMap();
+            CreateMap<ET_ShiftManagementSystem.Entities.Doc, Models.DocDTO>().ReverseMap();
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using ShiftMgtDbContext.Data;
 using Microsoft.EntityFrameworkCore;
+using ET_ShiftManagementSystem.Data;
 
-
-namespace ET_ShiftManagementSystem.Data
-{ 
+namespace ET_ShiftManagementSystem.Dataa
+{
     public interface IDesignTimeDbContextFactory<ShiftManagementDbContext> where ShiftManagementDbContext : DbContext
     {
 

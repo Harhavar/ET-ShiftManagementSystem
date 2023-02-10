@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
-using ShiftMgtDbContext.Entities;
+using ET_ShiftManagementSystem.Servises;
 using System.Data;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -15,18 +15,23 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IShiftServices shiftServices;
         private readonly IMapper mapper;
 
-        public ShiftController(IShiftServices shiftServices , IMapper mapper)
+        public ShiftController(IShiftServices shiftServices, IMapper mapper)
         {
             this.shiftServices = shiftServices;
             this.mapper = mapper;
         }
 
         [HttpGet]
-        [Route("All/")]
-       // [Authorize(Roles = "Admin")]
+        //[Route("All/")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllShifts()
         {
-            var shift =  await shiftServices.GetAllShiftAsync();
+            var shift = await shiftServices.GetAllShiftAsync();
+
+            if (shift == null)
+            {
+                return NotFound();
+            }
 
             var ShiftDTO = mapper.Map<List<Models.ShiftDTO>>(shift);
 
@@ -34,11 +39,17 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("single/")]
-       // [Authorize(Roles = "Admin")]
+        [Route("{id}")]
+        // [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetShiftByID(int id)
         {
             var shift = await shiftServices.GetShiftById(id);
+
+            if (shift == null)
+            {
+                return NotFound();
+            }
 
             var ShiftDTO = mapper.Map<Models.ShiftDTO>(shift);
 
@@ -46,70 +57,98 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "SuperAdmin")]
         public IActionResult AddShift(Shift shiftDTO)
         {
             if (shiftDTO == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-
-            var shift = new Shift()
+            try
             {
-                ShiftName = shiftDTO.ShiftName,
-                StartTime    = DateTime.Now,
-                EndTime = DateTime.Now,
 
-            };
-            shiftServices.AddSift(shift);
+                var shift = new Shift()
+                {
+                    ShiftName = shiftDTO.ShiftName,
+                    StartTime = shiftDTO.StartTime,
+                    EndTime = shiftDTO.EndTime,
 
-            return Ok(shift);
+                };
+                shiftServices.AddSift(shift);
+
+                return Ok(shift);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
         [HttpPut]
-       // [Authorize(Roles = "SuperAdmin")]
-
-        public async Task<IActionResult> UpdateShift(int id,Models.UpdateShiftRequest shiftDTO)
+        //[Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> UpdateShift(int id, Models.UpdateShiftRequest shiftDTO)
         {
-            var shift = new ShiftMgtDbContext.Entities.Shift()
+            if (id != shiftDTO.ShiftId)
             {
-                ShiftId = shiftDTO.ShiftId,
-                ShiftName = shiftDTO.ShiftName,
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now
-                
-            };
+                return BadRequest();
+            }
+            try
+            {
 
-            await shiftServices.UpdateShiftAsync(id, shift);
 
-            return Ok(shift);
+                var shift = new ET_ShiftManagementSystem.Entities.Shift()
+                {
+                    ShiftId = shiftDTO.ShiftId,
+                    ShiftName = shiftDTO.ShiftName,
+                    StartTime = shiftDTO.StartTime,
+                    EndTime = shiftDTO.EndTime
+
+                };
+
+                await shiftServices.UpdateShiftAsync(id, shift);
+
+                return Ok(shift);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteShiftAsync(int Id)
         {
-            var delete = await shiftServices.DeleteShiftAsync(Id);
-
-            if (delete == null)
+            try
             {
-                return NotFound();
+
+
+                var delete = await shiftServices.DeleteShiftAsync(Id);
+
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+
+                var DeleteDTO = new Models.ShiftDTO()
+                {
+
+                    ShiftId = delete.ShiftId,
+                    ShiftName = delete.ShiftName,
+                    StartTime = delete.StartTime,
+                    EndTime = delete.EndTime,
+
+                };
+
+                return Ok(DeleteDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
-            var DeleteDTO = new Models.ShiftDTO()
-            {
 
-                ShiftId  = delete.ShiftId,
-                ShiftName = delete.ShiftName,
-                StartTime = delete.StartTime,
-                EndTime = delete.EndTime,
-                
-            };
-
-            return Ok(DeleteDTO);
-        
         }
     }
 }

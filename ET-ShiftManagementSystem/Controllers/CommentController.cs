@@ -1,30 +1,33 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
-using ShiftMgtDbContext.Data;
-using ShiftMgtDbContext.Entities;
+using ET_ShiftManagementSystem.Servises;
+using ET_ShiftManagementSystem.Data;
 using System.Data;
 using System.Drawing.Drawing2D;
+using Microsoft.AspNetCore.Cors;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("CorePolicy")]
     public class CommentController : Controller
     {
         private readonly ICommentServices commentServices;
         //private readonly IMapper mapper;
 
-        public CommentController(ICommentServices commentServices )
+        public CommentController(ICommentServices commentServices)
         {
             this.commentServices = commentServices;
             //this.mapper = mapper;
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
+        [Route("{id}")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<ActionResult<Comment>> GetCommentDetails(int id)
         {
             var comment = await commentServices.GetCommentByID(id);
@@ -36,18 +39,18 @@ namespace ET_ShiftManagementSystem.Controllers
             //var RegionDTO = new Models.CommentDTO();
             //comment.ToList().ForEach(comment =>
             //{
-                var regionDTO = new Models.CommentDTO()
-                {
-                    CommentID = comment.CommentID,
-                    CommentText = comment.CommentText,
-                    CreatedDate = comment.CreatedDate,
-                    Shared = comment.Shared,
-                    ShiftID = comment.ShiftID,
-                    UserID = comment.UserID,
-                    //Population = regions.Population
+            var regionDTO = new Models.CommentDTO()
+            {
+                CommentID = comment.CommentID,
+                CommentText = comment.CommentText,
+                CreatedDate = comment.CreatedDate,
+                Shared = comment.Shared,
+                ShiftID = comment.ShiftID,
+                UserID = comment.UserID,
+                //Population = regions.Population
 
-                };
-                //Add(regionDTO);
+            };
+            //Add(regionDTO);
 
 
             //});
@@ -57,13 +60,16 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("/allComment")]
-        //[Authorize(Roles = "Admin")]
+        //[Route("allComment")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetAllComments()
         {
             var comment = await commentServices.GetAllCommentsAsync();
-
-            //retur dto regions
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            //retur dto Comments
             var RegionDTO = new List<Models.CommentDTO>();
             comment.ToList().ForEach(comment =>
             {
@@ -73,7 +79,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     CommentText = comment.CommentText,
                     CreatedDate = comment.CreatedDate,
                     Shared = comment.Shared,
-                    ShiftID  = comment.ShiftID,
+                    ShiftID = comment.ShiftID,
                     UserID = comment.UserID,
                     //Population = regions.Population
 
@@ -89,24 +95,32 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
-        public IActionResult AddComment(ShiftMgtDbContext.Entities.Comment comment)
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
+        public IActionResult AddComment(Comment comment)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest();
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest();
+                }
+                var com = new ET_ShiftManagementSystem.Entities.Comment()
+                {
+                    ShiftID = comment.ShiftID,
+                    CommentText = comment.CommentText,
+                    Shared = comment.Shared,
+                    CreatedDate = DateTime.Now,
+
+                };
+                commentServices.AddComment(comment);
+
+                return Ok(com);
             }
-            var com = new ShiftMgtDbContext.Entities.Comment()
+            catch (Exception ex)
             {
-                ShiftID= comment.ShiftID,
-                CommentText = comment.CommentText,
-                Shared = comment.Shared,
-                CreatedDate = DateTime.Now,
-
-            };
-            commentServices.AddComment(comment);
-
-            return Ok(com);
+                return BadRequest(ex);
+            }
 
             //var AddComment = new ShiftMgtDbContext.Entities.Comment()
             //{
@@ -131,7 +145,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "SuperAdmin")]
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> DeleteComment(int id)
         {
             var delete = await commentServices.DeleteCommentAsync(id);
@@ -158,20 +172,27 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> UpdateComment(int id ,Models.UpdateCommentRequest comment)
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
+        public async Task<IActionResult> UpdateComment(int id, Models.UpdateCommentRequest comment)
         {
-            var com = new ShiftMgtDbContext.Entities.Comment()
+            try
             {
-                CommentID= comment.CommentID,
-                CommentText = comment.CommentText,
-                Shared = comment.Shared,
-                CreatedDate= DateTime.Now,
-            };
+                var com = new ET_ShiftManagementSystem.Entities.Comment()
+                {
+                    CommentID = comment.CommentID,
+                    CommentText = comment.CommentText,
+                    Shared = comment.Shared,
+                    CreatedDate = DateTime.Now,
+                };
 
-            await commentServices.UpdateCommentAsync(id, com);
+                await commentServices.UpdateCommentAsync(id, com);
 
-            return Ok(com);
+                return Ok(com);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
     }
 }

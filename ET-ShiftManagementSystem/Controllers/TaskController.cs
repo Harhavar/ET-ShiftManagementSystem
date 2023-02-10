@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShiftManagementServises.Servises;
+using ET_ShiftManagementSystem.Servises;
 using ShiftMgtDbContext.Entities;
 using System.Data;
+using ET_ShiftManagementSystem.Entities;
+using Microsoft.AspNetCore.Cors;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     public class TaskController : Controller
     {
         private readonly ITaskServices taskServices;
@@ -21,58 +24,80 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-
+        // [Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetTask()
         {
             var task = await taskServices.GetTasks();
 
-            var TaskDTO = mapper.Map<List<Models.TaskDTO>>(task); 
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            var TaskDTO = mapper.Map<List<Models.TaskDTO>>(task);
 
             return Ok(TaskDTO);
         }
 
         [HttpPost]
+        //[Authorize(Roles = "SuperAdmin,Admin")]
         public IActionResult AddTask(TaskDetail taskDetail)
         {
-            var taskDtl = new TaskDetail()
+            try
             {
-                TaskComment = taskDetail.TaskComment,
-                CreatedBy = taskDetail.CreatedBy,
-                CreatedDate = taskDetail.CreatedDate,
-                ModifiedBy = taskDetail.ModifiedBy,
-                ModifiedDate = taskDetail.ModifiedDate,
-                isActive = taskDetail.isActive,
 
-
-            };
-            taskServices.AddTask(taskDtl);
-            return Ok(taskDtl);
+                var taskDtl = new TaskDetail()
+                {
+                    TaskComment = taskDetail.TaskComment,
+                    CreatedBy = taskDetail.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    ModifiedBy = taskDetail.ModifiedBy,
+                    ModifiedDate = taskDetail.ModifiedDate,
+                    isActive = taskDetail.isActive,
+                };
+                taskServices.AddTask(taskDtl);
+                return Ok(taskDtl);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
-        public async  Task<IActionResult> DeleteTask(int id)
+        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "SuperAdmin,Admin")]
+        public async Task<IActionResult> DeleteTask(int id)
         {
-            var delete = await taskServices.DeleteTask(id);
-
-            if (delete == null)
+            try
             {
-               return NotFound();
 
+
+                var delete = await taskServices.DeleteTask(id);
+
+                if (delete == null)
+                {
+                    return NotFound();
+
+                }
+
+                var DeleteDto = new Models.TaskDTO()
+                {
+                    Id = delete.Id,
+                    TaskComment = delete.TaskComment,
+                    CreatedBy = delete.CreatedBy,
+                    ModifiedBy = delete.ModifiedBy,
+                    ModifiedDate = delete.ModifiedDate,
+                    CreatedDate = delete.CreatedDate,
+                    isActive = delete.isActive,
+
+                };
+                return Ok(DeleteDto);
             }
-
-            var DeleteDto = new Models.TaskDTO()
+            catch (Exception ex)
             {
-                Id = delete.Id,
-                TaskComment = delete.TaskComment,
-                CreatedBy = delete.CreatedBy,
-                ModifiedBy = delete.ModifiedBy,
-                ModifiedDate = delete.ModifiedDate,
-                CreatedDate = delete.CreatedDate,
-                isActive = delete.isActive,
-
-            };
-            return Ok(DeleteDto);
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
