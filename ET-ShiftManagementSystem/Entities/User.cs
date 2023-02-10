@@ -30,6 +30,8 @@ namespace ShiftMgtDbContext.Entities
 
         public string? AlternateContactNumber { get; set; }
 
+        public int? TenateID { get; set; }
+
         //navigaion property 
         //[ForeignKey("ProjectId")]
         //public int ProjectId { get; set; }

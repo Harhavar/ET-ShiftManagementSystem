@@ -12,7 +12,7 @@ namespace ET_ShiftManagementSystem.Servises
         User AuthenticateAsync(string username, string password);
 
         Task<User> RegisterAsync(User user);
-        Task<User> RegisterSubscriber(User user);
+        Task<User> RegisterSubscriber(User user ,Tenate tenate);
         Task<User> RegisterUserAsync(User user);
 
         User Get(Guid userId);
@@ -35,7 +35,7 @@ namespace ET_ShiftManagementSystem.Servises
         }
         public  User AuthenticateAsync(string username, string password)
         {
-            var user =  _ShiftManagementDbContext.users.FirstOrDefault(x => x.username.ToLower() == username.ToLower() && x.password == password);
+            var user =  _ShiftManagementDbContext.users.FirstOrDefault(x => x.username.ToLower() == username.ToLower() || x.Email == username.ToLower() && x.password == password);
 
             if (user == null)
             {
@@ -155,10 +155,11 @@ namespace ET_ShiftManagementSystem.Servises
             
         }
 
-        public async Task<User> RegisterSubscriber(User user)
-         //public async Task<User> RegisterAsync(User user)
+        public async Task<User> RegisterSubscriber(User user , Tenate tenate)
         {
+            await _ShiftManagementDbContext.Tenates.AddAsync(tenate);
             user.id = Guid.NewGuid();
+
             await _ShiftManagementDbContext.users.AddAsync(user);
             await _ShiftManagementDbContext.SaveChangesAsync();
             var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "SuperAdmin").Select(a => a.Id).FirstOrDefault();
@@ -177,11 +178,5 @@ namespace ET_ShiftManagementSystem.Servises
 
         }
 
-
-        //public async Task Update(User user)
-        //{
-        //    _ShiftManagementDbContext.users.Update(user);
-        //    await _ShiftManagementDbContext.SaveChangesAsync();
-        //}
     }
 }

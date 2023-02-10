@@ -1,5 +1,6 @@
 ﻿//using ShiftManagementServises.Servises;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Services;
 using Microsoft.EntityFrameworkCore;
 using ShiftMgtDbContext.Entities;
 using System;
@@ -16,6 +17,11 @@ namespace ET_ShiftManagementSystem.Data
         {
 
         }
+        public ShiftManagementDbContext(DbContextOptions<ShiftManagementDbContext> options, ITenantGetter tenantGetter)
+        : base(options)
+        {
+            //tenant = tenantGetter.Tenant;
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User_Role>()
@@ -26,25 +32,42 @@ namespace ET_ShiftManagementSystem.Data
                 .HasOne(x => x.User)
                 .WithMany(y => y.UserRoles)
                 .HasForeignKey(x => x.Userid);
-            //modelBuilder.Entity<ProjectUser>()
-            //    .HasOne(x => x.project)
-            //    .WithMany(x => x.Projects).
-            //    HasForeignKey(x => x.ProjectId);
-            //modelBuilder.Entity<ProjectUser>()
-            //    .HasOne(x => x.User)
-            //    .WithMany(y => y.Projects).
-            //    HasForeignKey(x => x.userid);
-            //modelBuilder.Entity<ProjectUser>()
-            //    .HasOne(u => u.project)
-            //    .WithMany(p => p.ProjectUsers)
-            //    .HasForeignKey(u => u.ProjectId);
-            //modelBuilder.Entity<ProjectUser>()
-            //    .HasOne(u => u.User)
-            //    .WithMany(p => p.ProjectUsers)
-            //    .HasForeignKey(u => u.UserId);
+            //modelBuilder
+            //   .Entity<Tenate>()
+            //    .HasQueryFilter(a => a.TenateId == tenant)
+            //    .HasData("");
+        //modelBuilder.Entity<ProjectUser>()
+        //    .HasOne(x => x.project)
+        //    .WithMany(x => x.Projects).
+        //    HasForeignKey(x => x.ProjectId);
+        //modelBuilder.Entity<ProjectUser>()
+        //    .HasOne(x => x.User)
+        //    .WithMany(y => y.Projects).
+        //    HasForeignKey(x => x.userid);
+        //modelBuilder.Entity<ProjectUser>()
+        //    .HasOne(u => u.project)
+        //    .WithMany(p => p.ProjectUsers)
+        //    .HasForeignKey(u => u.ProjectId);
+        //modelBuilder.Entity<ProjectUser>()
+        //    .HasOne(u => u.User)
+        //    .WithMany(p => p.ProjectUsers)
+        //    .HasForeignKey(u => u.UserId);
 
         }
+        private readonly int tenant;
+        //public ShiftManagementDbContext(DbContextOptions<ShiftManagementDbContext> options, ITenantGetter tenantGetter)
+        //: base(options)
+        //{
+        //    tenant = tenantGetter.Tenant;
+        //}
 
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder
+        //        .Entity<Tenate>()
+        //        .HasQueryFilter(a => a.TenateId == tenant)
+        //        .HasData();
+        //}
         public DbSet<Project> projects { get; set; }
 
         public DbSet<ProjectDetail> projectDetails { get; set; }
@@ -72,6 +95,11 @@ namespace ET_ShiftManagementSystem.Data
         public DbSet<Subscription> Subscriptions { get; set; }
 
         public DbSet<Alert> alerts { get; set; }
+
+        public DbSet<Tenate> Tenates { get; set; }
+
+        public DbSet<Organization> Organizations { get; set; }
+
 
     }
 }

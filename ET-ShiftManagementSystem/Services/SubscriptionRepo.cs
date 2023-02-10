@@ -11,7 +11,7 @@ namespace ET_ShiftManagementSystem.Servises
        public Task<IEnumerable<Subscription>> GetSubscriptionAsync();
        public Task<Subscription> GetSubscriptionByIdAsync(int id);
 
-        public  long AddSubscription(Subscription subs);
+        public long AddSubscription(Subscription subs);
 
         public Task<Subscription> UpdateSubscriptionByIdAsync(int id , Subscription subscription);
 
@@ -28,7 +28,9 @@ namespace ET_ShiftManagementSystem.Servises
 
         public long AddSubscription(Subscription subs)
         {
+            
             shiftManagementDb.Subscriptions.Add(subs);
+            subs.Status = 0;
             shiftManagementDb.SaveChanges();
             return subs.Id;
         }

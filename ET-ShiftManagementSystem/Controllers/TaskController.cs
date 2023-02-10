@@ -5,11 +5,13 @@ using ET_ShiftManagementSystem.Servises;
 using ShiftMgtDbContext.Entities;
 using System.Data;
 using ET_ShiftManagementSystem.Entities;
+using Microsoft.AspNetCore.Cors;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     public class TaskController : Controller
     {
         private readonly ITaskServices taskServices;

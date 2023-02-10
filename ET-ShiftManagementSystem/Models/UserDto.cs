@@ -21,5 +21,7 @@ namespace ET_ShiftManagementSystem.Models
         public string ContactNumber { get; set; }
 
         public string AlternateContactNumber { get; set; }
+
+        public int? TenateID { get; set; }
     }
 }

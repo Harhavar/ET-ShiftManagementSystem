@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using System.Net.WebSockets;
 using System.Formats.Asn1;
 using System.Runtime.Intrinsics.X86;
+using ET_ShiftManagementSystem.Services;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -29,8 +30,9 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly ISREDetiles _sreDetails;
         private readonly IUserRepository userRepsository;
         private readonly IProjectUserRepository _projectUser;
+        private readonly ITenateServices tenateServices;
 
-        public ProjectController(IProjectServises projectServices, IProjectDatailServises projectDatailServises, /*IUserServices userServices*/ IShiftServices shiftServices, ICommentServices commentServices , IMapper mapper , ISREDetiles SreDetails ,IUserRepository userRepository , IProjectUserRepository projectUser)
+        public ProjectController(IProjectServises projectServices, IProjectDatailServises projectDatailServises, /*IUserServices userServices*/ IShiftServices shiftServices, ICommentServices commentServices, IMapper mapper, ISREDetiles SreDetails, IUserRepository userRepository, IProjectUserRepository projectUser , ITenateServices tenateServices)
         {
             _projectServices = projectServices;
             _projectDatailServises = projectDatailServises;
@@ -41,68 +43,69 @@ namespace ET_ShiftManagementSystem.Controllers
             _sreDetails = SreDetails;
             this.userRepsository = userRepository;
             this._projectUser = projectUser;
+            this.tenateServices = tenateServices;
         }
         //[Route("Details/{projectId}")]
         //[HttpGet]
         //[Authorize(Roles = "Admin")]
-       // public async Task<IActionResult> GetProjectDetails(int projectId)
+        // public async Task<IActionResult> GetProjectDetails(int projectId)
         //{
-            //var projectDetailsData = new ProjectDetailsDTO();
-            //var projectdetail = await _projectServices.GetProject(projectId);
-            //projectDetailsData.ProjectName= projectdetail.ProjectName;
-            //projectDetailsData.ClientName= projectdetail.ClientName;
-            //projectDetailsData.Description = projectdetail.Description;
-            //projectDetailsData.ProjectID = projectId;
-            ////var projectData = _projectDatailServises.GetProjecDetails(projectId);
+        //var projectDetailsData = new ProjectDetailsDTO();
+        //var projectdetail = await _projectServices.GetProject(projectId);
+        //projectDetailsData.ProjectName= projectdetail.ProjectName;
+        //projectDetailsData.ClientName= projectdetail.ClientName;
+        //projectDetailsData.Description = projectdetail.Description;
+        //projectDetailsData.ProjectID = projectId;
+        ////var projectData = _projectDatailServises.GetProjecDetails(projectId);
 
 
-            ////var CommentDetail = await _commentServices.GetComment(projectId);
+        ////var CommentDetail = await _commentServices.GetComment(projectId);
 
-            //var ShiftDetail = _shiftServices.GetShiftDetails(projectId);
-            
-            //foreach ( var item in projectData)
-            //{
-                //var userDetail = _userServices.GetUserDetails(item.UserID);
-                //var projectUser = new ProjectUser()
-                //{
-                //    UserId = item.UserID,
-                //    UserName = userDetail.UserName,
-                //    FullName = userDetail.FullName,
-                //    Email = userDetail.Email,
+        //var ShiftDetail = _shiftServices.GetShiftDetails(projectId);
 
-                //};
-                //if (item.ShiftID.HasValue)
-                //{
-                //    var shiftDetails = _shiftServices.GetShiftDetails(item.ShiftID.Value);
-                //    if (shiftDetails != null) 
-                //    {
-                //        projectUser.ShiftID = item.ShiftID.Value;
-                //        projectUser.ShiftName = shiftDetails.ShiftName;
+        //foreach ( var item in projectData)
+        //{
+        //var userDetail = _userServices.GetUserDetails(item.UserID);
+        //var projectUser = new ProjectUser()
+        //{
+        //    UserId = item.UserID,
+        //    UserName = userDetail.UserName,
+        //    FullName = userDetail.FullName,
+        //    Email = userDetail.Email,
 
-                //    }
-                //};
+        //};
+        //if (item.ShiftID.HasValue)
+        //{
+        //    var shiftDetails = _shiftServices.GetShiftDetails(item.ShiftID.Value);
+        //    if (shiftDetails != null) 
+        //    {
+        //        projectUser.ShiftID = item.ShiftID.Value;
+        //        projectUser.ShiftName = shiftDetails.ShiftName;
 
-                //projectDetailsData.ProjectUsers.Add(projectUser);
+        //    }
+        //};
 
-                
-            //}
-            ////foreach (var value in CommentDetail)
-            //{
-            //    var Comment = _commentServices.GetComment(value.CommentID);
-            //    var userComment = new CommentDetailes()
-            //    {
-            //        CommentText = value.CommentText,
-            //        CreatedDate= value.CreatedDate,
-            //        EmployeeName = projectDetailsData.ProjectUsers.FirstOrDefault(a => a.UserId==value.UserID).UserName,
-            //        ShiftID= value.ShiftID,
-            //        UserID  = value.UserID,
-            //        Shift = projectDetailsData.ProjectUsers.FirstOrDefault(a => a.ShiftID == value.ShiftID).ShiftName
-            //    };
-            //    projectDetailsData.CommentDetiles.Add(userComment);
-            //}
-                
+        //projectDetailsData.ProjectUsers.Add(projectUser);
 
-            //return Ok(projectDetailsData);
+
+        //}
+        ////foreach (var value in CommentDetail)
+        //{
+        //    var Comment = _commentServices.GetComment(value.CommentID);
+        //    var userComment = new CommentDetailes()
+        //    {
+        //        CommentText = value.CommentText,
+        //        CreatedDate= value.CreatedDate,
+        //        EmployeeName = projectDetailsData.ProjectUsers.FirstOrDefault(a => a.UserId==value.UserID).UserName,
+        //        ShiftID= value.ShiftID,
+        //        UserID  = value.UserID,
+        //        Shift = projectDetailsData.ProjectUsers.FirstOrDefault(a => a.ShiftID == value.ShiftID).ShiftName
+        //    };
+        //    projectDetailsData.CommentDetiles.Add(userComment);
+        //}
+
+
+        //return Ok(projectDetailsData);
         //}
 
         [HttpGet]
@@ -113,12 +116,12 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             var project = await _projectServices.GetAllAsync();
 
-            if(project == null)
+            if (project == null)
             {
                 return NotFound();
             }
 
-           var ProjectDTO = mapper.Map<List<Models.ProjectDto>>(project);
+            var ProjectDTO = mapper.Map<List<Models.ProjectDto>>(project);
 
             return Ok(ProjectDTO);
 
@@ -145,60 +148,60 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         //[Authorize(Roles = "SuperAdmin")]
-        public  IActionResult AddProjectASync(Project projectDto)
+        public IActionResult AddProjectASync(Project projectDto)
         {
             try
             {
 
-            
-            var Proj = new Project()
-            {
-                ProjectName = projectDto.ProjectName,
-                Description = projectDto.Description,
-                ClientName = projectDto.ClientName,
-                CreatedBy = projectDto.CreatedBy,
-                CreatedDate = DateTime.Now,
-                ModifieBy = projectDto.ModifieBy,
-                ModifieDate = DateTime.Now,
-                IsActive = projectDto.IsActive
-            };
 
-             _projectServices.AddProjectAsync(Proj); 
+                var Proj = new Project()
+                {
+                    ProjectName = projectDto.ProjectName,
+                    Description = projectDto.Description,
+                    ClientName = projectDto.ClientName,
+                    CreatedBy = projectDto.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    ModifieBy = projectDto.ModifieBy,
+                    ModifieDate = DateTime.Now,
+                    IsActive = projectDto.IsActive
+                };
 
-            return Ok(Proj);
+                _projectServices.AddProjectAsync(Proj);
+
+                return Ok(Proj);
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 return BadRequest(ex.Message);
             }
         }
-      
+
 
         [HttpPut]
         //[Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> UpdateProject(int id , Project ProjectDto) 
+        public async Task<IActionResult> UpdateProject(int id, Project ProjectDto)
         {
             try
             {
 
-           
-            var Project = new Project()
-            {
-                ProjectName = ProjectDto.ProjectName,
-                Description = ProjectDto.Description,
-                ClientName = ProjectDto.ClientName,
-                CreatedBy = ProjectDto.CreatedBy,
-                CreatedDate = DateTime.Now,
-                ModifieBy = ProjectDto.ModifieBy,
-                ModifieDate = DateTime.Now,
-                IsActive = ProjectDto.IsActive
-            };
 
-            await _projectServices.UpdateAsync(id ,Project);
+                var Project = new Project()
+                {
+                    ProjectName = ProjectDto.ProjectName,
+                    Description = ProjectDto.Description,
+                    ClientName = ProjectDto.ClientName,
+                    CreatedBy = ProjectDto.CreatedBy,
+                    CreatedDate = DateTime.Now,
+                    ModifieBy = ProjectDto.ModifieBy,
+                    ModifieDate = DateTime.Now,
+                    IsActive = ProjectDto.IsActive
+                };
 
-            return Ok(Project);
+                await _projectServices.UpdateAsync(id, Project);
+
+                return Ok(Project);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -255,13 +258,13 @@ namespace ET_ShiftManagementSystem.Controllers
                     UserId = userId,
                     ProjectId = projectId,
                 };
-
+                //tenateServices.increase()
 
                 var abc = _projectUser.Update(projectUser);
 
                 return Ok(abc);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -274,20 +277,19 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
+                var user = _projectUser.GetUserId(userId);
+                var project = _projectUser.GetProjectId(projectId);
+                if (user == null || project == null)
+                {
+                    return null;
+                }
 
-           
-            var user = _projectUser.GetUserId(userId);
-            var project = _projectUser.GetProjectId(projectId);
-            if (user == null || project == null)
-            {
-                return null;
-            }
-            
-            var abc = _projectUser.Remove(user);
+                var abc = _projectUser.Remove(user);
+                //var 
 
-            return Ok(abc);
+                return Ok(abc);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -309,9 +311,9 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 var SreDTO = new Models.SREdetailsDTO()
                 {
-                    MobileNumber = sre.MobileNumber,  
+                    MobileNumber = sre.MobileNumber,
                     SRE = sre.SRE,
-                    Email= sre.Email,
+                    Email = sre.Email,
 
                 };
                 SREDto.Add(SreDTO);
@@ -329,18 +331,17 @@ namespace ET_ShiftManagementSystem.Controllers
             try
             {
 
-           
-            var SRE = new SREDetaile()
-            {
-                SRE = sRE.SRE,
-                MobileNumber = sRE.MobileNumber,
-                Email = sRE.Email,
-                IsActive= sRE.IsActive,
-            };
-             
-            _sreDetails.AddSRE(SRE);
+                var SRE = new SREDetaile()
+                {
+                    SRE = sRE.SRE,
+                    MobileNumber = sRE.MobileNumber,
+                    Email = sRE.Email,
+                    IsActive = sRE.IsActive,
+                };
 
-            return Ok(SRE);
+                _sreDetails.AddSRE(SRE);
+
+                return Ok(SRE);
             }
             catch (Exception ex)
             {
@@ -356,20 +357,20 @@ namespace ET_ShiftManagementSystem.Controllers
             try
             {
 
-           
-            var SRE = new SREDetaile()
-            {
-                SRE = Sredetail.SRE,
-                MobileNumber = Sredetail.MobileNumber,
-                Email = Sredetail.Email,
-                //IsActive = Sredetail.IsActive,
-            };
 
-            await _sreDetails.UpdateSRE(Id , SRE);
+                var SRE = new SREDetaile()
+                {
+                    SRE = Sredetail.SRE,
+                    MobileNumber = Sredetail.MobileNumber,
+                    Email = Sredetail.Email,
+                    //IsActive = Sredetail.IsActive,
+                };
 
-            return Ok(SRE);
+                await _sreDetails.UpdateSRE(Id, SRE);
+
+                return Ok(SRE);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -379,9 +380,9 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("DeleteSRE")]
         public async Task<IActionResult> DeleteSRE(int Id)
         {
-            var Delete =await  _sreDetails.DeleteSRE(Id);
+            var Delete = await _sreDetails.DeleteSRE(Id);
 
-            if( Delete == null)
+            if (Delete == null)
             {
                 return NotFound();
             }

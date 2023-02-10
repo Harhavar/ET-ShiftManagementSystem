@@ -3,12 +3,14 @@ using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
+    [EnableCors("CorePolicy")]
     [Route("[Controller]")]
     public class AlertController : Controller
     {
@@ -64,6 +66,7 @@ namespace ET_ShiftManagementSystem.Controllers
         //}
 
         [HttpGet]
+        [EnableCors("CorePolicy")]
         public async Task<ActionResult<IEnumerable<Alert>>> Get()
         {
             var alert = await alertServices.GetAlertAsync();

@@ -2,6 +2,7 @@
 using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Servises;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         // GET: api/subscriptions
         [HttpGet]
+        //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> GetSubscriptions()
         {
             var Subs = await _subscription.GetSubscriptionAsync();
@@ -38,6 +40,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         // GET: api/subscriptions/5
         [HttpGet("{id}")]
+        //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> GetSubscription(int id)
         {
             var subs = await _subscription.GetSubscriptionByIdAsync(id);
@@ -52,6 +55,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         // POST: api/subscriptions
         [HttpPost]
+        //[Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult> PostSubscription(Subscription subscripti)
         {
             if (subscripti == null)
@@ -72,11 +76,14 @@ namespace ET_ShiftManagementSystem.Controllers
 
             var subsc = _subscription.AddSubscription(subs);
 
+            
+
             return Ok($"keep ur subscription id for future reference {subsc}");
         }
 
         // PUT: api/subscriptions/5
         [HttpPut("{id}")]
+        //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> PutSubscription(int id, Subscription subscription)
         {
             if (id != subscription.Id)
@@ -109,6 +116,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         // DELETE: api/subscriptions/5
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "SuperAdmin")]
         public async Task<ActionResult<Subscription>> DeleteSubscription(int id)
         {
             var subscription = await _subscription.DeleteSubscriptionByIdAsync(id);

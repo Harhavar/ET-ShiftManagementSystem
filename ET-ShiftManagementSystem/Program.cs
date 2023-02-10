@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Data;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using ET_ShiftManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,9 +58,13 @@ builder.Services.AddScoped<ICommentServices, CommentServices>();
 
 builder.Services.AddScoped<IEmailServices, EmailServices>();
 
+builder.Services.AddScoped<IorganizationServices, organizationServices>();
+
 builder.Services.AddScoped<IEmailSender , EmailSender>();
 
 builder.Services.AddScoped<ISREDetiles , SREservices>();
+
+builder.Services.AddScoped<ITenateServices , TenateServices>();
 
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -84,7 +89,10 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 var asd = builder.Configuration.GetConnectionString("ProjectAPIConnectioString");
 builder.Services.AddDbContext<ShiftManagementDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectAPIConnectioString"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectAPIConnectioString"),sqlServerOptionsAction: sqlOperation =>
+    {
+        sqlOperation.EnableRetryOnFailure();
+    });
 
 });
 builder.Services.AddScoped<ISubscriptionRepo, SubscriptionRepo>();
@@ -107,6 +115,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     options.TokenLifespan = TimeSpan.FromHours(1);
 });
 
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
 {
     ValidateIssuer = true,
@@ -119,25 +128,42 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 });
 
+//public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+//{
+//    app.UseMiddleware<TenantMiddleware>();
+//}
 
-var app = builder.Build();
+//add session in web api 
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromMinutes(10);
+});
+
 //cors (cross origin request service we need when we access from front end application
 //for single domine one url in origin , for two or more known domine we need to include , * for any domine (url)
-//builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
-//{
-//    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-//}));
+builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
+{
+    build.WithOrigins("http://20.204.99.128/etapi/", "https://localhost:7259/", "http://127.0.0.1/etapi/").AllowAnyMethod().AllowAnyHeader();
+}));
+
+var app = builder.Build();
+
 //middleware 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+//session 
+app.UseSession();
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//app.UseCors("CorePolicy");
+app.UseCors("CorePolicy");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

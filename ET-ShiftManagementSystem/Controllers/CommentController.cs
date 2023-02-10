@@ -7,11 +7,13 @@ using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Data;
 using System.Data;
 using System.Drawing.Drawing2D;
+using Microsoft.AspNetCore.Cors;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [EnableCors("CorePolicy")]
     public class CommentController : Controller
     {
         private readonly ICommentServices commentServices;
@@ -98,7 +100,6 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-
 
                 if (!ModelState.IsValid)
                 {
