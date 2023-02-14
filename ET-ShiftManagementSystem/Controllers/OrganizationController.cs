@@ -2,6 +2,8 @@
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Drawing2D;
@@ -10,6 +12,8 @@ namespace ET_ShiftManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "SuperAdmin,Admin,User,SystemAdmin")]
+    [EnableCors("CorePolicy")]
     public class OrganizationController : ControllerBase
     {
         private readonly IorganizationServices _services;
@@ -23,6 +27,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("ViewData")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Organization>>> Get()
         {
             var Organization = await _services.GetOrganizationData();
@@ -54,6 +59,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("Details")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Organization>>> GetDetails()
         {
             var Organization = await _services.GetOrganizationData();
@@ -93,6 +99,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> GetOrganizationById(Guid id)
         {
             var Organization = await _services.GetOrgByID(id);
@@ -107,6 +114,7 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(organizationDTO);
         }
         [HttpPost]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> AddOrganization(AddOrganizationRequest addOrganization)
         {
 
@@ -156,6 +164,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> updateOrganization([FromRoute] Guid id , [FromBody]Models.organizationModels.UpdateOrganizationRequest updateOrganization)
         {
             var organization = new Entities.Organization()
@@ -203,6 +212,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> Deleteorg(Guid id)
         {
             var delete = await _services.DeleteOrganization(id);

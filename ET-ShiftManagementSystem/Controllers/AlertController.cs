@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models;
+using ET_ShiftManagementSystem.Models.AlertModel;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -24,6 +24,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpGet]
         [Route("TimeWarp")]
+        [Authorize(Roles = "SystemAdmin")]
         public IActionResult GetAlerts(DateTime start, DateTime end)
         {
             var alerts = alertServices.GetAlertByFilter(start, end);
@@ -32,6 +33,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("filter")]
+        [Authorize(Roles = "SystemAdmin")]
         public IActionResult GetAlert(string alertname, DateTime from, DateTime? to)
         {
             try
@@ -67,6 +69,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [EnableCors("CorePolicy")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Alert>>> Get()
         {
             var alert = await alertServices.GetAlertAsync();
@@ -76,10 +79,10 @@ namespace ET_ShiftManagementSystem.Controllers
                 return BadRequest();
             }
 
-            var AlertDto = new List<Models.AlertsDTO>();
+            var AlertDto = new List<AlertsDTO>();
             alert.ToList().ForEach(alert =>
             {
-                var alertDTO = new Models.AlertsDTO()
+                var alertDTO = new Models.AlertModel.AlertsDTO()
                 {
                     CreatedDate = alert.CreatedDate,
                     AlertName = alert.AlertName,
@@ -98,6 +101,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("all")]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Alert>>> GetAllalert()
         {
             try
@@ -110,10 +114,10 @@ namespace ET_ShiftManagementSystem.Controllers
                     return BadRequest();
                 }
 
-                var AlertDto = new List<Models.AlertsDTO>();
+                var AlertDto = new List<AlertsDTO>();
                 alert.ToList().ForEach(alert =>
                 {
-                    var alertDTO = new Models.AlertsDTO()
+                    var alertDTO = new Models.AlertModel.AlertsDTO()
                     {
                         CreatedDate = alert.CreatedDate,
                         AlertName = alert.AlertName,
@@ -137,7 +141,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-
+        [Authorize(Roles = "SystemAdmin")]
         public IActionResult addAlert(Alert alert)
         {
             try
@@ -171,6 +175,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult> deleteAlert(int id)
         {
             var delete = await alertServices.DeleteAlertAsync(id);
@@ -180,7 +185,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var alertDTO = new Models.AlertsDTO()
+            var alertDTO = new Models.AlertModel.AlertsDTO()
             {
                 AlertName = delete.AlertName,
                 RCA = delete.RCA,

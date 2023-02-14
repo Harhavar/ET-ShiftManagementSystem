@@ -55,7 +55,11 @@ namespace ET_ShiftManagementSystem.Servises
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: Credential);
 
-            return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(Token));
+            var t =  Task.FromResult(new JwtSecurityTokenHandler().WriteToken(Token));
+
+            //var t1 = t.Result;
+            
+            return  t;
         }
 
         public Token SaveToken(Token token)

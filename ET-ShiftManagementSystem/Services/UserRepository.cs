@@ -19,7 +19,7 @@ namespace ET_ShiftManagementSystem.Servises
         Task<User> RegisterAdminAsync(User user);
 
         //Task Update(User user);
-
+        public Task<IEnumerable<User>> GetUser();
 
         Task<User> FindByEmailAsync(string email);
         void UpdateUser(Guid userId, string pasword);
@@ -35,7 +35,7 @@ namespace ET_ShiftManagementSystem.Servises
         }
         public  User AuthenticateAsync(string username, string password)
         {
-            var user =  _ShiftManagementDbContext.users.FirstOrDefault(x => x.username.ToLower() == username.ToLower() || x.Email == username.ToLower() && x.password == password);
+            var user =  _ShiftManagementDbContext.users.FirstOrDefault(x => x.username.ToLower() == username.ToLower() /*|| x.Email == username.ToLower()*/ && x.password == password);
 
             if (user == null)
             {
@@ -43,6 +43,8 @@ namespace ET_ShiftManagementSystem.Servises
             }
 
             var userRoles =  _ShiftManagementDbContext.usersRoles.Where(x => x.Userid == user.id).ToList();
+
+            //var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "SystemAdmin").Select(a => a.Name).FirstOrDefault();
 
             //user.Roles=  _ShiftManagementDbContext.roles.Where(x => x.Id == user.id).Select(a=>a.Id.ToString()).ToList();
             if (userRoles.Any())
@@ -88,7 +90,13 @@ namespace ET_ShiftManagementSystem.Servises
             user.id = Guid.NewGuid();
             await _ShiftManagementDbContext.users.AddAsync(user);
             await _ShiftManagementDbContext.SaveChangesAsync();
-            var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "SuperAdmin").Select(a=>a.Id).FirstOrDefault();
+            var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "SystemAdmin").Select(a=>a.Id).FirstOrDefault();
+            var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "SystemAdmin").Select(a => a.Name).FirstOrDefault();
+
+            user.Role = Role;
+            user.IsActive = true;
+            user.CreatedDate = DateTime.Now;
+            await _ShiftManagementDbContext.SaveChangesAsync();
             if (!string.IsNullOrEmpty(roleID.ToString()))
             {
                 var role = new User_Role()
@@ -110,6 +118,12 @@ namespace ET_ShiftManagementSystem.Servises
             await _ShiftManagementDbContext.users.AddAsync(user);
             await _ShiftManagementDbContext.SaveChangesAsync();
             var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "User").Select(a => a.Id).FirstOrDefault();
+            var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "User").Select(a => a.Name).FirstOrDefault();
+
+            user.Role = Role;
+            user.IsActive= true;
+            user.CreatedDate = DateTime.Now;
+            await _ShiftManagementDbContext.SaveChangesAsync();
             if (!string.IsNullOrEmpty(roleID.ToString()))
             {
                 var role = new User_Role()
@@ -130,6 +144,13 @@ namespace ET_ShiftManagementSystem.Servises
             await _ShiftManagementDbContext.users.AddAsync(user);
             await _ShiftManagementDbContext.SaveChangesAsync();
             var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "Admin").Select(a => a.Id).FirstOrDefault();
+            var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "Admin").Select(a => a.Name).FirstOrDefault();
+
+            user.Role = Role;
+            user.IsActive = true;
+            user.CreatedDate = DateTime.Now;
+            await _ShiftManagementDbContext.SaveChangesAsync();
+
             if (!string.IsNullOrEmpty(roleID.ToString()))
             {
                 var role = new User_Role()
@@ -178,5 +199,9 @@ namespace ET_ShiftManagementSystem.Servises
 
         }
 
+        public async Task<IEnumerable<User>> GetUser()
+        {
+           return await _ShiftManagementDbContext.users.ToListAsync();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Models.DocModel;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var DocDTO = mapper.Map<List<Models.DocDTO>>(Doc);
+            var DocDTO = mapper.Map<List<DocDTO>>(Doc);
 
             return Ok(DocDTO);
         }
@@ -80,7 +81,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     return NotFound();
                 }
 
-                var DeleteDTO = new Models.DocDTO()
+                var DeleteDTO = new Models.DocModel.DocDTO()
                 {
                     Id = id,
                     Docs = delete.Docs,

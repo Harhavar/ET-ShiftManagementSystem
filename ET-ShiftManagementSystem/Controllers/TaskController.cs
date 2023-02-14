@@ -6,6 +6,7 @@ using ShiftMgtDbContext.Entities;
 using System.Data;
 using ET_ShiftManagementSystem.Entities;
 using Microsoft.AspNetCore.Cors;
+using ET_ShiftManagementSystem.Models.TaskModel;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -34,7 +35,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var TaskDTO = mapper.Map<List<Models.TaskDTO>>(task);
+            var TaskDTO = mapper.Map<List<TaskDTO>>(task);
 
             return Ok(TaskDTO);
         }
@@ -81,7 +82,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 }
 
-                var DeleteDto = new Models.TaskDTO()
+                var DeleteDto = new Models.TaskModel.TaskDTO()
                 {
                     Id = delete.Id,
                     TaskComment = delete.TaskComment,

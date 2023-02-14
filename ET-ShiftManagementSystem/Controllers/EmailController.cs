@@ -7,11 +7,13 @@ using MimeKit.Text;
 using ET_ShiftManagementSystem.Entities;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     public class EmailController : Controller
     {
         private readonly IEmailServices emailServices;

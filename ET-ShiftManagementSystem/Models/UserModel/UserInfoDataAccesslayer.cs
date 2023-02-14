@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using ShiftMgtDbContext.Entities;
 
-namespace ET_ShiftManagementSystem.Models
+namespace ET_ShiftManagementSystem.Models.UserModel
 {
     public class UserInfoDataAccesslayer
     {
@@ -10,7 +10,7 @@ namespace ET_ShiftManagementSystem.Models
         {
             var userInfo = new UserCredential();
 
-            using (SqlConnection conn = new SqlConnection("ProjectAPIConnectioString")) 
+            using (SqlConnection conn = new SqlConnection("ProjectAPIConnectioString"))
             {
                 string sql = string.Format(@"");
             }

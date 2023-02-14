@@ -1,10 +1,10 @@
-﻿using System.Globalization;
+﻿using System.Security.Cryptography.X509Certificates;
 
-namespace ET_ShiftManagementSystem.Models
+namespace ET_ShiftManagementSystem.Models.Authmodel
 {
-    public class UserDto
+    public class RegisterRequest
     {
-        public Guid id { get; set; }
+        //public Guid id { get; set; }
 
         public string username { get; set; }
 
@@ -14,14 +14,13 @@ namespace ET_ShiftManagementSystem.Models
 
         public string FirstName { get; set; }
 
-        public string LastName { get; set; } = string.Empty;
-
-        public bool IsActive { get; set; }
+        public string LastName { get; set; }
 
         public string ContactNumber { get; set; }
 
         public string AlternateContactNumber { get; set; }
 
-        public int? TenateID { get; set; }
+
+        public Guid? TenateID { get; set; }
     }
 }

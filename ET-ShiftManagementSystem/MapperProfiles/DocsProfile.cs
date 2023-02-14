@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Models.DocModel;
 
 namespace ET_ShiftManagementSystem.MapperProfiles
 {
@@ -6,7 +7,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public DocsProfile()
         {
-            CreateMap<ET_ShiftManagementSystem.Entities.Doc, Models.DocDTO>().ReverseMap();
+            CreateMap<ET_ShiftManagementSystem.Entities.Doc, DocDTO>().ReverseMap();
         }
     }
 }

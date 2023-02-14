@@ -9,6 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SRC", "SRC", "{DE8213BF-C97
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{21B574C3-3618-4D38-85E9-D97CE69C5ECD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoginTest", "LoginTest", "{197E14D3-F58E-4A01-8F49-23D75B5EA941}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoginapiTest", "LoginapiTest\LoginapiTest.csproj", "{53339904-8DB7-4732-AC23-7E5ABFED8774}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,12 +23,18 @@ Global
 		{BE4BFDB1-BE57-4E1E-80DD-B878FF6C003B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE4BFDB1-BE57-4E1E-80DD-B878FF6C003B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE4BFDB1-BE57-4E1E-80DD-B878FF6C003B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53339904-8DB7-4732-AC23-7E5ABFED8774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53339904-8DB7-4732-AC23-7E5ABFED8774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53339904-8DB7-4732-AC23-7E5ABFED8774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53339904-8DB7-4732-AC23-7E5ABFED8774}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BE4BFDB1-BE57-4E1E-80DD-B878FF6C003B} = {DE8213BF-C979-46FC-978D-D2739921534C}
+		{197E14D3-F58E-4A01-8F49-23D75B5EA941} = {21B574C3-3618-4D38-85E9-D97CE69C5ECD}
+		{53339904-8DB7-4732-AC23-7E5ABFED8774} = {197E14D3-F58E-4A01-8F49-23D75B5EA941}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2BF4F289-8933-4A85-82B5-4645B7F8CC7C}

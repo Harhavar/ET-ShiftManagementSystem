@@ -1,9 +1,10 @@
-﻿using FluentValidation;
+﻿using ET_ShiftManagementSystem.Models.UserModel;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ET_ShiftManagementSystem.AddValidation
 {
-    public class AuthValidator : AbstractValidator<Models.UserDto>
+    public class AuthValidator : AbstractValidator<UserDto>
     {
         public AuthValidator()
         {

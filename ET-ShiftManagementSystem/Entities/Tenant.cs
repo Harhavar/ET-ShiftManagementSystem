@@ -2,7 +2,7 @@
 {
     public class Tenate
     {
-        public int? TenateId { get; set; }
+        public Guid? TenateId { get; set; }
 
         public string TenateName { get; set; }
 

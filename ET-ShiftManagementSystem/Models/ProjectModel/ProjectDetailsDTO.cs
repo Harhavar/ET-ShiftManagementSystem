@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Text.Json.Nodes;
 
-namespace ET_ShiftManagementSystem.Models
+namespace ET_ShiftManagementSystem.Models.ProjectModel
 {
 
     public class ProjectDetailsDTO
@@ -31,12 +31,12 @@ namespace ET_ShiftManagementSystem.Models
         //public Project project { get; set; }
 
         //public Shift shift { get; set; }
-        
+
     }
     public class ProjectUser
     {
-        public int  UserId { get; set; }
-        public string UserName { get; set; } 
+        public int UserId { get; set; }
+        public string UserName { get; set; }
 
         public string Email { get; set; }
 
@@ -90,6 +90,6 @@ namespace ET_ShiftManagementSystem.Models
 
     //    //public List<ShiftDetails> ShiftDetails { get; set; }
 
-       // public List<CommentDetailes> CommentDetiles { get; set; }
-      //  public int ProjectID { get;  set; }
+    // public List<CommentDetailes> CommentDetiles { get; set; }
+    //  public int ProjectID { get;  set; }
 }

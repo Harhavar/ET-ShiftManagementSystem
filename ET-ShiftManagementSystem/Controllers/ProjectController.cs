@@ -14,11 +14,14 @@ using System.Net.WebSockets;
 using System.Formats.Asn1;
 using System.Runtime.Intrinsics.X86;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Cors;
+using ET_ShiftManagementSystem.Models.ProjectModel;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [EnableCors("CorePolicy")]
     public class ProjectController : ControllerBase
     {
         private readonly IProjectServises _projectServices;
@@ -121,7 +124,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var ProjectDTO = mapper.Map<List<Models.ProjectDto>>(project);
+            var ProjectDTO = mapper.Map<List<ProjectDto>>(project);
 
             return Ok(ProjectDTO);
 
@@ -141,7 +144,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var projectDTO = mapper.Map<Models.ProjectDto>(project);
+            var projectDTO = mapper.Map<ProjectDto>(project);
 
             return Ok(project);
         }
@@ -220,7 +223,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
             //Convert response back to DTO
 
-            var DeleteDTO = new Models.ProjectDto()
+            var DeleteDTO = new Models.ProjectModel.ProjectDto()
             {
                 ProjectId = delete.ProjectId,
                 CreatedBy = delete.CreatedBy,

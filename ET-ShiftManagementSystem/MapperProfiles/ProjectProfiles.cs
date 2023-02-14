@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Models.ProjectModel;
 
 namespace ET_ShiftManagementSystem.MapperProfiles
 {
@@ -6,7 +7,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public ProjectProfiles()
         {
-            CreateMap<ET_ShiftManagementSystem.Entities.Project , Models.ProjectDto>().ReverseMap();
+            CreateMap<ET_ShiftManagementSystem.Entities.Project , ProjectDto>().ReverseMap();
         }
     }
 }

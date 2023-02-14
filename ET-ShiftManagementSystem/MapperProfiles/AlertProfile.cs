@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ET_ShiftManagementSystem.Models.AlertModel;
 
 namespace ET_ShiftManagementSystem.MapperProfiles
 {
@@ -6,7 +7,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public AlertProfile()
         {
-            CreateMap<ET_ShiftManagementSystem.Entities.Alert,Models.AlertsDTO>().ReverseMap();
+            CreateMap<ET_ShiftManagementSystem.Entities.Alert,AlertsDTO>().ReverseMap();
         }
     }
 }

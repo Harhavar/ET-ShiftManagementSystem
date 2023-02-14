@@ -1,4 +1,4 @@
-﻿namespace ET_ShiftManagementSystem.Models
+﻿namespace ET_ShiftManagementSystem.Models.ProjectModel
 {
     public class AddProjectRequest
     {

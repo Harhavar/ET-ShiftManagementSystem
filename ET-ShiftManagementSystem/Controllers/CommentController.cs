@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ET_ShiftManagementSystem.Servises;
@@ -8,6 +7,7 @@ using ET_ShiftManagementSystem.Data;
 using System.Data;
 using System.Drawing.Drawing2D;
 using Microsoft.AspNetCore.Cors;
+using ET_ShiftManagementSystem.Models.CommentModel;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -39,7 +39,7 @@ namespace ET_ShiftManagementSystem.Controllers
             //var RegionDTO = new Models.CommentDTO();
             //comment.ToList().ForEach(comment =>
             //{
-            var regionDTO = new Models.CommentDTO()
+            var regionDTO = new Models.CommentModel.CommentDTO()
             {
                 CommentID = comment.CommentID,
                 CommentText = comment.CommentText,
@@ -70,10 +70,10 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
             //retur dto Comments
-            var RegionDTO = new List<Models.CommentDTO>();
+            var RegionDTO = new List<CommentDTO>();
             comment.ToList().ForEach(comment =>
             {
-                var regionDTO = new Models.CommentDTO()
+                var regionDTO = new Models.CommentModel.CommentDTO()
                 {
                     CommentID = comment.CommentID,
                     CommentText = comment.CommentText,
@@ -155,7 +155,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var DeleteDTO = new Models.CommentDTO()
+            var DeleteDTO = new Models.CommentModel.CommentDTO()
             {
 
                 CommentText = delete.CommentText,
@@ -173,7 +173,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPut]
         //[Authorize(Roles = "SuperAdmin,Admin,User")]
-        public async Task<IActionResult> UpdateComment(int id, Models.UpdateCommentRequest comment)
+        public async Task<IActionResult> UpdateComment(int id, UpdateCommentRequest comment)
         {
             try
             {

@@ -1,8 +1,9 @@
-﻿using FluentValidation;
+﻿using ET_ShiftManagementSystem.Models.ShiftModel;
+using FluentValidation;
 
 namespace ET_ShiftManagementSystem.AddValidation
 {
-    public class updateShiftRequestValidator : AbstractValidator<Models.UpdateShiftRequest>
+    public class updateShiftRequestValidator : AbstractValidator<UpdateShiftRequest>
     {
         public updateShiftRequestValidator()
         {

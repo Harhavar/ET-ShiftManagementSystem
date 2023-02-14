@@ -1,8 +1,9 @@
-﻿using FluentValidation;
+﻿using ET_ShiftManagementSystem.Models.CommentModel;
+using FluentValidation;
 
 namespace ET_ShiftManagementSystem.AddValidation
 {
-    public class AddCommmentsValidator : AbstractValidator<Models.AddComments>
+    public class AddCommmentsValidator : AbstractValidator<AddComments>
     {
         public AddCommmentsValidator()
          {

@@ -1,8 +1,9 @@
-﻿using FluentValidation;
+﻿using ET_ShiftManagementSystem.Models.ProjectModel;
+using FluentValidation;
 
 namespace ET_ShiftManagementSystem.AddValidation
 {
-    public class AddProjectRequestValidator : AbstractValidator<Models.AddProjectRequest>
+    public class AddProjectRequestValidator : AbstractValidator<AddProjectRequest>
     {
         public AddProjectRequestValidator()
         {

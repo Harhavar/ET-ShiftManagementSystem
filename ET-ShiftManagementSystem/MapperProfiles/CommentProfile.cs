@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Models.CommentModel;
 
 namespace ET_ShiftManagementSystem.MapperProfiles
 {
@@ -7,7 +8,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public CommentProfile()
         {
-            CreateMap<Comment, Models.CommentDTO>().ReverseMap();
+            CreateMap<Comment, CommentDTO>().ReverseMap();
         }
     }
 }

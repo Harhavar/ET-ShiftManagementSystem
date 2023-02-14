@@ -1,7 +1,6 @@
 ﻿using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using ShiftMgtDbContext.Entities;
 using ET_ShiftManagementSystem.Servises;
@@ -12,6 +11,8 @@ using Org.BouncyCastle.Asn1.Cmp;
 using ET_ShiftManagementSystem.Data;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using static System.Net.WebRequestMethods;
+using ET_ShiftManagementSystem.Models.Authmodel;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -38,8 +39,8 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpPost]
         [Route("Register")]
-        //[Authorize(Roles = "Vender")] //SUPER ADMIN ADDING USER TO THE PROJECT
-        public async Task<IActionResult> Register(Models.RegisterRequest registerRequest)
+        //[Authorize(Roles = "SuperAdmin")] //SUPER ADMIN ADDING SuperAdmin Creating Organization 
+        public async Task<IActionResult> Register(RegisterRequest registerRequest)
         {
             try
             {
@@ -53,7 +54,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     password = registerRequest.password,
                     ContactNumber = registerRequest.ContactNumber,
                     AlternateContactNumber = registerRequest.AlternateContactNumber,
-                    TenateID= registerRequest.TenateID,
+                    TenentID= registerRequest.TenateID,
 
                 };
 
@@ -61,7 +62,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 user = await userRepository.RegisterAsync(user);
 
                 //convert back to DTO
-                var UserDTO = new Models.UserDto
+                var UserDTO = new Models.UserModel.UserDto
                 {
                     id = user.id,
                     username = user.username,
@@ -86,7 +87,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         [Route("AddingSubsriber")]
         //[Authorize(Roles = "Vender,SuperAdmin,Admin")] //SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
-        public async Task<IActionResult> AddingSubscriber(Models.RegisterRequest registerRequest )
+        public async Task<IActionResult> AddingSubscriber(RegisterRequest registerRequest )
         {
             //request DTO to Domine Model
             var user = new ShiftMgtDbContext.Entities.User()
@@ -98,7 +99,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 password = registerRequest.password,
                 ContactNumber = registerRequest.ContactNumber,
                 AlternateContactNumber = registerRequest.AlternateContactNumber,
-                TenateID= registerRequest.TenateID,
+                TenentID = registerRequest.TenateID,
 
             };
             var tenent = new Tenate
@@ -110,7 +111,7 @@ namespace ET_ShiftManagementSystem.Controllers
             user = await userRepository.RegisterSubscriber(user, tenent);
 
             //convert back to DTO
-            var UserDTO = new Models.UserDto
+            var UserDTO = new Models.UserModel.UserDto
             {
                 id = user.id,
                 username = user.username,
@@ -121,7 +122,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 IsActive = user.IsActive,
                 ContactNumber = registerRequest.ContactNumber,
                 AlternateContactNumber = registerRequest.AlternateContactNumber,
-                TenateID= registerRequest.TenateID,
+                TenateID = registerRequest.TenateID,
             };
 
             var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
@@ -139,7 +140,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         [Route("AddingUser")]
         //[Authorize(Roles = "SuperAdmin,Admin")] //SUPER ADMIN AND ADMIN ADDING USER TO THE PROJECT
-        public async Task<IActionResult> AddingUser(Models.RegisterRequest registerRequest)
+        public async Task<IActionResult> AddingUser(RegisterRequest registerRequest)
         {
             //request DTO to Domine Model
             var user = new ShiftMgtDbContext.Entities.User()
@@ -151,7 +152,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 password = registerRequest.password,
                 ContactNumber = registerRequest.ContactNumber,
                 AlternateContactNumber = registerRequest.AlternateContactNumber,
-                TenateID = registerRequest.TenateID,
+                TenentID = registerRequest.TenateID,
             };
 
             // pass details to repository 
@@ -159,7 +160,7 @@ namespace ET_ShiftManagementSystem.Controllers
             user = await userRepository.RegisterUserAsync(user);
 
             //convert back to DTO
-            var UserDTO = new Models.UserDto
+            var UserDTO = new Models.UserModel.UserDto
             {
                 id = user.id,
                 username = user.username,
@@ -187,7 +188,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         [Route("AddingAdmin")]
         //[Authorize(Roles = "SuperAdmin")] // SUPER ADMIN ADDING ADMIN TO THE PROJECT
-        public async Task<IActionResult> AddingAdmin(Models.RegisterRequest registerRequest)
+        public async Task<IActionResult> AddingAdmin(RegisterRequest registerRequest)
         {
             //request DTO to Domine Model
             var user = new ShiftMgtDbContext.Entities.User()
@@ -199,7 +200,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 password = registerRequest.password,
                 ContactNumber = registerRequest.ContactNumber,
                 AlternateContactNumber = registerRequest.AlternateContactNumber,
-                TenateID =registerRequest.TenateID,
+                TenentID =registerRequest.TenateID,
 
             };
 
@@ -208,7 +209,7 @@ namespace ET_ShiftManagementSystem.Controllers
             user = await userRepository.RegisterAdminAsync(user);
 
             //convert back to DTO
-            var UserDTO = new Models.UserDto
+            var UserDTO = new Models.UserModel.UserDto
             {
                 id = user.id,
                 username = user.username,
@@ -239,29 +240,23 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         [Route("Login")]
         [ActionName("LoginAync")]
-        //[Authorize(Roles= "SuperAdmin,Admin,User")]
-        public IActionResult LoginAync(Models.LoginRequest loginRequest)
+        //[Authorize(Roles= "SuperAdmin,Admin,User,SystemAdmin")]
+        public IActionResult LoginAync(LoginRequest loginRequest)
         {
             var user = userRepository.AuthenticateAsync(loginRequest.username, loginRequest.password);
 
             if (user != null)
             {
-
-                //assign tenent id when they login
-                //var tenent = new Tenate()
-                //{
-                //    TenateId = user.TenateID,
-
-                //};
-
-
+                
                 //generate token 
                 var Token = tokenHandler.CreateToken(user);
-                
-                return Ok(Token);
+
+                var result = $"this is token : \"{Token.Result}\" ,  this is userId :\"{user.id}\" , user role : \"{user.Role}\"";
+
+                return Ok(result);
             }
 
-            return BadRequest("user name or password is incurrect");
+            return BadRequest("Email / username or password doesn’t match");
         }
 
 
@@ -291,11 +286,11 @@ namespace ET_ShiftManagementSystem.Controllers
             };
             tokenHandler.SaveToken(save);
 
-            var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email = user.Email }, Request.Scheme);
+            //var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email = user.Email }, Request.Scheme);
             await emailSender.SendEmailAsync(request.Email, "Reset your password",
-                $"Please reset your password by <a href='{resetUrl}'>clicking here</a>.");
+                $"Please reset your password by <a href='{"http://localhost:3000/ResetPaswword"}'>clicking here</a>.");
 
-            return Ok();
+            return Ok($"user id : {user.id}");
         }
 
         [HttpGet]
@@ -316,15 +311,16 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPost]
         [Route("ResetPassword")]
+
         //[Authorize(Roles = "SuperAdmin,Admin,User")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword( Guid userId,[FromBody]ResetPasswordViewModel model)
         {
             if (model.Password != model.ConfirmPassword)
             {
                 return BadRequest("Password must be same");
             }
             // Verify that the provided token is valid
-            userRepository.UpdateUser(model.UserId, model.Password);
+            userRepository.UpdateUser(userId, model.Password);
             return Ok("Password updated succesfully");
 
         }

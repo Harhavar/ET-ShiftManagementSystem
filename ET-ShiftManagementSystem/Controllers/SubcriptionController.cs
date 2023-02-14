@@ -3,6 +3,7 @@ using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("api/subscriptions")]
+    [EnableCors("CorePolicy")]
     public class SubcriptionController : Controller
     {
         private readonly ISubscriptionRepo _subscription;

@@ -1,8 +1,9 @@
-﻿using FluentValidation;
+﻿using ET_ShiftManagementSystem.Models.Authmodel;
+using FluentValidation;
 
 namespace ET_ShiftManagementSystem.AddValidation
 {
-    public class loginrequestValidator : AbstractValidator<Models.LoginRequest>
+    public class loginrequestValidator : AbstractValidator<LoginRequest>
     {
         public loginrequestValidator()
         {

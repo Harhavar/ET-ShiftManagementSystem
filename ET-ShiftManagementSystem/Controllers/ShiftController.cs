@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ET_ShiftManagementSystem.Servises;
 using System.Data;
+using Microsoft.AspNetCore.Cors;
+using ET_ShiftManagementSystem.Models.ShiftModel;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     public class ShiftController : Controller
     {
         private readonly IShiftServices shiftServices;
@@ -33,7 +35,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var ShiftDTO = mapper.Map<List<Models.ShiftDTO>>(shift);
+            var ShiftDTO = mapper.Map<List<ShiftDTO>>(shift);
 
             return Ok(ShiftDTO);
         }
@@ -51,7 +53,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 return NotFound();
             }
 
-            var ShiftDTO = mapper.Map<Models.ShiftDTO>(shift);
+            var ShiftDTO = mapper.Map<ShiftDTO>(shift);
 
             return Ok(ShiftDTO);
         }
@@ -87,7 +89,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpPut]
         //[Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> UpdateShift(int id, Models.UpdateShiftRequest shiftDTO)
+        public async Task<IActionResult> UpdateShift(int id, UpdateShiftRequest shiftDTO)
         {
             if (id != shiftDTO.ShiftId)
             {
@@ -131,7 +133,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     return NotFound();
                 }
 
-                var DeleteDTO = new Models.ShiftDTO()
+                var DeleteDTO = new Models.ShiftModel.ShiftDTO()
                 {
 
                     ShiftId = delete.ShiftId,
