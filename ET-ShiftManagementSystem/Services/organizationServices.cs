@@ -16,6 +16,8 @@ namespace ET_ShiftManagementSystem.Services
         public Task<Organization> UpdateOrganization(Guid id , Organization organization);
 
         public Task<Organization> DeleteOrganization(Guid id);
+
+        void UpdateOrganization(Guid id, string password);
     }
     public class organizationServices : IorganizationServices
     {
@@ -25,12 +27,22 @@ namespace ET_ShiftManagementSystem.Services
         {
             this.shiftManagementDb = shiftManagementDb;
         }
+        public void UpdateOrganization(Guid id, string password)
+        {
+            var user = shiftManagementDb.Organizations.FirstOrDefault(a => a.TenentID == id);
+            if (user != null)
+            {
+                user.Password = password;
+                shiftManagementDb.SaveChanges();
+            }
 
+        }
         public async Task<Organization> AddOrgnization(Organization organization)
         {
             organization.TenentID= Guid.NewGuid();
             organization.CreatedDate= DateTime.Now;
             organization.LastModifiedDate= DateTime.Now;
+            organization.Password = "ihfbrfjufevjk";
             await shiftManagementDb.Organizations.AddAsync(organization);
             await shiftManagementDb.SaveChangesAsync();
             return organization;

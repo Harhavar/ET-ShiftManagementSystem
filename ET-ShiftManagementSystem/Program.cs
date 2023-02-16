@@ -46,7 +46,7 @@ builder.Services.AddSwaggerGen(options =>
         {securityScheme, new string[] {} }
     });
 });
-    
+
 builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
 
 builder.Services.AddScoped<IProjectServises, ProjectServises>();
@@ -60,11 +60,14 @@ builder.Services.AddScoped<IEmailServices, EmailServices>();
 
 builder.Services.AddScoped<IorganizationServices, organizationServices>();
 
-builder.Services.AddScoped<IEmailSender , EmailSender>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
-builder.Services.AddScoped<ISREDetiles , SREservices>();
+builder.Services.AddScoped<ISREDetiles, SREservices>();
 
-builder.Services.AddScoped<ITenateServices , TenateServices>();
+builder.Services.AddScoped<ITenateServices, TenateServices>();
+
+
+builder.Services.AddScoped<IPermissionServises, PermissionServises>();
 
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -89,7 +92,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 var asd = builder.Configuration.GetConnectionString("ProjectAPIConnectioString");
 builder.Services.AddDbContext<ShiftManagementDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectAPIConnectioString"),sqlServerOptionsAction: sqlOperation =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ProjectAPIConnectioString"), sqlServerOptionsAction: sqlOperation =>
     {
         sqlOperation.EnableRetryOnFailure();
     });
@@ -103,11 +106,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IDocumentServices, DocumentServices>();
 
-builder.Services.AddScoped<ITaskServices , TaskServices>();
+builder.Services.AddScoped<ITaskServices, TaskServices>();
 
 builder.Services.AddScoped<IAlertServices, AlertServices>();
 
-builder.Services.AddScoped<IProjectUserRepository , ProjectUserRepository>();
+builder.Services.AddScoped<IProjectUserRepository, ProjectUserRepository>();
+
+
+
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
@@ -115,18 +121,25 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
     options.TokenLifespan = TimeSpan.FromHours(1);
 });
 
+//string domain = $"https://{Configuration["Auth0:Domain"]}/";
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
-{
-    ValidateIssuer = true,
-    ValidateAudience = true,
-    ValidateIssuerSigningKey = true,
-    ValidateLifetime = true,
-    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-    ValidAudience = builder.Configuration["Jwt:Audience"],
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        //options.Authority = builder.Domain;
+        //options.Audience = builder.Configuration["Auth0:Audience"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
 
-});
+        };
+    });
 
 //public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 //{
@@ -145,7 +158,8 @@ builder.Services.AddSession(option =>
 //for single domine one url in origin , for two or more known domine we need to include , * for any domine (url)
 builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
 {
-    build.WithOrigins("http://20.204.99.128/etapi/", "https://localhost:7259/", "http://127.0.0.1/etapi/").AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins("http://20.204.99.128/etapi/", "https://localhost:7259/", "http://127.0.0.1/etapi/")
+    .AllowAnyMethod().AllowAnyHeader();
 }));
 
 var app = builder.Build();

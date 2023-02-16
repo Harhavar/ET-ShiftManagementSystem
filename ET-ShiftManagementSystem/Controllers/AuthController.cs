@@ -25,16 +25,18 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly ITokenHandler tokenHandler;
         private readonly IEmailSender emailSender;
         private readonly ITenateServices tenateServices;
+        private readonly IorganizationServices iorganizationServices;
 
         //private readonly IEmailServices emailServices;
 
 
-        public AuthController(IUserRepository userRepository, ITokenHandler tokenHandler, IEmailSender emailSender , ITenateServices tenateServices)
+        public AuthController(IUserRepository userRepository, ITokenHandler tokenHandler, IEmailSender emailSender , ITenateServices tenateServices , IorganizationServices iorganizationServices)
         {
             this.userRepository = userRepository;
             this.tokenHandler = tokenHandler;
             this.emailSender = emailSender;
             this.tenateServices = tenateServices;
+            this.iorganizationServices = iorganizationServices;
             //this.emailServices = emailServices;
         }
         [HttpPost]
@@ -251,7 +253,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 //generate token 
                 var Token = tokenHandler.CreateToken(user);
 
-                var result = $"this is token : \"{Token.Result}\" ,  this is userId :\"{user.id}\" , user role : \"{user.Role}\"";
+                var result = $"User token : \"{Token.Result}\" ,  userId :\"{user.id}\" , user role : \"{user.Role}\"";
 
                 return Ok(result);
             }
@@ -321,6 +323,21 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             // Verify that the provided token is valid
             userRepository.UpdateUser(userId, model.Password);
+            return Ok("Password updated succesfully");
+
+        }
+        [HttpPost]
+        [Route("ResetORGPassword")]
+
+        //[Authorize(Roles = "SuperAdmin,Admin,User")]
+        public async Task<IActionResult> ResetORGPassword(Guid TenentId, [FromBody] ResetPasswordViewModel model)
+        {
+            if (model.Password != model.ConfirmPassword)
+            {
+                return BadRequest("Password must be same");
+            }
+            // Verify that the provided token is valid
+            iorganizationServices.UpdateOrganization(TenentId, model.Password);
             return Ok("Password updated succesfully");
 
         }

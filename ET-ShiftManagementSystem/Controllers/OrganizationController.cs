@@ -2,6 +2,7 @@
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Services;
+using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -18,11 +19,13 @@ namespace ET_ShiftManagementSystem.Controllers
     {
         private readonly IorganizationServices _services;
         private readonly IMapper mapper;
+        private readonly IEmailSender emailSender;
 
-        public OrganizationController(IorganizationServices services, IMapper mapper)
+        public OrganizationController(IorganizationServices services, IMapper mapper , IEmailSender emailSender)
         {
             _services = services;
             this.mapper = mapper;
+            this.emailSender = emailSender;
         }
 
         [HttpGet]
@@ -155,7 +158,11 @@ namespace ET_ShiftManagementSystem.Controllers
                 CreatedDate = Organization.CreatedDate,
                 HouseBuildingNumber = Organization.HouseBuildingNumber,
                 LastModifiedDate = Organization.LastModifiedDate,
+                Password= Organization.Password,
             };
+
+             await emailSender.SendEmailAsync(Organization.Adminemailaddress, "Reset your password",
+                $"Please reset your password by <a href='{"http://localhost:3000/ResetPaswword"}'>clicking here</a>.");
 
             return CreatedAtAction(nameof(GetOrganizationById), new { Id = OrganizationDTO.TenentID }, OrganizationDTO);
 

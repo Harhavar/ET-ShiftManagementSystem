@@ -99,6 +99,7 @@ namespace ET_ShiftManagementSystem.Data
         public DbSet<Tenate> Tenates { get; set; }
 
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
 
 
     }

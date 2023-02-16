@@ -17,5 +17,6 @@
         public string Adminemailaddress { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
+        public string? Password { get; set; }
     }
 }
