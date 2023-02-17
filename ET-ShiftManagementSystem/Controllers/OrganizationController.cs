@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Models.Authmodel;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Services;
 using ET_ShiftManagementSystem.Servises;
@@ -7,25 +8,29 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Graph;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using System.Drawing.Drawing2D;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "SuperAdmin,Admin,User,SystemAdmin")]
+    //[Authorize(Roles = "SuperAdmin,Admin,User,SystemAdmin")]
     [EnableCors("CorePolicy")]
     public class OrganizationController : ControllerBase
     {
         private readonly IorganizationServices _services;
         private readonly IMapper mapper;
         private readonly IEmailSender emailSender;
+        private readonly IUserRepository userRepository;
 
-        public OrganizationController(IorganizationServices services, IMapper mapper , IEmailSender emailSender)
+        public OrganizationController(IorganizationServices services, IMapper mapper , IEmailSender emailSender , IUserRepository userRepository)
         {
             _services = services;
             this.mapper = mapper;
             this.emailSender = emailSender;
+            this.userRepository = userRepository;
         }
 
         [HttpGet]
@@ -117,7 +122,7 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(organizationDTO);
         }
         [HttpPost]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> AddOrganization(AddOrganizationRequest addOrganization)
         {
 
@@ -138,6 +143,8 @@ namespace ET_ShiftManagementSystem.Controllers
                 HouseBuildingNumber = addOrganization.HouseBuildingNumber,
 
             };
+
+            
 
             Organization = await _services.AddOrgnization(Organization);
 
@@ -160,13 +167,52 @@ namespace ET_ShiftManagementSystem.Controllers
                 LastModifiedDate = Organization.LastModifiedDate,
                 Password= Organization.Password,
             };
+            //request DTO to Domine Model
+            var user = new ShiftMgtDbContext.Entities.User()
+            {
+                username = Organization.Adminfullname,
+                FirstName = Organization.Adminfullname,
+                //LastName = " ",
+                Email = Organization.Adminemailaddress,
+                //password = "HelloWorld26#",
+                //ContactNumber = "",
+                // AlternateContactNumber = "",
+                TenentID = Organization.TenentID,
 
-             await emailSender.SendEmailAsync(Organization.Adminemailaddress, "Reset your password",
-                $"Please reset your password by <a href='{"http://localhost:3000/ResetPaswword"}'>clicking here</a>.");
+            };
+            // pass details to repository 
+
+            user = await userRepository.RegisterORGAdminAsync(user);
+
+            //convert back to DTO
+            var UserDTO = new Models.UserModel.UserDto
+            {
+                id = user.id,
+                username = user.username,
+                FirstName = user.FirstName,
+                Email = user.Email,
+                LastName = user.LastName,
+                password = user.password,
+                IsActive = user.IsActive,
+                ContactNumber = user.ContactNumber,
+                AlternateContactNumber = user.AlternateContactNumber,
+                TenateID = user.TenentID,
+            };
+
+            //var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
+
+
+            await emailSender.SendEmailAsync(Organization.Adminemailaddress, $"Welcome To ShiftManagementSystem",
+                $" Your username is {Organization.Adminfullname} your emai id : {Organization.Adminemailaddress},\n Please reset your password by <h1><a href='{"http://localhost:3000/resetpassword"}'>click here</a></ h1> \n Please login by <h1><a href='{"http://localhost:3000"}'>click here</a></h1>.");
+
+            //await emailSender.SendEmailAsync(Organization.Adminemailaddress, "Reset your password",
+               // $"Please reset your password by <a href='{"http://localhost:3000/resetpassword"}'>clicking here</a>.");
 
             return CreatedAtAction(nameof(GetOrganizationById), new { Id = OrganizationDTO.TenentID }, OrganizationDTO);
 
-
+           /* { user.FirstName + " " + user.LastName}
+            added to the project . use this credential to login UserId :{ user.username}
+            password is :{ user.password}*/
         }
 
         [HttpPut]

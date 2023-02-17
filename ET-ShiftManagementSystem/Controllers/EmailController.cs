@@ -23,7 +23,7 @@ namespace ET_ShiftManagementSystem.Controllers
             this.emailServices = emailServices;
         }
         [HttpPost]
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        //[Authorize(Roles = "SuperAdmin,Admin")]
         public IActionResult SendMail(Email request)
         {
             try

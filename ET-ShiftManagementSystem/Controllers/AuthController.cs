@@ -253,7 +253,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 //generate token 
                 var Token = tokenHandler.CreateToken(user);
 
-                var result = $"User token : \"{Token.Result}\" ,  userId :\"{user.id}\" , user role : \"{user.Role}\"";
+                var result = $"User token : \"{Token.Result}\" ,  userId :\"{user.id}\" , user role : \"{user.Role}\" , OrganizationID \"{user.TenentID}\"";
 
                 return Ok(result);
             }
@@ -290,9 +290,9 @@ namespace ET_ShiftManagementSystem.Controllers
 
             //var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email = user.Email }, Request.Scheme);
             await emailSender.SendEmailAsync(request.Email, "Reset your password",
-                $"Please reset your password by <a href='{"http://localhost:3000/ResetPaswword"}'>clicking here</a>.");
+                $"Please reset your password : <a href='{$"http://localhost:3000/resetpassword?userId={user.id}"}'><h2>click here</h2></a>.");
 
-            return Ok($"user id : {user.id}");
+            return Ok($"user id :{user.id}");
         }
 
         [HttpGet]
@@ -326,21 +326,23 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok("Password updated succesfully");
 
         }
-        [HttpPost]
-        [Route("ResetORGPassword")]
 
-        //[Authorize(Roles = "SuperAdmin,Admin,User")]
-        public async Task<IActionResult> ResetORGPassword(Guid TenentId, [FromBody] ResetPasswordViewModel model)
-        {
-            if (model.Password != model.ConfirmPassword)
-            {
-                return BadRequest("Password must be same");
-            }
-            // Verify that the provided token is valid
-            iorganizationServices.UpdateOrganization(TenentId, model.Password);
-            return Ok("Password updated succesfully");
 
-        }
+        //[HttpPost]
+        //[Route("ResetORGPassword")]
+
+        ////[Authorize(Roles = "SuperAdmin,Admin,User")]
+        //public async Task<IActionResult> ResetORGPassword(Guid TenentId, [FromBody] ResetPasswordViewModel model)
+        //{
+        //    if (model.Password != model.ConfirmPassword)
+        //    {
+        //        return BadRequest("Password must be same");
+        //    }
+        //    // Verify that the provided token is valid
+        //    iorganizationServices.UpdateOrganization(TenentId, model.Password);
+        //    return Ok("Password updated succesfully");
+
+        //}
 
     }
 }

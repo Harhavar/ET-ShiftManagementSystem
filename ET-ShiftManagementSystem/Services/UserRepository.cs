@@ -17,6 +17,7 @@ namespace ET_ShiftManagementSystem.Servises
 
         User Get(Guid userId);
         Task<User> RegisterAdminAsync(User user);
+        Task<User> RegisterORGAdminAsync(User user);
 
         //Task Update(User user);
         public Task<IEnumerable<User>> GetUser();
@@ -145,6 +146,36 @@ namespace ET_ShiftManagementSystem.Servises
             await _ShiftManagementDbContext.SaveChangesAsync();
             var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "Admin").Select(a => a.Id).FirstOrDefault();
             var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "Admin").Select(a => a.Name).FirstOrDefault();
+
+            user.Role = Role;
+            user.IsActive = true;
+            user.CreatedDate = DateTime.Now;
+            await _ShiftManagementDbContext.SaveChangesAsync();
+
+            if (!string.IsNullOrEmpty(roleID.ToString()))
+            {
+                var role = new User_Role()
+                {
+                    Id = Guid.NewGuid(),
+                    Userid = user.id,
+                    RoleId = roleID
+                };
+                await _ShiftManagementDbContext.usersRoles.AddAsync(role);
+                await _ShiftManagementDbContext.SaveChangesAsync();
+            }
+            return user;
+        }
+        public async Task<User> RegisterORGAdminAsync(User user)
+        {
+            user.id = Guid.NewGuid();
+            user.LastName = "";
+            user.password= "password";
+            user.ContactNumber = "";
+            user.AlternateContactNumber = " ";
+            await _ShiftManagementDbContext.users.AddAsync(user);
+            await _ShiftManagementDbContext.SaveChangesAsync();
+            var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "SuperAdmin").Select(a => a.Id).FirstOrDefault();
+            var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "SuperAdmin").Select(a => a.Name).FirstOrDefault();
 
             user.Role = Role;
             user.IsActive = true;

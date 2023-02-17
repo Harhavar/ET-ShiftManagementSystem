@@ -1,9 +1,11 @@
-﻿using ET_ShiftManagementSystem.Models.organizationModels;
+﻿using ET_ShiftManagementSystem.Data;
+using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Models.UserModel;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ShiftMgtDbContext.Entities;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -14,10 +16,12 @@ namespace ET_ShiftManagementSystem.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository userRepository;
+        private readonly ShiftManagementDbContext shiftManagementDb;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserRepository userRepository, ShiftManagementDbContext shiftManagementDb)
         {
             this.userRepository = userRepository;
+            this.shiftManagementDb = shiftManagementDb;
         }
         [HttpGet]
         public async Task<IActionResult> GetUser()
@@ -35,18 +39,31 @@ namespace ET_ShiftManagementSystem.Controllers
                 var organizationRequest = new GetUserRequest()
                 {
                     username = user.username,
-                    Role= user.Role,
-                    IsActive= user.IsActive,
-                    ContactNumber= user.ContactNumber,
-                    AlternateContactNumber= user.AlternateContactNumber,
-                    Email= user.Email,
-                    CreatedDate= user.CreatedDate,
+                    Role = user.Role,
+                    IsActive = user.IsActive,
+                    ContactNumber = user.ContactNumber,
+                    AlternateContactNumber = user.AlternateContactNumber,
+                    Email = user.Email,
+                    CreatedDate = user.CreatedDate,
                 };
                 OrganizationRequest.Add(organizationRequest);
 
             });
 
             return Ok(OrganizationRequest);
+        }
+        [HttpGet]
+        [Route("Tenent")]
+        public async Task<IActionResult> GetUser(Guid tenentId)
+        {
+            var user = await shiftManagementDb.users.Where(u => u.TenentID == tenentId).ToListAsync();
+            if (user == null)
+            {
+                return NotFound();
+
+            }
+            var result = $"{user.Count} ";
+            return Ok(user);
         }
     }
 }
