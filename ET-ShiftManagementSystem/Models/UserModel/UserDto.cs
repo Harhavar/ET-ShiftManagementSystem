@@ -23,5 +23,7 @@ namespace ET_ShiftManagementSystem.Models.UserModel
         public string AlternateContactNumber { get; set; }
 
         public Guid? TenateID { get; set; }
+
+        public string? Role { get; set; }
     }
 }

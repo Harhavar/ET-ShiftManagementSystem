@@ -4,6 +4,9 @@ using ET_ShiftManagementSystem.Servises;
 using System.Security.Cryptography.X509Certificates;
 using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
+using Microsoft.Extensions.Logging;
+using org.apache.zookeeper.data;
+
 
 namespace ET_ShiftManagementSystem.Servises
 {
@@ -16,13 +19,20 @@ namespace ET_ShiftManagementSystem.Servises
         Task<User> RegisterUserAsync(User user);
 
         User Get(Guid userId);
+
+        Task<User> EditUser(Guid userId, User user);
+
         Task<User> RegisterAdminAsync(User user);
         Task<User> RegisterORGAdminAsync(User user);
 
         //Task Update(User user);
         public Task<IEnumerable<User>> GetUser();
+        public Task<IEnumerable<User>> GetUser(Guid guid);
 
+       
         Task<User> FindByEmailAsync(string email);
+
+       
         void UpdateUser(Guid userId, string pasword);
     }
     public class UserRepository : IUserRepository
@@ -117,13 +127,15 @@ namespace ET_ShiftManagementSystem.Servises
         {
             user.id = Guid.NewGuid();
             await _ShiftManagementDbContext.users.AddAsync(user);
-            await _ShiftManagementDbContext.SaveChangesAsync();
+            //await _ShiftManagementDbContext.SaveChangesAsync();
             var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "User").Select(a => a.Id).FirstOrDefault();
             var Role = _ShiftManagementDbContext.roles.Where(x => x.Name == "User").Select(a => a.Name).FirstOrDefault();
 
             user.Role = Role;
             user.IsActive= true;
             user.CreatedDate = DateTime.Now;
+            user.LastName = "";
+            user.password = "lkjhgfdsa";
             await _ShiftManagementDbContext.SaveChangesAsync();
             if (!string.IsNullOrEmpty(roleID.ToString()))
             {
@@ -233,6 +245,53 @@ namespace ET_ShiftManagementSystem.Servises
         public async Task<IEnumerable<User>> GetUser()
         {
            return await _ShiftManagementDbContext.users.ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetUser(Guid guid)
+        {
+           var user = await _ShiftManagementDbContext.users.Where( x => x.TenentID == guid ).ToListAsync();
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return (IEnumerable<User>)user;
+        }
+
+        public async Task<User> EditUser(Guid userId, User user)
+        {
+            var ExistingUser = _ShiftManagementDbContext.users.FirstOrDefault(x => x.id == userId);
+
+            if (ExistingUser == null)
+            {
+                return null;
+            }
+
+            ExistingUser.username = user.FirstName;
+            ExistingUser.Email = user.Email;
+            ExistingUser.ContactNumber= user.ContactNumber;
+            ExistingUser.AlternateContactNumber= user.AlternateContactNumber;
+            ExistingUser.IsActive= user.IsActive;
+            ExistingUser.Role= user.Role;
+
+            //ExistingUser.OrganizationLogo = organization.OrganizationLogo;
+            //ExistingOrganization.OrganizationName = organization.OrganizationName;
+            //ExistingOrganization.StreetLandmark = organization.StreetLandmark;
+            //ExistingOrganization.PhoneNumber = organization.PhoneNumber;
+            //ExistingOrganization.HouseBuildingNumber = organization.HouseBuildingNumber;
+            //ExistingOrganization.Country = organization.Country;
+            //ExistingOrganization.PhoneNumber = organization.PhoneNumber;
+            //ExistingOrganization.Adminemailaddress = organization.Adminemailaddress;
+            //ExistingOrganization.Adminfullname = organization.Adminfullname;
+            //ExistingOrganization.EmailAddress = organization.EmailAddress;
+            //ExistingOrganization.CityTown = organization.CityTown;
+            //ExistingOrganization.StateProvince = organization.StateProvince;
+            //ExistingOrganization.LastModifiedDate = DateTime.Now;
+
+            await _ShiftManagementDbContext.SaveChangesAsync();
+
+            return ExistingUser;
         }
     }
 }

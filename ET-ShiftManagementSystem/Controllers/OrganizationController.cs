@@ -35,7 +35,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("ViewData")]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Organization>>> Get()
         {
             var Organization = await _services.GetOrganizationData();
