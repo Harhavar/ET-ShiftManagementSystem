@@ -9,7 +9,7 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ShiftManagementDbContext dbContext;
 
-        public DataController(IHttpContextAccessor httpContextAccessor , ShiftManagementDbContext dbContext)
+        public DataController(IHttpContextAccessor httpContextAccessor, ShiftManagementDbContext dbContext)
         {
             _httpContextAccessor = httpContextAccessor;
             this.dbContext = dbContext;
@@ -30,6 +30,10 @@ namespace ET_ShiftManagementSystem.Controllers
         //    var data = dbContext.users.Where(x => x.TenateID.ToString() == tenantId);
         //    return data.ToString();
         //}
+       // using (var memorystream = new MemoryStream() )
+       //{
+       // }
+
     }
 
 }

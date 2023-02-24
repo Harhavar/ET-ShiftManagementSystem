@@ -2,6 +2,7 @@
 using ET_ShiftManagementSystem.Models.Authmodel;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Models.UserModel;
+using ET_ShiftManagementSystem.Services;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
@@ -60,7 +61,7 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("Tenent")]
+        [Route("CountUsers")]
         public async Task<IActionResult> GetUser(Guid tenentId)
         {
             var user = await shiftManagementDb.users.Where(u => u.TenentID == tenentId).ToListAsync();
@@ -71,9 +72,11 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             var result = $"{user.Count} ";
 
-            return Ok(user);
+            return Ok(user.Count());
         }
 
+
+        //getting users in the single organization 
         [HttpGet]
         [Route("Tenent/users")]
         public async Task<IActionResult> GetUsers(Guid TenentID)
@@ -108,6 +111,7 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(OrganizationRequest);
         }
 
+        //getting single user 
         [HttpGet]
         [Route("Tenent/users/Id")]
         public async  Task<IActionResult> Getuser(Guid UserId)
@@ -140,6 +144,7 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(OrganizationRequest);
         }
 
+        //adding user inside the organization by Admin
         [HttpPost]
         [Route("AddUser")]
         public async Task<IActionResult> AddUser( Guid Tenentid ,AddUserRequest userRequest)
@@ -180,7 +185,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
 
             await emailSender.SendEmailAsync(user.Email, $"Invitation To Project",
-                $" use this credential to login UserId :{user.username} \n Please reset ur password  <h1><a href='{"http://localhost:3000/resetpassword"}'>click here</a></h1>.");
+                $"use this credential to login UserId :{user.username} \n Please reset ur password  <h1><a href='{"http://localhost:3000/resetpassword"}'>click here</a></h1>.");
 
             return CreatedAtAction(nameof(Getuser), new { id = UserDTO.id }, UserDTO);
         }
@@ -224,5 +229,17 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(Euser);
 
         }
+
+        //[HttpDelete]
+        //public async Task<IActionResult> DeleteUser(Guid UserId)
+        //{
+        //    var delete = await userRepository.DeleteUser(UserId);
+        //    if (delete == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(delete);
+        //}
     }
 }

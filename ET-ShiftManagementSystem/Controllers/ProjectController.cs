@@ -126,7 +126,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
             var ProjectDTO = mapper.Map<List<ProjectDto>>(project);
 
-            return Ok(ProjectDTO);
+            return Ok(ProjectDTO.Count());
 
         }
 
@@ -194,7 +194,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     Description = ProjectDto.Description,
                     ClientName = ProjectDto.ClientName,
                     CreatedBy = ProjectDto.CreatedBy,
-                    CreatedDate = DateTime.Now,
+                   // CreatedDate = DateTime.Now,
                     ModifieBy = ProjectDto.ModifieBy,
                     ModifieDate = DateTime.Now,
                     IsActive = ProjectDto.IsActive

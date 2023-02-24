@@ -34,6 +34,7 @@ namespace ET_ShiftManagementSystem.Servises
 
        
         void UpdateUser(Guid userId, string pasword);
+        public Task<User> DeleteUser(Guid id);
     }
     public class UserRepository : IUserRepository
 
@@ -273,25 +274,34 @@ namespace ET_ShiftManagementSystem.Servises
             ExistingUser.ContactNumber= user.ContactNumber;
             ExistingUser.AlternateContactNumber= user.AlternateContactNumber;
             ExistingUser.IsActive= user.IsActive;
-            ExistingUser.Role= user.Role;
-
-            //ExistingUser.OrganizationLogo = organization.OrganizationLogo;
-            //ExistingOrganization.OrganizationName = organization.OrganizationName;
-            //ExistingOrganization.StreetLandmark = organization.StreetLandmark;
-            //ExistingOrganization.PhoneNumber = organization.PhoneNumber;
-            //ExistingOrganization.HouseBuildingNumber = organization.HouseBuildingNumber;
-            //ExistingOrganization.Country = organization.Country;
-            //ExistingOrganization.PhoneNumber = organization.PhoneNumber;
-            //ExistingOrganization.Adminemailaddress = organization.Adminemailaddress;
-            //ExistingOrganization.Adminfullname = organization.Adminfullname;
-            //ExistingOrganization.EmailAddress = organization.EmailAddress;
-            //ExistingOrganization.CityTown = organization.CityTown;
-            //ExistingOrganization.StateProvince = organization.StateProvince;
-            //ExistingOrganization.LastModifiedDate = DateTime.Now;
+            if(user.Role == "ProjectManager")
+            {
+                var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "Projectmanager").Select(a => a.Name).FirstOrDefault();
+                ExistingUser.Role = roleID;
+            }
+            else if (user.Role == "TeamManager")
+            {
+                var roleID = _ShiftManagementDbContext.roles.Where(x => x.Name == "TeamManager").Select(a => a.Name).FirstOrDefault();
+                ExistingUser.Role = roleID;
+            }
 
             await _ShiftManagementDbContext.SaveChangesAsync();
 
             return ExistingUser;
+        }
+        public async Task<User> DeleteUser(Guid id)
+        {
+            var deleteUser = await _ShiftManagementDbContext.users.FirstOrDefaultAsync(x => x.id == id);
+
+            if (deleteUser == null)
+            {
+                return null;
+
+            }
+
+            _ShiftManagementDbContext.users.Remove(deleteUser);
+            _ShiftManagementDbContext.SaveChanges();
+            return deleteUser;
         }
     }
 }

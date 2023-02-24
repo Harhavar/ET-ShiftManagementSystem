@@ -35,6 +35,8 @@ namespace ET_ShiftManagementSystem.Controllers
 
             var DocDTO = mapper.Map<List<DocDTO>>(Doc);
 
+            
+
             return Ok(DocDTO);
         }
 

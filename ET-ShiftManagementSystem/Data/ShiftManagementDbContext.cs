@@ -20,7 +20,7 @@ namespace ET_ShiftManagementSystem.Data
         public ShiftManagementDbContext(DbContextOptions<ShiftManagementDbContext> options, ITenantGetter tenantGetter)
         : base(options)
         {
-            //tenant = tenantGetter.Tenant;
+           
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,25 +36,25 @@ namespace ET_ShiftManagementSystem.Data
             //   .Entity<Tenate>()
             //    .HasQueryFilter(a => a.TenateId == tenant)
             //    .HasData("");
-        //modelBuilder.Entity<ProjectUser>()
-        //    .HasOne(x => x.project)
-        //    .WithMany(x => x.Projects).
-        //    HasForeignKey(x => x.ProjectId);
-        //modelBuilder.Entity<ProjectUser>()
-        //    .HasOne(x => x.User)
-        //    .WithMany(y => y.Projects).
-        //    HasForeignKey(x => x.userid);
-        //modelBuilder.Entity<ProjectUser>()
-        //    .HasOne(u => u.project)
-        //    .WithMany(p => p.ProjectUsers)
-        //    .HasForeignKey(u => u.ProjectId);
-        //modelBuilder.Entity<ProjectUser>()
-        //    .HasOne(u => u.User)
-        //    .WithMany(p => p.ProjectUsers)
-        //    .HasForeignKey(u => u.UserId);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(x => x.project)
+            //    .WithMany(x => x.Projects).
+            //    HasForeignKey(x => x.ProjectId);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(x => x.User)
+            //    .WithMany(y => y.Projects).
+            //    HasForeignKey(x => x.userid);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(u => u.project)
+            //    .WithMany(p => p.ProjectUsers)
+            //    .HasForeignKey(u => u.ProjectId);
+            //modelBuilder.Entity<ProjectUser>()
+            //    .HasOne(u => u.User)
+            //    .WithMany(p => p.ProjectUsers)
+            //    .HasForeignKey(u => u.UserId);
 
         }
-        private readonly int tenant;
+        // private readonly int tenant;
         //public ShiftManagementDbContext(DbContextOptions<ShiftManagementDbContext> options, ITenantGetter tenantGetter)
         //: base(options)
         //{
@@ -69,6 +69,8 @@ namespace ET_ShiftManagementSystem.Data
         //        .HasData();
         //}
         public DbSet<Project> projects { get; set; }
+
+        public DbSet<Projects> Projects { get; set; }
 
         public DbSet<ProjectDetail> projectDetails { get; set; }
 
@@ -99,8 +101,18 @@ namespace ET_ShiftManagementSystem.Data
         public DbSet<Tenate> Tenates { get; set; }
 
         public DbSet<Organization> Organizations { get; set; }
+
         public DbSet<Permission> Permissions { get; set; }
 
+        public DbSet<OrgPermission> OrgPermissions { get; set; }
 
+
+        public DbSet<OrganizationRole> OrganizationRoles { get; set; }
+
+        public DbSet<GlobalRole> GlobalRoles { get; set; }
+
+
+
+        public DbSet<FileDetails> FileDetails { get; set; }
     }
 }

@@ -69,6 +69,13 @@ builder.Services.AddScoped<ITenateServices, TenateServices>();
 
 builder.Services.AddScoped<IPermissionServises, PermissionServises>();
 
+builder.Services.AddScoped<IProjectServices, ProjectServices>();
+
+builder.Services.AddScoped<IRoleServices , RoleServices>();
+
+builder.Services.AddScoped<IOrganizationRoleServices, OrganizationRoleServices>();
+
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
