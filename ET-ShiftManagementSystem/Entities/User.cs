@@ -32,7 +32,7 @@ namespace ShiftMgtDbContext.Entities
 
         public string? Role { get; set; }
 
-        public Guid? TenentID { get; set; }
+        public Guid TenentID { get; set; }
 
         public DateTime? CreatedDate { get; set; }
 

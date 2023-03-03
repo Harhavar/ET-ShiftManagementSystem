@@ -11,15 +11,15 @@ namespace ET_ShiftManagementSystem.Entities
     public class Shift
     {
         [Key]
-        public int ShiftId { get; set; }
+        public Guid ShiftID { get; set; }
 
         public string ShiftName { get; set; }
 
-        public DateTime StartTime { get; set; }
+        public TimeSpan StartTime { get; set; }
 
-        public DateTime EndTime { get; set; }
+        public TimeSpan EndTime { get; set; }
 
-        //[ForeignKey("ShiftId")]
-        //public virtual Comment? CommentDetail { get; set; }
+        public Guid TenantId { get; set; }
+
     }
 }

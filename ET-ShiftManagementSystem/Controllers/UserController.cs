@@ -113,7 +113,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         //getting single user 
         [HttpGet]
-        [Route("Tenent/users/Id")]
+        [Route("Tenent/users/{UserId}")]
         public async  Task<IActionResult> Getuser(Guid UserId)
         {
             var user = userRepository.Get(UserId);

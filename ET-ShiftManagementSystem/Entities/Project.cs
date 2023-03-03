@@ -30,10 +30,6 @@ namespace ET_ShiftManagementSystem.Entities
 
         public bool IsActive { get; set; }
 
-        //public List<ProjectUser> ProjectUsers { get; set; }
-
-        //public ICollection<User> users { get; set; }
-
 
     }
 }

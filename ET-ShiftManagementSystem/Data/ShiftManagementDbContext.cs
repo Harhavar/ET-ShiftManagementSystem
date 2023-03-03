@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ShiftMgtDbContext.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -111,8 +112,14 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<GlobalRole> GlobalRoles { get; set; }
 
-
+        public DbSet<Tasks> Tasks { get; set; }
 
         public DbSet<FileDetails> FileDetails { get; set; }
+
+        public DbSet<TaskComment> TaskComments { get; set; }
+
+        public DbSet<Note> Notes { get; set; }
+
+        public DbSet<UserShift> UserShifts { get; set; }
     }
 }

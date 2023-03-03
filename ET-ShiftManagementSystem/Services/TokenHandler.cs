@@ -1,6 +1,7 @@
 ﻿//using IDWalks.Models.Domines;
 using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Models.Authmodel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using ShiftMgtDbContext.Entities;
@@ -57,8 +58,10 @@ namespace ET_ShiftManagementSystem.Servises
 
             var t =  Task.FromResult(new JwtSecurityTokenHandler().WriteToken(Token));
 
+            //var user = userRepository.AuthenticateAsync(loginRequest.username, loginRequest.password);
+
             //var t1 = t.Result;
-            
+
             return  t;
         }
 
@@ -81,6 +84,15 @@ namespace ET_ShiftManagementSystem.Servises
             }
 
             return token;
+        }
+        public class myResponce
+        {
+            public Guid id { get; set; }
+
+            public Guid TenentID { get; set; }
+            public string Role { get; set; }
+
+            public Task Token { get; set; }
         }
     }
 }

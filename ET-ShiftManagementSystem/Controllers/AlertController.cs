@@ -2,6 +2,7 @@
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.AlertModel;
 using ET_ShiftManagementSystem.Servises;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -69,7 +70,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [EnableCors("CorePolicy")]
-        [Authorize(Roles = "SystemAdmin")]
+       // [Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Alert>>> Get()
         {
             var alert = await alertServices.GetAlertAsync();
@@ -84,6 +85,7 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 var alertDTO = new Models.AlertModel.AlertsDTO()
                 {
+                    severity = (int)alert.severity,
                     CreatedDate = alert.CreatedDate,
                     AlertName = alert.AlertName,
                     RCA = alert.RCA,
@@ -92,16 +94,21 @@ namespace ET_ShiftManagementSystem.Controllers
                     ReportedBy = alert.ReportedBy,
                     ReportedTo = alert.ReportedTo,
                     Id = alert.Id,
+                    lastModifiedDate = alert.lastModifiedDate,
+                    Status = alert.Status,
+                    TenantId = alert.TenantId,
+                    ProjectId = alert.ProjectId,
+
                 };
                 AlertDto.Add(alertDTO);
 
             });
             return Ok(AlertDto);
         }
-
+        //GetAllAlertBySeveority(severityLevel severity)
         [HttpGet]
         [Route("all")]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Alert>>> GetAllalert()
         {
             try
@@ -119,6 +126,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var alertDTO = new Models.AlertModel.AlertsDTO()
                     {
+                        severity= (int)alert.severity,
                         CreatedDate = alert.CreatedDate,
                         AlertName = alert.AlertName,
                         RCA = alert.RCA,
@@ -127,7 +135,55 @@ namespace ET_ShiftManagementSystem.Controllers
                         ReportedBy = alert.ReportedBy,
                         ReportedTo = alert.ReportedTo,
                         Id = alert.Id,
+                        lastModifiedDate = alert.lastModifiedDate,
+                        Status = alert.Status,
+                        TenantId = alert.TenantId,
+                        ProjectId = alert.ProjectId,
 
+                    };
+                    AlertDto.Add(alertDTO);
+
+                });
+                return Ok(AlertDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("BySeverity")]
+        //[Authorize(Roles = "SystemAdmin")]
+        public async Task<ActionResult<IEnumerable<Alert>>> GetAllAlertBySeveority(severityLevel severity)
+        {
+            try
+            {
+
+                var alert = await alertServices.GetAllAlertBySeveority(severity);
+
+                if (alert == null)
+                {
+                    return NotFound();
+                }
+
+                var AlertDto = new List<AlertsDTO>();
+                alert.ToList().ForEach(alert =>
+                {
+                    var alertDTO = new Models.AlertModel.AlertsDTO()
+                    {
+                        severity = (int)alert.severity,
+                        CreatedDate = alert.CreatedDate,
+                        AlertName = alert.AlertName,
+                        RCA = alert.RCA,
+                        TriggeredTime = alert.TriggeredTime,
+                        Description = alert.Description,
+                        ReportedBy = alert.ReportedBy,
+                        ReportedTo = alert.ReportedTo,
+                        Id = alert.Id,
+                        lastModifiedDate = alert.lastModifiedDate,
+                        Status = alert.Status,
+                        TenantId = alert.TenantId,
+                        ProjectId = alert.ProjectId,
                     };
                     AlertDto.Add(alertDTO);
 
@@ -141,8 +197,8 @@ namespace ET_ShiftManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SystemAdmin")]
-        public IActionResult addAlert(Alert alert)
+        //[Authorize(Roles = "SystemAdmin")]
+        public async Task<ActionResult> addAlert(Guid ProjectID , [FromBody]AddAlertRequest alert)
         {
             try
             {
@@ -151,22 +207,12 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     return BadRequest();
                 }
+                
 
-                var aler = new Alert
-                {
-                    AlertName = alert.AlertName,
-                    //Id = alert.Id,
-                    RCA = alert.RCA,
-                    Description = alert.Description,
-                    ReportedBy = alert.ReportedBy,
-                    ReportedTo = alert.ReportedTo,
-                    TriggeredTime = alert.TriggeredTime,
-                    CreatedDate = DateTime.Now
-                };
 
-                var alertDTO = alertServices.AddAlert(aler);
+                 await alertServices.AddAlert(ProjectID ,alert.alertRequest, alert.severity);
 
-                return Ok(alertDTO);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -176,7 +222,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpDelete]
         [Authorize(Roles = "SystemAdmin")]
-        public async Task<ActionResult> deleteAlert(int id)
+        public async Task<ActionResult> deleteAlert(Guid id)
         {
             var delete = await alertServices.DeleteAlertAsync(id);
 
@@ -187,13 +233,18 @@ namespace ET_ShiftManagementSystem.Controllers
 
             var alertDTO = new Models.AlertModel.AlertsDTO()
             {
+                severity = (int)delete.severity,
                 AlertName = delete.AlertName,
                 RCA = delete.RCA,
                 Description = delete.Description,
                 ReportedBy = delete.ReportedBy,
                 ReportedTo = delete.ReportedTo,
                 TriggeredTime = delete.TriggeredTime,
-                Id = id
+                Id = id,
+                lastModifiedDate = delete.lastModifiedDate,
+                Status = delete.Status,
+                TenantId = delete.TenantId,
+                ProjectId = delete.ProjectId,
             };
 
             return Ok(alertDTO);

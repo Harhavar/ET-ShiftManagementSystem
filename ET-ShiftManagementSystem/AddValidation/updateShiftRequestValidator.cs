@@ -7,7 +7,7 @@ namespace ET_ShiftManagementSystem.AddValidation
     {
         public updateShiftRequestValidator()
         {
-                RuleFor( s => s.ShiftId ).NotEmpty();
+                RuleFor( s => s.ShiftID ).NotEmpty();
                 RuleFor( s => s.StartTime ).NotEmpty();
                 RuleFor( s => s.EndTime ).NotEmpty();
                 RuleFor( s => s.ShiftName ).NotEmpty();

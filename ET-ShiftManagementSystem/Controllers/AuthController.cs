@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using static System.Net.WebRequestMethods;
 using ET_ShiftManagementSystem.Models.Authmodel;
+using Azure.Storage.Blobs.Models;
+using static ET_ShiftManagementSystem.Servises.TokenHandler;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -244,7 +246,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [ActionName("LoginAync")]
         //[Authorize(Roles= "SuperAdmin,Admin,User,SystemAdmin")]
         public IActionResult LoginAync(LoginRequest loginRequest)
-        {
+         {
             var user = userRepository.AuthenticateAsync(loginRequest.username, loginRequest.password);
 
             if (user != null)
@@ -253,14 +255,23 @@ namespace ET_ShiftManagementSystem.Controllers
                 //generate token 
                 var Token = tokenHandler.CreateToken(user);
 
-                var result = $"User token : \"{Token.Result}\" ,  userId :\"{user.id}\" , user role : \"{user.Role}\" , OrganizationID \"{user.TenentID}\"";
+                //var result = $"User token : \"{Token.Result}\" ,  userId :\"{user.id}\" , user role : \"{user.Role}\" , OrganizationID \"{user.TenentID}\"";
 
-                return Ok(result);
+                var reponse = new myResponce()
+                {
+                    id = user.id,
+                    TenentID = user.TenentID,
+                    Role=user.Role,
+                    Token = Token,
+                };
+
+                return Ok(reponse);
             }
 
             return BadRequest("Email / username or password doesn’t match");
         }
 
+        
 
         [HttpPost]
         [Route("ForgetPassword")]

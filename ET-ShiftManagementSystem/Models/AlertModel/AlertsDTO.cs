@@ -2,7 +2,7 @@
 {
     public class AlertsDTO
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string AlertName { get; set; }
 
@@ -17,5 +17,13 @@
         public string ReportedTo { get; set; }
 
         public DateTime CreatedDate { get; set; }
+        public int severity { get; set; }
+        public DateTime lastModifiedDate { get; set; }
+
+        public string Status { get; set; }
+
+        public Guid ProjectId { get; set; }
+
+        public Guid TenantId { get; set; }
     }
 }

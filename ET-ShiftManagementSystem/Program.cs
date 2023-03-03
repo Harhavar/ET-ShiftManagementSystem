@@ -47,6 +47,10 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
+
+
 builder.Services.AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Program>());
 
 builder.Services.AddScoped<IProjectServises, ProjectServises>();
@@ -76,6 +80,10 @@ builder.Services.AddScoped<IRoleServices , RoleServices>();
 builder.Services.AddScoped<IOrganizationRoleServices, OrganizationRoleServices>();
 
 builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.AddScoped<INotesServices, NotesServices>();
+
+builder.Services.AddTransient<TaskCommentServices>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
@@ -118,6 +126,8 @@ builder.Services.AddScoped<ITaskServices, TaskServices>();
 builder.Services.AddScoped<IAlertServices, AlertServices>();
 
 builder.Services.AddScoped<IProjectUserRepository, ProjectUserRepository>();
+
+builder.Services.AddScoped<ITasksServices,  TasksServices>();
 
 
 

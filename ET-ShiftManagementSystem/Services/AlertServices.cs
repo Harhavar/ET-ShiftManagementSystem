@@ -1,6 +1,8 @@
 ﻿using CloudinaryDotNet.Actions;
 using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Models.AlertModel;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Imaging;
 
@@ -10,13 +12,14 @@ namespace ET_ShiftManagementSystem.Servises
     {
         Task<IEnumerable<Alert>> GetAlertAsync();
         Task<IEnumerable<Alert>> GetAllAlert();
+        Task<IEnumerable<Alert>> GetAllAlertBySeveority(severityLevel severity);
 
         Task<IEnumerable<Alert>> GetAlertByFilter(string AlertName, DateTime from, DateTime? To);
         Task<IEnumerable<Alert>> GetAlertByFilter( DateTime from, DateTime To);
 
-        long AddAlert(Alert alert);
+        Task AddAlert(Guid ProjectId , AlertRequest alertRequest , severityLevel sevearity );
 
-        Task<Alert> DeleteAlertAsync(int id);
+        Task<Alert> DeleteAlertAsync(Guid id);
 
     }
     public class AlertServices : IAlertServices
@@ -28,15 +31,37 @@ namespace ET_ShiftManagementSystem.Servises
             _shiftManagementDb = shiftManagementDb;
         }
 
-        public long AddAlert(Alert alert)
+        public async Task AddAlert(Guid ProjectId, AlertRequest alertRequest, severityLevel sevearity)
         {
+            //if (sevearity < 0 && sevearity => 2)
+            var alert = new Alert
+            {
+                Id = Guid.NewGuid(),
+                AlertName = alertRequest.AlertName,
+                //Id = alert.Id,
+                //RCA = alertRequest.RCA,
+                Description = alertRequest.Description,
+                //ReportedBy = alertRequest.ReportedBy,
+                ReportedTo = alertRequest.ReportedTo,
+                TriggeredTime = alertRequest.TriggeredTime,
+                CreatedDate = DateTime.Now,
+                severity = sevearity,
+                Status = alertRequest.Status,
+                lastModifiedDate = DateTime.Now,
+                RCA = "",
+                ReportedBy="",
+                ProjectId= ProjectId,
+                TenantId= _shiftManagementDb.Projects.Where(x => x.ProjectId == ProjectId).Select(x=> x.TenentId).FirstOrDefault(),
 
-            _shiftManagementDb.alerts.Add(alert);
-            _shiftManagementDb.SaveChanges();
-            return alert.Id;
+
+            };
+
+             _shiftManagementDb.alerts.Add(alert);
+            await _shiftManagementDb.SaveChangesAsync();
+           
         }
 
-        public async Task<Alert> DeleteAlertAsync(int id)
+        public async Task<Alert> DeleteAlertAsync(Guid id)
         {
             var delete = await _shiftManagementDb.alerts.FirstOrDefaultAsync(x => x.Id == id);
             if (delete == null)
@@ -53,6 +78,16 @@ namespace ET_ShiftManagementSystem.Servises
         public async Task<IEnumerable<Alert>> GetAllAlert()
         {
             return await _shiftManagementDb.alerts.ToListAsync();
+        }
+        public async Task<IEnumerable<Alert>> GetAllAlertBySeveority(severityLevel severity)
+        {
+            var alerts = await _shiftManagementDb.alerts.Where(x => x.severity == severity).ToListAsync();
+
+            if (alerts == null)
+            {
+                return null;
+            }
+            return alerts;
         }
 
         public async Task<IEnumerable<Alert>> GetAlertAsync()
