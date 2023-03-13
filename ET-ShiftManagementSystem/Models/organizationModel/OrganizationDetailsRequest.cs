@@ -2,6 +2,7 @@
 {
     public class OrganizationDetailsRequest
     {
+        public Guid TenentID { get; set; }
         public string OrganizationName { get; set; }
         public byte[]? OrganizationLogo { get; set; }
         public string PhoneNumber { get; set; }

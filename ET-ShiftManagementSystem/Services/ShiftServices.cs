@@ -21,7 +21,7 @@ namespace ET_ShiftManagementSystem.Servises
         public List<Shift> GetAllShift(Guid TenatID);
         Shift GetShiftDetails(Guid ShiftId);
 
-        Task<Shift> AddSift(Shift shift);
+        Task<Shift> AddSift(Guid tenentId ,Shift shift);
         Task<Shift> GetShiftById(Guid ShiftId);
 
         Task<List<User>> userShifts(Guid ProjectId);
@@ -58,8 +58,10 @@ namespace ET_ShiftManagementSystem.Servises
         }
 
 
-        public async Task<Shift> AddSift(Shift shift)
+        public async Task<Shift> AddSift(Guid tenentId , Shift shift)
         {
+            shift.ShiftID = Guid.NewGuid();
+            shift.TenantId = tenentId;
             _dbContext.Shifts.Add(shift);
             await _dbContext.SaveChangesAsync();
             return shift;

@@ -3,264 +3,396 @@ using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Models.PermissionModel;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
+    [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     [ApiController]
-    
     public class PermissionController : Controller
     {
         private readonly IPermissionServises permissionServises;
         private readonly IMapper mapper;
 
-        public PermissionController(IPermissionServises permissionServises, IMapper mapper )
+        public PermissionController(IPermissionServises permissionServises, IMapper mapper)
         {
             this.permissionServises = permissionServises;
             this.mapper = mapper;
         }
 
-        //global permission 
+        /// <summary>
+        /// Get Global permission 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("[Controller]")]
         public async Task<ActionResult<IEnumerable<Entities.Permission>>> Get()
         {
-           var perm =  await permissionServises.GetPermissions();
-
-            if(perm == null)
+            try
             {
-                return NotFound();
-            }
-            var PermissionRequest = new List<GetGlobalPermission>();
+                var perm = await permissionServises.GetPermissions();
 
-            perm.ToList().ForEach(permission =>
-            {
-                var permissionRequest = new GetGlobalPermission()
+                if (perm == null)
                 {
-                    PermissionName = permission.PermissionName,
-                    Description= permission.Description,
-                    CreatedDate = permission.CreatedDate,
-                };
-                PermissionRequest.Add(permissionRequest);
+                    return NotFound();
+                }
+                var PermissionRequest = new List<GetGlobalPermission>();
 
-            });
+                perm.ToList().ForEach(permission =>
+                {
+                    var permissionRequest = new GetGlobalPermission()
+                    {
+                        PermissionName = permission.PermissionName,
+                        Description = permission.Description,
+                        CreatedDate = permission.CreatedDate,
+                    };
+                    PermissionRequest.Add(permissionRequest);
 
-            return Ok(PermissionRequest);
+                });
+
+                return Ok(PermissionRequest);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+            
 
         }
+
+        /// <summary>
+        /// Get perticular global permission by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[Controller]/{id:guid}")]
-       
+
         public async Task<IActionResult> GetPermissions(Guid id)
         {
-            var perm = await  permissionServises.GetPermissionById(id);
-            if(perm == null)
+            try
             {
-                return NotFound();
+                var perm = await permissionServises.GetPermissionById(id);
+                if (perm == null)
+                {
+                    return NotFound();
+                }
+
+                var PermissionRequest = mapper.Map<PermissionDTO>(perm);
+
+                return Ok(PermissionRequest);
+
             }
+            catch (Exception ex)
+            {
 
-            var PermissionRequest = mapper.Map<PermissionDTO>(perm);
+                return Ok(ex.Message);
+            }
+           
 
-            return Ok(PermissionRequest);
-
-            
         }
 
+
+        /// <summary>
+        /// Add Global permission  
+        /// </summary>
+        /// <param name="addPermission"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[Controller]")]
         public async Task<IActionResult> Addpermission(AddPermissionRequest addPermission)
         {
-            if (addPermission == null)
+            try
             {
-                return BadRequest("Should not be null");
+                if (addPermission == null)
+                {
+                    return BadRequest("Should not be null");
+                }
+                var perm = new Permission
+                {
+                    PermissionName = addPermission.PermissionName,
+                    Description = addPermission.Description,
+                };
+
+                perm = await permissionServises.AddPermission(perm);
+
+                return Ok(perm);
             }
-            var perm = new Permission
+            catch (Exception ex)
             {
-                PermissionName = addPermission.PermissionName,
-                Description = addPermission.Description,
-            };
 
-             perm = await permissionServises.AddPermission(perm);
-
-            return Ok(perm);
+                return Ok(ex.Message);
+            }
+            
         }
 
+        /// <summary>
+        /// Update Global Permission 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatePermission"></param>
+        /// <returns></returns>
         [HttpPut]
         [Route("[Controller]/{id:guid}")]
-        
-        public async Task<IActionResult> UpdatePermission([FromRoute]Guid id ,[FromBody]UpdatePermissionRequest updatePermission)
+
+        public async Task<IActionResult> UpdatePermission([FromRoute] Guid id, [FromBody] UpdatePermissionRequest updatePermission)
         {
-            var parm = new Permission
+            try
             {
-                PermissionName = updatePermission.PermissionName,
-                Description = updatePermission.Description,
+                var parm = new Permission
+                {
+                    PermissionName = updatePermission.PermissionName,
+                    Description = updatePermission.Description,
 
-            };
+                };
 
-            parm = await permissionServises.EditPermission(id, parm);
+                parm = await permissionServises.EditPermission(id, parm);
 
-            if (parm == null)
-            {
-                return NotFound();
+                if (parm == null)
+                {
+                    return NotFound();
+                }
+
+                var permissionDTO = new Models.PermissionModel.PermissionDTO()
+                {
+                    PermissionName = parm.PermissionName,
+                    Description = parm.Description,
+                    CreatedDate = parm.CreatedDate,
+                    Id = parm.Id,
+                    LastModifiedDate = parm.LastModifiedDate,
+
+                };
+                return Ok(permissionDTO);
             }
-
-            var permissionDTO = new Models.PermissionModel.PermissionDTO()
+            catch (Exception ex)
             {
-                PermissionName= parm.PermissionName,
-                Description= parm.Description,
-                CreatedDate= parm.CreatedDate,
-                Id= parm.Id,
-                LastModifiedDate= parm.LastModifiedDate,
-                
-            };
-            return Ok(permissionDTO);
+
+                throw;
+            }
+            
         }
 
+        /// <summary>
+        /// Delete Global permission
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("[Controller]")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var parm = permissionServises.GetPermissionById(id);
-            if(parm == null)
+            try
             {
-                return NotFound();
-            }
-            
-            var delete = permissionServises.DeletePermission(id);
+                var parm = permissionServises.GetPermissionById(id);
+                if (parm == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(delete);
+                var delete = permissionServises.DeletePermission(id);
+
+                return Ok(delete);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
         }
-        //organization permission 
+        /// <summary>
+        /// Get organization permission 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("org/[Controller]")]
         public async Task<ActionResult<IEnumerable<Entities.Permission>>> GetOrg()
         {
-            var perm = await permissionServises.GetOrgPermissions();
-
-            if (perm == null)
+            try
             {
-                return NotFound();
-            }
-            var PermissionRequest = new List<GetOrgPermission>();
+                var perm = await permissionServises.GetOrgPermissions();
 
-            perm.ToList().ForEach(permission =>
-            {
-                var permissionRequest = new GetOrgPermission()
+                if (perm == null)
                 {
-                    PermissionName = permission.PermissionName,
-                    Description = permission.Description,
-                    CreatedDate = permission.CreatedDate,
-                    PermissionType= permission.PermissionType,
-                    
-                };
-                PermissionRequest.Add(permissionRequest);
+                    return NotFound();
+                }
+                var PermissionRequest = new List<GetOrgPermission>();
 
-            });
+                perm.ToList().ForEach(permission =>
+                {
+                    var permissionRequest = new GetOrgPermission()
+                    {
+                        PermissionName = permission.PermissionName,
+                        Description = permission.Description,
+                        CreatedDate = permission.CreatedDate,
+                        PermissionType = permission.PermissionType,
 
-            return Ok(PermissionRequest);
+                    };
+                    PermissionRequest.Add(permissionRequest);
+
+                });
+
+                return Ok(PermissionRequest);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
 
         }
 
-        //organization permission view only one row 
+        /// <summary>
+        /// Get organization permission By giving Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
-       
+
         [Route("org/[Controller]/{id:guid}")]
         public async Task<IActionResult> GetOrgPermissions(Guid id)
         {
-            var perm = await permissionServises.GetOrgPermissionById(id);
-            if (perm == null)
+            try
             {
-                return NotFound();
-            }
+                var perm = await permissionServises.GetOrgPermissionById(id);
+                if (perm == null)
+                {
+                    return NotFound();
+                }
 
-            var PermissionRequest = new List<GetOrgPermissionview>();
+                var PermissionRequest = new List<GetOrgPermissionview>();
 
-           // perm.ToList().ForEach(permission =>
-            //{
+                // perm.ToList().ForEach(permission =>
+                //{
                 var permissionRequest = new GetOrgPermissionview()
                 {
                     PermissionName = perm.PermissionName,
                     Description = perm.Description,
                     CreatedDate = perm.CreatedDate,
                     //PermissionType = perm.PermissionType,
-                    LastModifiedDate= perm.LastModifiedDate,
+                    LastModifiedDate = perm.LastModifiedDate,
 
                 };
                 PermissionRequest.Add(permissionRequest);
 
-           // });
+                // });
 
-            return Ok(PermissionRequest);
-
+                return Ok(PermissionRequest);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
-        //add new organization permission 
+
+        /// <summary>
+        /// add new organization permission 
+        /// </summary>
+        /// <param name="addPermission"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("org/[Controller]")]
-       
+
         public async Task<IActionResult> AddOrgpermission(AddOrgPermission addPermission)
         {
-            if (addPermission == null)
+            try
             {
-                return BadRequest("Should not be null");
+                if (addPermission == null)
+                {
+                    return BadRequest("Should not be null");
+                }
+                var perm = new OrgPermission
+                {
+                    PermissionName = addPermission.PermissionName,
+                    Description = addPermission.Description,
+                };
+
+                perm = await permissionServises.AddOrgPermission(perm);
+
+                return Ok(perm);
             }
-            var perm = new OrgPermission
+            catch (Exception ex)
             {
-                PermissionName = addPermission.PermissionName,
-                Description = addPermission.Description,
-            };
 
-            perm = await permissionServises.AddOrgPermission(perm);
-
-            return Ok(perm);
+                throw;
+            }
+            
         }
 
+
+        /// <summary>
+        /// Update Organization permission
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatePermission"></param>
+        /// <returns></returns>
         [HttpPut]
-       
+
         [Route("org/[Controller]/{id:guid}")]
         public async Task<IActionResult> UpdateOrgPermission([FromRoute] Guid id, [FromBody] UpdateOrgPermission updatePermission)
         {
-            var parm = new OrgPermission
+            try
             {
-                PermissionName = updatePermission.PermissionName,
-                Description = updatePermission.Description,
+                var parm = new OrgPermission
+                {
+                    PermissionName = updatePermission.PermissionName,
+                    Description = updatePermission.Description,
+                };
 
-            };
+                parm = await permissionServises.EditOrgPermission(id, parm);
 
-            parm = await permissionServises.EditOrgPermission(id, parm);
+                if (parm == null)
+                {
+                    return NotFound();
+                }
 
-            if (parm == null)
-            {
-                return NotFound();
+                var permissionDTO = new Models.PermissionModel.OrgPermissionDTO()
+                {
+                    PermissionName = parm.PermissionName,
+                    Description = parm.Description,
+                    CreatedDate = parm.CreatedDate,
+                    Id = parm.Id,
+                    LastModifiedDate = parm.LastModifiedDate,
+                    PermissionType = parm.PermissionType,
+
+                };
+                return Ok(permissionDTO);
             }
-
-            var permissionDTO = new Models.PermissionModel.OrgPermissionDTO()
+            catch (Exception ex)
             {
-                PermissionName = parm.PermissionName,
-                Description = parm.Description,
-                CreatedDate = parm.CreatedDate,
-                Id = parm.Id,
-                LastModifiedDate = parm.LastModifiedDate,
-                PermissionType= parm.PermissionType,
 
-            };
-            return Ok(permissionDTO);
+                throw;
+            }
+            
         }
 
+        /// <summary>
+        /// Delete Organization 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("org/[Controller]")]
-        
         public async Task<IActionResult> DeleteOrgPermission(Guid id)
         {
-            //var perm = await permissionServises.GetOrgPermissionById(id);
-            var delete = await permissionServises.DeleteOrgPermission(id);
-            if (delete == null)
+            try
             {
-                return NotFound();
+                var delete = await permissionServises.DeleteOrgPermission(id);
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+                return Ok(delete);
             }
+            catch (Exception ex)
+            {
 
+                throw;
+            }
             
-
-            return Ok(delete);
         }
 
     }

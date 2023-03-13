@@ -2,12 +2,14 @@
 using ET_ShiftManagementSystem.Models.CommentModel;
 using ET_ShiftManagementSystem.Models.OrganizationRoleModel;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     public class OrganizationRoleController : Controller
     {
         private readonly IOrganizationRoleServices _roleServices;
@@ -16,103 +18,149 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             _roleServices = roleServices;
         }
-
+        /// <summary>
+        /// View Organization roles 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
 
         public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetOrganizationRole()
         {
-            var role = await _roleServices.GetRoles();
+            try
+            {
+                var role = await _roleServices.GetRoles();
 
-            if (role == null)
-            {
-                return NotFound();
-            }
-            //retur dto organizationrole
-            var OrganizationDTO = new List<OrganizationRoleViewRequest>();
-            role.ToList().ForEach(role =>
-            {
-                var organizationDTO = new Models.OrganizationRoleModel.OrganizationRoleViewRequest()
+                if (role == null)
                 {
-                    RoleName = role.RoleName,
-                    Description = role.Description,
-                    RoleType = role.RoleType,
-                    CreatedDate = role.CreatedDate,
-                    LinkedPermission = role.LinkedPermission,
+                    return NotFound();
+                }
+                //retur dto organizationrole
+                var OrganizationDTO = new List<OrganizationRoleViewRequest>();
+                role.ToList().ForEach(role =>
+                {
+                    var organizationDTO = new Models.OrganizationRoleModel.OrganizationRoleViewRequest()
+                    {
+                        RoleName = role.RoleName,
+                        Description = role.Description,
+                        RoleType = role.RoleType,
+                        CreatedDate = role.CreatedDate,
+                        LinkedPermission = role.LinkedPermission,
 
 
-                };
-                OrganizationDTO.Add(organizationDTO);
+                    };
+                    OrganizationDTO.Add(organizationDTO);
 
 
-            });
+                });
 
-            return Ok(OrganizationDTO);
+                return Ok(OrganizationDTO);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
         }
+
+        /// <summary>
+        /// View Global roles we follow in Our Application
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("Global")]
 
         public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetGlobalRole()
         {
-            var role = await _roleServices.GetGlobalRoles();
+            try
+            {
+                var role = await _roleServices.GetGlobalRoles();
 
-            if (role == null)
-            {
-                return NotFound();
+                if (role == null)
+                {
+                    return NotFound();
+                }
+                //retur dto organizationrole
+                var OrganizationDTO = new List<GlobalRoleViewRequest>();
+                role.ToList().ForEach(role =>
+                {
+                    var organizationDTO = new Models.OrganizationRoleModel.GlobalRoleViewRequest()
+                    {
+                        RoleName = role.RoleName,
+                        Description = role.Description,
+                        //RoleType = role.RoleType,
+                        CreatedDate = role.CreatedDate,
+                        LinkedPermission = role.LinkedPermission,
+
+
+                    };
+                    OrganizationDTO.Add(organizationDTO);
+
+
+                });
+
+                return Ok(OrganizationDTO);
             }
-            //retur dto organizationrole
-            var OrganizationDTO = new List<GlobalRoleViewRequest>();
-            role.ToList().ForEach(role =>
+            catch (Exception ex)
             {
-                var organizationDTO = new Models.OrganizationRoleModel.GlobalRoleViewRequest()
+
+                return BadRequest(ex.Message);
+            }
+            
+
+        }
+
+
+        /// <summary>
+        /// View Perticular Organization Role By Giving RoleID
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        [HttpGet("ViewOrgRole")]
+        //[Route("{id:guid}")]
+        public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetOrganizationViewRole(Guid guid)
+        {
+            try
+            {
+                var role = await _roleServices.GetRoles(guid);
+
+                if (role == null)
+                {
+                    return NotFound();
+                }
+                //retur dto organizationrole
+                //var OrganizationDTO = new List<OrganizationCustomRoleViewRequest>();
+                //role.ToList().ForEach(role =>
+                //{
+                var organizationDTO = new Models.OrganizationRoleModel.OrganizationCustomRoleViewRequest()
                 {
                     RoleName = role.RoleName,
                     Description = role.Description,
                     //RoleType = role.RoleType,
                     CreatedDate = role.CreatedDate,
                     LinkedPermission = role.LinkedPermission,
-
+                    LastModifiedDate = role.LastModifiedDate,
 
                 };
-                OrganizationDTO.Add(organizationDTO);
+                //OrganizationDTO.Add(organizationDTO);
 
 
-            });
+                //});
 
-            return Ok(OrganizationDTO);
-
-        }
-        [HttpGet("ViewOrgRole")]
-        //[Route("{id:guid}")]
-        public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetOrganizationViewRole(Guid guid)
-        {
-            var role = await _roleServices.GetRoles(guid);
-
-            if (role == null)
-            {
-                return NotFound();
+                return Ok(organizationDTO);
             }
-            //retur dto organizationrole
-            //var OrganizationDTO = new List<OrganizationCustomRoleViewRequest>();
-            //role.ToList().ForEach(role =>
-            //{
-            var organizationDTO = new Models.OrganizationRoleModel.OrganizationCustomRoleViewRequest()
+            catch (Exception ex)
             {
-                RoleName = role.RoleName,
-                Description = role.Description,
-                //RoleType = role.RoleType,
-                CreatedDate = role.CreatedDate,
-                LinkedPermission = role.LinkedPermission,
-                LastModifiedDate = role.LastModifiedDate,
 
-            };
-            //OrganizationDTO.Add(organizationDTO);
-
-
-            //});
-
-            return Ok(organizationDTO);
+                return Ok(ex.Message);
+            }
+            
 
         }
+        /// <summary>
+        /// View perticular Global role by giving Role Id
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
         [HttpGet("ViewGlobalRole")]
         //[Route("{id:guid}")]
         public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetGlobalViewRole(Guid guid)
@@ -146,6 +194,13 @@ namespace ET_ShiftManagementSystem.Controllers
 
         }
 
+
+        /// <summary>
+        /// Update Organization Role
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="editRole"></param>
+        /// <returns></returns>
         [HttpPut]
 
         public async Task<IActionResult> UpdateRole(Guid guid, EditRoleRequest editRole)
@@ -167,6 +222,14 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(role);
 
         }
+
+
+        /// <summary>
+        /// Update Global Role
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="editRole"></param>
+        /// <returns></returns>
         [HttpPut("global")]
 
         public async Task<IActionResult> UpdateGolbalRole(Guid guid, EditRoleRequest editRole)
@@ -189,7 +252,11 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok(role);
 
         }
-
+        /// <summary>
+        /// Add new Organization role 
+        /// </summary>
+        /// <param name="editRole"></param>
+        /// <returns></returns>
         [HttpPost]
 
         public async Task<IActionResult> PostNewRole(EditRoleRequest editRole)
@@ -211,6 +278,11 @@ namespace ET_ShiftManagementSystem.Controllers
             return CreatedAtAction(nameof(GetOrganizationViewRole), new { Id = role.Id }, role);
         }
 
+        /// <summary>
+        /// Delete Organization role 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
 
         public async Task<IActionResult> DeleteRole(Guid id)
@@ -223,6 +295,12 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             return Ok(delete);
         }
+
+        /// <summary>
+        /// Delete global Role 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("Global")]
         
         public async Task<IActionResult> DeleteGlobalRole(Guid id)

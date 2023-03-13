@@ -4,6 +4,7 @@ using ET_ShiftManagementSystem.Models.DocModel;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata;
@@ -12,6 +13,7 @@ namespace ET_ShiftManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("CorePolicy")]
     public class FilesController : ControllerBase
     {
         private readonly IFileService _uploadService;
@@ -21,6 +23,12 @@ namespace ET_ShiftManagementSystem.Controllers
             _uploadService = uploadService;
         }
 
+
+        /// <summary>
+        /// View Document Upoladed Related to the project 
+        /// </summary>
+        /// <param name="TenentId"></param>
+        /// <returns></returns>
         [HttpGet("View")]
         public async Task<ActionResult<IEnumerable<FileDetails>>> Get(Guid TenentId)
         {
@@ -53,25 +61,39 @@ namespace ET_ShiftManagementSystem.Controllers
             }
 
         }
+
+        /// <summary>
+        /// View Pericular document Uploaded by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("View-Single")]
         //[Route("{id:Guid}")]
         //[Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> GetOrganizationById(Guid id)
         {
-            var Organization = await _uploadService.GetSingleDocs(id);
-
-            if (Organization == null)
+            try
             {
-                return NotFound();
+                var Organization = await _uploadService.GetSingleDocs(id);
+
+                if (Organization == null)
+                {
+                    return NotFound();
+                }
+
+                //var doc = new ViewDocument()
+                //{
+                //    FileName = Organization.FileName,
+                //    UpdateDate = Organization.UpdateDate,
+                //};
+
+                return Ok(Organization);
             }
-
-            //var doc = new ViewDocument()
-            //{
-            //    FileName = Organization.FileName,
-            //    UpdateDate = Organization.UpdateDate,
-            //};
-
-            return Ok(Organization);
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+            
         }
 
         /// <summary>
@@ -147,17 +169,30 @@ namespace ET_ShiftManagementSystem.Controllers
 
         }
 
+        /// <summary>
+        /// Delete Unwanted File in a project 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("DeleteDoc")]
 
         public async Task<ActionResult> DeleteDocs(Guid id)
         {
-            var Delete = await _uploadService.DeleteDocuent(id);
-            if (Delete == null)
+            try
             {
-                return NotFound();
-            }
+                var Delete = await _uploadService.DeleteDocuent(id);
+                if (Delete == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(Delete.FileName);
+                return Ok(Delete.FileName);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+            
         }
     }
 }

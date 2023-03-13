@@ -7,6 +7,8 @@
     <RootNamespace>ET_ShiftManagementSystem</RootNamespace>
     <UserSecretsId>337a070e-88e3-4382-b54f-a498182572cb</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>C:\Users\HP\Desktop\ETS\ET-ShiftManagementSystem\ET-ShiftManagementSystem\bin\Debug\net6.0\ETSMS.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

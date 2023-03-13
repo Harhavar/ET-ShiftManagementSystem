@@ -110,18 +110,36 @@ namespace ET_ShiftManagementSystem.Controllers
         //    }
         //}
 
+        /// <summary>
+        /// Get All Task In Organization
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("Task")]
-        
         public async Task<ActionResult<IEnumerable<Tasks>>> GetTasks()
         {
-            var responce = await _tasksServices.GetAllTasks();
-            if(responce == null)
+            try
             {
-                return NotFound();
+                var responce = await _tasksServices.GetAllTasks();
+                if (responce == null)
+                {
+                    return NotFound();
+                }
+                return Ok(responce);
             }
-            return Ok(responce);
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
 
+        /// <summary>
+        /// Add task by user or admin 
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="TaskDetails"></param>
+        /// <returns></returns>
         [HttpPost("AddTask")]
         public async Task<ActionResult> PostTask(Guid UserId, [FromForm] TaskUploadModel TaskDetails)
         {
@@ -141,37 +159,82 @@ namespace ET_ShiftManagementSystem.Controllers
             }
         }
 
+        /// <summary>
+        /// Add Comment by User Or admin on a perticular Task
+        /// </summary>
+        /// <param name="TaskID"></param>
+        /// <param name="updateTask"></param>
+        /// <returns></returns>
         [HttpPut("Update-Task")]
         public async Task<ActionResult> AddCommentsUpdateTask(Guid TaskID ,[FromForm]UpdateTask updateTask)
         {
-            var Task = _dbContext.Tasks.FirstOrDefault(x => x.Id == TaskID);
-            if(Task == null)
+            try
             {
-                return BadRequest();
+                var Task = _dbContext.Tasks.FirstOrDefault(x => x.Id == TaskID);
+                if (Task == null)
+                {
+                    return BadRequest();
+                }
+                await _tasksServices.UpdateTask(TaskID, updateTask);
+                return Ok();
             }
-            await _tasksServices.UpdateTask(TaskID,updateTask);
-            return Ok();
-        }
-        [HttpPost("TaskComment")]
+            catch (Exception ex)
+            {
 
+                throw;
+            }
+            
+        }
+
+        /// <summary>
+        /// Add task by admin and User
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="taskVm"></param>
+        /// <returns></returns>
+        [HttpPost("TaskComment")]
         public IActionResult AddTask(Guid UserId , [FromForm] TaskCommentVM taskVm)
         {
-            _commentServices.addComment(UserId, taskVm);
-            return Ok();
+            try
+            {
+                _commentServices.addComment(UserId, taskVm);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
         }
 
+
+        /// <summary>
+        /// Get Comments in perticualr Task By Task Id 
+        /// </summary>
+        /// <param name="TaskID"></param>
+        /// <returns></returns>
         [HttpGet("TaskComments")]
 
         public IActionResult GetTask(Guid TaskID)
         {
-            var Task = _commentServices.GetAllComment(TaskID);
-            if(Task == null)
+            try
             {
-                return NotFound();
-            }
+                var Task = _commentServices.GetAllComment(TaskID);
+                if (Task == null)
+                {
+                    return NotFound();
+                }
 
-            
-            return Ok(Task);
+
+                return Ok(Task);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
         }
     }
 }

@@ -22,6 +22,12 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             this.emailServices = emailServices;
         }
+
+        /// <summary>
+        /// Send Email By Giving to mail , subject and body
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         //[Authorize(Roles = "SuperAdmin,Admin")]
         public IActionResult SendMail(Email request)
@@ -34,7 +40,7 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Ok(ex.Message);
             }
         }
     }

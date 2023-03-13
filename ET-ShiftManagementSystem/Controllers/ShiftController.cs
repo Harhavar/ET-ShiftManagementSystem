@@ -24,61 +24,109 @@ namespace ET_ShiftManagementSystem.Controllers
             this.mapper = mapper;
         }
 
+        /// <summary>
+        /// get All Shifts 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         //[Route("All/")]
         // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllShifts()
         {
-            var shift = await shiftServices.GetAllShiftAsync();
-
-            if (shift == null)
+            try
             {
-                return NotFound();
+                var shift = await shiftServices.GetAllShiftAsync();
+
+                if (shift == null)
+                {
+                    return NotFound();
+                }
+
+                var ShiftDTO = mapper.Map<List<ShiftDTO>>(shift);
+
+                return Ok(ShiftDTO);
             }
+            catch (Exception ex)
+            {
 
-            var ShiftDTO = mapper.Map<List<ShiftDTO>>(shift);
-
-            return Ok(ShiftDTO);
+                throw;
+            }
+           
         }
+
+        /// <summary>
+        /// Get Tenant Specific Shifts Defined in Organization
+        /// </summary>
+        /// <param name="TenatID"></param>
+        /// <returns></returns>
         [HttpGet("GetTenantShift")]
         //[Route("All/")]
         // [Authorize(Roles = "Admin")]
         public IActionResult GetAllShift(Guid TenatID)
         {
-            var shift =  shiftServices.GetAllShift(TenatID);
+            try
+            {
+                var shift = shiftServices.GetAllShift(TenatID);
 
-            //if (shift == null)
-            //{
-            //    return NotFound();
-            //}
+                //if (shift == null)
+                //{
+                //    return NotFound();
+                //}
 
-            //var ShiftDTO = mapper.Map<List<ShiftDTO>>(shift);
+                //var ShiftDTO = mapper.Map<List<ShiftDTO>>(shift);
 
-            return Ok(shift);
+                return Ok(shift);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
         }
 
+        /// <summary>
+        /// Get Perticular Shift By Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{id}")]
         // [Authorize(Roles = "Admin")]
         //[Authorize(Roles = "SuperAdmin,Admin,User")]
         public async Task<IActionResult> GetShiftByID(Guid id)
         {
-            var shift = await shiftServices.GetShiftById(id);
-
-            if (shift == null)
+            try
             {
-                return NotFound();
+                var shift = await shiftServices.GetShiftById(id);
+
+                if (shift == null)
+                {
+                    return NotFound();
+                }
+
+                var ShiftDTO = mapper.Map<ShiftDTO>(shift);
+
+                return Ok(ShiftDTO);
             }
+            catch (Exception ex)
+            {
 
-            var ShiftDTO = mapper.Map<ShiftDTO>(shift);
-
-            return Ok(ShiftDTO);
+                throw;
+            }
+            
         }
 
+        /// <summary>
+        /// Addshift 
+        /// </summary>
+        /// <param name="shiftDTO"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "SuperAdmin")]
-        public IActionResult AddShift([FromForm]Shift shiftDTO)
+        public IActionResult AddShift(Guid TenantId , [FromForm]Shift shiftDTO)
         {
+
             if (shiftDTO == null)
             {
                 return NotFound();
@@ -93,17 +141,22 @@ namespace ET_ShiftManagementSystem.Controllers
                     EndTime = shiftDTO.EndTime,
 
                 };
-                shiftServices.AddSift(shift);
+                shiftServices.AddSift(TenantId , shift);
 
                 return Ok(shift);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Ok(ex.Message);
             }
 
         }
 
+        /// <summary>
+        /// Update Shift 
+        /// </summary>
+        /// <param name="shiftDTO"></param>
+        /// <returns></returns>
         [HttpPut]
         //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateShift(UpdateShiftRequest shiftDTO)
@@ -127,18 +180,22 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Ok(ex.Message);
             }
         }
 
+
+        /// <summary>
+        /// Delete Shift 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpDelete]
         //[Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteShiftAsync(Guid Id)
         {
             try
             {
-
-
                 var delete = await shiftServices.DeleteShiftAsync(Id);
 
                 if (delete == null)
@@ -160,10 +217,8 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Ok(ex.Message);
             }
-
-
         }
     }
 }

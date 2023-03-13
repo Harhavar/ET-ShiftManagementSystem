@@ -1,4 +1,5 @@
-﻿using ET_ShiftManagementSystem.Entities;
+﻿using AutoMapper.Configuration.Annotations;
+using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.NotesModel;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Models.ProjectModel;
@@ -6,6 +7,8 @@ using ET_ShiftManagementSystem.Models.ProjectsModel;
 using ET_ShiftManagementSystem.Models.ShiftModel;
 using ET_ShiftManagementSystem.Services;
 using ET_ShiftManagementSystem.Servises;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Logging;
@@ -15,6 +18,9 @@ using static ET_ShiftManagementSystem.Servises.ShiftServices;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
+    [ApiController]
+    [Route("[Controller]")]
+    [EnableCors("CorePolicy")]
     public class ProjectsController : Controller
     {
         private readonly IProjectServices _projectServices;
@@ -28,174 +34,284 @@ namespace ET_ShiftManagementSystem.Controllers
             _shiftServices = shiftServices;
         }
 
+        /// <summary>
+        /// Get All Peojects in Application
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [Route("ViewProjects")]
+        [Route("GETAllProjects")]
         //[Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Projects>>> Get()
         {
-            var Organization = await _projectServices.GetProjectsData();
-
-            if (Organization == null)
+            try
             {
-                return NotFound();
-            }
+                var Organization = await _projectServices.GetProjectsData();
 
-            var OrganizationRequest = new List<ProjectsViewRequest>();
-
-            Organization.ToList().ForEach(Organization =>
-            {
-                var organizationRequest = new ProjectsViewRequest()
+                if (Organization == null)
                 {
-                    Name = Organization.Name,
-                    Description = Organization.Description,
-                    Status = Organization.Status,
-                    CreatedDate = Organization.CreatedDate,
-                };
-                OrganizationRequest.Add(organizationRequest);
+                    return NotFound();
+                }
 
-            });
+                var OrganizationRequest = new List<ProjectsViewRequest>();
 
-            return Ok(OrganizationRequest);
+                Organization.ToList().ForEach(Organization =>
+                {
+                    var organizationRequest = new ProjectsViewRequest()
+                    {
+                        Name = Organization.Name,
+                        Description = Organization.Description,
+                        Status = Organization.Status,
+                        CreatedDate = Organization.CreatedDate,
+                    };
+                    OrganizationRequest.Add(organizationRequest);
+
+                });
+
+                return Ok(OrganizationRequest);
+
+            }
+            catch (Exception ex)
+            {
+
+                return Ok(ex.Message);
+            }
 
         }
 
+        /// <summary>
+        /// Get All Project Details
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("ProjectDetails")]
         //[Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Projects>>> GetDetails()
         {
-            var Organization = await _projectServices.GetProjectsData();
-
-            if (Organization == null)
+            try
             {
-                return NotFound();
-            }
+                var Organization = await _projectServices.GetProjectsData();
 
-            var OrganizationRequest = new List<ProjectDetailsRequest>();
-
-            Organization.ToList().ForEach(Organization =>
-            {
-                var organizationRequest = new ProjectDetailsRequest()
+                if (Organization == null)
                 {
-                    Name = Organization.Name,
-                    Description = Organization.Description,
-                    Status = Organization.Status,
-                    CreatedDate = Organization.CreatedDate,
-                    LastModifiedDate = Organization.LastModifiedDate,
-                };
-                OrganizationRequest.Add(organizationRequest);
+                    return NotFound();
+                }
 
-            });
+                var OrganizationRequest = new List<ProjectDetailsRequest>();
 
-            return Ok(OrganizationRequest);
+                Organization.ToList().ForEach(Organization =>
+                {
+                    var organizationRequest = new ProjectDetailsRequest()
+                    {
+                        Name = Organization.Name,
+                        Description = Organization.Description,
+                        Status = Organization.Status,
+                        CreatedDate = Organization.CreatedDate,
+                        LastModifiedDate = Organization.LastModifiedDate,
+                    };
+                    OrganizationRequest.Add(organizationRequest);
+
+                });
+
+                return Ok(OrganizationRequest);
+
+            }
+            catch (Exception Ex)
+            {
+
+                return Ok(Ex.Message);
+            }
 
         }
 
+
+        /// <summary>
+        /// Count of projects Present in Application
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("ProjectCount")]
         //[Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Projects>>> GetCount()
         {
-            var Organization = await _projectServices.GetProjectsData();
+            try
+            {
+                var Organization = await _projectServices.GetProjectsData();
 
-            return Ok(Organization.Count());
+                return Ok(Organization.Count());
+
+            }
+            catch (Exception ex)
+            {
+
+                return Ok(ex.Message);
+            }
+
         }
 
-        [HttpGet("SingleView")]
+
+        /// <summary>
+        /// Get Perticular project By giving Id 
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpGet("GETSingleProject/{ProjectId}")]
         public async Task<ActionResult<IEnumerable<Note>>> Get(Guid ProjectId)
         {
-            var responce = await _projectServices.GetProjectById(ProjectId);
-
-            if (responce == null)
+            try
             {
-                return NotFound();
+                var responce = await _projectServices.GetProjectById(ProjectId);
+
+                if (responce == null)
+                {
+                    return NotFound();
+                }
+                var Notes = new List<ProjectDetailsRequest>();
+
+                var note = new ProjectDetailsRequest()
+                {
+                    Name = responce.Name,
+                    Description = responce.Description,
+                    Status = responce.Status,
+                    CreatedDate = responce.CreatedDate,
+                    LastModifiedDate = responce.LastModifiedDate,
+
+                };
+                Notes.Add(note);
+
+
+                return Ok(Notes);
             }
-            var Notes = new List<ProjectDetailsRequest>();
-
-            var note = new ProjectDetailsRequest()
+            catch (Exception ex)
             {
-                Name = responce.Name,
-                Description = responce.Description,
-                Status = responce.Status,
-                CreatedDate = responce.CreatedDate,
-                LastModifiedDate = responce.LastModifiedDate,
+                return Ok(ex.Message);
+            }
 
-            };
-            Notes.Add(note);
-
-
-            return Ok(Notes);
         }
 
-
-        [HttpPost("AddProject")]
+        /// <summary>
+        /// Add Project in Perticular Organization
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <param name="addProject"></param>
+        /// <returns></returns>
+        [HttpPost("AddProject/{tenantId}")]
         //[Authorize(Roles = "SystemAdmin")]
         public async Task<IActionResult> AddProject(Guid tenantId, [FromBody] AddProjectRequest addProject)
         {
-
-            var Project = new Entities.Projects()
+            try
             {
-
-                Name = addProject.Name,
-                Description = addProject.Description,
-
-            };
-
-            Project = await _projectServices.AddProject(tenantId, Project);
-
-            var userShifts = new List<UserShift>();
-
-            addProject.UserShift.ToList().ForEach(Organization =>
-            {
-                var userShift = new UserShift()
+                var Project = new Entities.Projects()
                 {
-                    ShiftId = Organization.ShiftId,
-                    UserId = Organization.UserId,
-                    ProjectId = Project.ProjectId,
-                    ID = Guid.NewGuid(),
+
+                    Name = addProject.Name,
+                    Description = addProject.Description,
+
                 };
-                userShifts.Add(userShift);
 
-            });
+                Project = await _projectServices.AddProject(tenantId, Project);
 
-            _shiftServices.Update(userShifts);
+                var userShifts = new List<UserShift>();
+
+                addProject.UserShift.ToList().ForEach(Organization =>
+                {
+                    var userShift = new UserShift()
+                    {
+                        ShiftId = Organization.ShiftId,
+                        UserId = Organization.UserId,
+                        ProjectId = Project.ProjectId,
+                        ID = Guid.NewGuid(),
+                    };
+                    userShifts.Add(userShift);
+
+                });
+
+                _shiftServices.Update(userShifts);
 
 
-            return CreatedAtAction(nameof(Get), new { Id = Project.ProjectId }, Project);
-        }
-
-        [HttpPut("UpdateProject")]
-        //[Authorize(Roles = "SystemAdmin")]
-        public async Task<IActionResult> UpdateProject(Guid ProjectId, [FromBody] AddProjectRequest addProject)
-        {
-
-            var Project = new Entities.Projects()
+                return CreatedAtAction(nameof(Get), new { Id = Project.ProjectId }, Project);
+            }
+            catch (Exception ex)
             {
 
-                Name = addProject.Name,
-                Description = addProject.Description,
-
-            };
-
-
-            Project = await _projectServices.EditProject(ProjectId, Project);
-
-
-            return Ok(Project);
-        }
-
-        [HttpDelete("DeleteProject")]
-
-        public async Task<IActionResult> DeleteProject(Guid projectId)
-        {
-            var delete = await _projectServices.DeleteProject(projectId);
-
-            if (delete == null)
-            {
-                return NotFound();
+                return Ok(ex.Message);
             }
 
-            return Ok(delete);
+        }
+
+        /// <summary>
+        /// Update Project 
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <param name="addProject"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateProject/{ProjectId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProject(Guid ProjectId, [FromBody] AddProjectRequest addProject)
+        {
+            try
+            {
+                var Project = new Entities.Projects()
+                {
+
+                    Name = addProject.Name,
+                    Description = addProject.Description,
+
+                };
+
+
+                Project = await _projectServices.EditProject(ProjectId, Project);
+
+                var ExistingUserShift = _projectServices.UserShift(ProjectId);
+
+                //foreach (var item in ExistingUserShift)
+                //{
+                //   var A = ExistingUserShift.Where(x => x.ProjectId == ProjectId).FirstOrDefault(); 
+                //    var  B = addProject.UserShift.Select(x => x.ShiftId).FirstOrDefault();
+                //    var c = addProject.UserShift.Select(x => x.UserId).FirstOrDefault();
+                //    A.ShiftId = B;
+                //    A.UserId = c;
+
+                //    _
+                //}
+
+
+
+                return Ok(ExistingUserShift);
+            }
+            catch (Exception ex)
+            {
+
+                return Ok(ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// Delete Project 
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteProject/{ProjectId}")]
+
+        public async Task<IActionResult> DeleteProject(Guid ProjectId)
+        {
+            try
+            {
+                var delete = await _projectServices.DeleteProject(ProjectId);
+
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(delete);
+            }
+            catch (Exception ex)
+            {
+
+                return Ok(ex.Message);
+            }
+
         }
         //[HttpPost]
         //[Route("Add-User-To-Shift")]
@@ -236,38 +352,47 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet("SREAssignment/{ProjectId}")]
         public async Task<IActionResult> GetShiftUser(Guid ProjectId)
         {
-            var users = await _shiftServices.userShifts(ProjectId);
-
-            var shiftUsers = new List<ShiftUserDetails>();
-            users.ToList().ForEach(Organization =>
+            try
             {
-                var note = new ShiftUserDetails()
+                var users = await _shiftServices.userShifts(ProjectId);
+
+                var shiftUsers = new List<ShiftUserDetails>();
+                users.ToList().ForEach(Organization =>
                 {
-                    username = Organization.username,
-                };
-                shiftUsers.Add(note);
+                    var note = new ShiftUserDetails()
+                    {
+                        username = Organization.username,
+                    };
+                    shiftUsers.Add(note);
 
-            });
+                });
 
-            var Shift = await _shiftServices.UserShiftName(ProjectId);
+                var Shift = await _shiftServices.UserShiftName(ProjectId);
 
-            var ShiftNames = new List<ShiftNames>();
-            Shift.ToList().ForEach(Organization =>
-            {
-                var note = new ShiftNames()
+                var ShiftNames = new List<ShiftNames>();
+                Shift.ToList().ForEach(Organization =>
                 {
-                    ShiftName = Organization.ShiftName
+                    var note = new ShiftNames()
+                    {
+                        ShiftName = Organization.ShiftName
+                    };
+                    ShiftNames.Add(note);
+
+                });
+
+                var responce = new UserShiftResponce
+                {
+                    Shifts = ShiftNames,
+                    Users = shiftUsers,
                 };
-                ShiftNames.Add(note);
-
-            });
-
-            var responce = new UserShiftResponce
+                return Ok(responce);
+            }
+            catch (Exception ex)
             {
-                Shifts = ShiftNames,
-                Users = shiftUsers,
-            };
-            return Ok(responce);
+
+                return Ok(ex.Message);
+            }
+
         }
 
         /// <summary>
@@ -280,65 +405,78 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public async Task<IActionResult> GetUserDetails(Guid ShiftId)
         {
-            var users = await _shiftServices.userShiftsDetails(ShiftId);
-
-            var shiftUsers = new List<UserDetailsInShift>();
-            users.ToList().ForEach(Organization =>
+            try
             {
-                var note = new UserDetailsInShift()
+                var users = await _shiftServices.userShiftsDetails(ShiftId);
+
+                var shiftUsers = new List<UserDetailsInShift>();
+                users.ToList().ForEach(Organization =>
                 {
-                    username = Organization.username,
-                    Email = Organization.Email,
-                    AlternateContactNumber = Organization.AlternateContactNumber,
-                    ContactNumber = Organization.ContactNumber,
-                };
-                shiftUsers.Add(note);
+                    var note = new UserDetailsInShift()
+                    {
+                        username = Organization.username,
+                        Email = Organization.Email,
+                        AlternateContactNumber = Organization.AlternateContactNumber,
+                        ContactNumber = Organization.ContactNumber,
+                    };
+                    shiftUsers.Add(note);
 
-            });
-            return Ok(shiftUsers);
+                });
+                return Ok(shiftUsers);
+            }
+            catch (Exception ex)
+            {
+
+                return Ok(ex.Message);
+            }
+
         }
-
-        [HttpPut("SREAssignment/{ProjectId}")]
-        [HttpPost("SREAssignment/{ProjectId}")]
+        /// <summary>
+        /// Add SRE to the project 
+        /// </summary>
+        /// <param name="ProjectId"></param>
+        /// <param name="UpdateExisting"></param>
+        /// <returns></returns>
+        [HttpPut("SREAssignment/Alter/{ProjectId}")]
+        [HttpPost("SREAssignment/Add/{ProjectId}")]
         public IActionResult Update(Guid ProjectId, [FromBody] List<addShift> UpdateExisting)
         {
-            var existingProject = _projectServices.GetProjectById(ProjectId);
-
-            if (existingProject != null)
+            try
             {
-                _shiftServices.UpdateExisting(ProjectId, UpdateExisting);
-                return Ok();
-            }
-            else
-            {
+                var existingProject = _projectServices.GetProjectById(ProjectId);
 
-
-                var userShifts = new List<UserShift>();
-
-                //UpdateExisting.UserShift.ToList().ForEach(Organization =>
-                //{
-                while (UpdateExisting.Count > 0)
+                if (existingProject != null)
                 {
-                    var userShift = new UserShift()
-                    {
-                        ShiftId = UpdateExisting.Select(x => x.ShiftId).FirstOrDefault(),
-                        UserId = UpdateExisting.Select(x => x.UserId).FirstOrDefault(),
-                        ProjectId = ProjectId,
-                        ID = Guid.NewGuid(),
-                    };
-                    userShifts.Add(userShift);
+                    _shiftServices.UpdateExisting(ProjectId, UpdateExisting);
                     return Ok();
                 }
-                
-
-                //});
-
-                _shiftServices.Update(userShifts);
+                else
+                {
+                    var userShifts = new List<UserShift>();
+                    //UpdateExisting.UserShift.ToList().ForEach(Organization =>
+                    //{
+                    while (UpdateExisting.Count > 0)
+                    {
+                        var userShift = new UserShift()
+                        {
+                            ShiftId = UpdateExisting.Select(x => x.ShiftId).FirstOrDefault(),
+                            UserId = UpdateExisting.Select(x => x.UserId).FirstOrDefault(),
+                            ProjectId = ProjectId,
+                            ID = Guid.NewGuid(),
+                        };
+                        userShifts.Add(userShift);
+                       
+                    }
+                    //});
+                    _shiftServices.Update(userShifts);
+                    return Ok();
+                }
+                return BadRequest("Project not found ");
             }
-
-
-            return BadRequest("Project not found ");
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
         }
-
     }
 }

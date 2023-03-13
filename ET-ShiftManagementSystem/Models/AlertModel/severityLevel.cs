@@ -2,9 +2,9 @@
 {
     public enum severityLevel
     {
-        T1 = 0,
-        T2 = 1,
-        T3 = 2,
+        P1 = 0,
+        P2 = 1,
+        P3 = 2,
 
     }
 }

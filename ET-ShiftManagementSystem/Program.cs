@@ -45,8 +45,32 @@ builder.Services.AddSwaggerGen(options =>
     {
         {securityScheme, new string[] {} }
     });
-});
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "ET_ShiftManagementSystem", Version = "v1" , Description ="Shift management system is basicaly ment For Devops engineers ",
+        Contact = new OpenApiContact
+        {
+            Name = "API Support",
+            Email = "sales@euphoricthought.com",
+            Url = new Uri("https://www.euphoricthought.com/"),
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Use under LICX",
+        },
+    });
+    var filePath = Path.Combine(System.AppContext.BaseDirectory, "ETSMS.xml");
 
+
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, filePath));
+
+});
+//(c =>
+//{
+//    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+//    var filePath = Path.Combine(System.AppContext.BaseDirectory, "new.xml");
+
+
+//    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, filePath));
+//});
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 
