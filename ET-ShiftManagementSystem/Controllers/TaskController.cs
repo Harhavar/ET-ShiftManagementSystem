@@ -236,5 +236,29 @@ namespace ET_ShiftManagementSystem.Controllers
             }
            
         }
+
+        [HttpGet]
+        [Route("[Action]")]
+        public IActionResult GetuserTaskToDo(Guid UserId)
+        {
+            var responce = _tasksServices.GetuserTaskToDo(UserId);
+
+            if(responce == null)
+            {
+                return NotFound();
+            }
+            return Ok(responce);
+        }
+        [HttpGet]
+        [Route("[Action]")]
+        public IActionResult GetuserTaskInProgress(Guid UserId)
+        {
+            var responce = _tasksServices.GetuserTaskInProgress(UserId);
+            if (responce == null)
+            {
+                return NotFound();
+            }
+            return Ok(responce);
+        }
     }
 }

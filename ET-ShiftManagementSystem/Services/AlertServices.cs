@@ -10,12 +10,12 @@ namespace ET_ShiftManagementSystem.Servises
 {
     public interface IAlertServices
     {
-        Task<IEnumerable<Alert>> GetAlertAsync();
+           List<Alert> GetTodaysAlert();
         Task<IEnumerable<Alert>> GetAllAlert();
-        Task<IEnumerable<Alert>> GetAllAlertBySeveority(severityLevel severity);
+        List<Alert> GetAllAlertBySeveority(severityLevel severity);
 
-        Task<IEnumerable<Alert>> GetAlertByFilter(string AlertName, DateTime from, DateTime? To);
-        Task<IEnumerable<Alert>> GetAlertByFilter( DateTime from, DateTime To);
+        List<Alert> GetAlertByFilter(string AlertName, DateTime from, DateTime? To);
+        List<Alert> GetAlertByFilter( DateTime from, DateTime To);
 
         Task AddAlert(Guid ProjectId , AlertRequest alertRequest , severityLevel sevearity );
 
@@ -79,9 +79,9 @@ namespace ET_ShiftManagementSystem.Servises
         {
             return await _shiftManagementDb.alerts.ToListAsync();
         }
-        public async Task<IEnumerable<Alert>> GetAllAlertBySeveority(severityLevel severity)
+        public List<Alert> GetAllAlertBySeveority(severityLevel severity)
         {
-            var alerts = await _shiftManagementDb.alerts.Where(x => x.severity == severity).ToListAsync();
+            var alerts =  _shiftManagementDb.alerts.Where(x => x.severity == severity).ToList();
 
             if (alerts == null)
             {
@@ -90,14 +90,14 @@ namespace ET_ShiftManagementSystem.Servises
             return alerts;
         }
 
-        public async Task<IEnumerable<Alert>> GetAlertAsync()
+        public List<Alert> GetTodaysAlert()
         {
             var TodaysAlert = _shiftManagementDb.alerts.Where(x => x.CreatedDate.Date == DateTime.Today);
             return TodaysAlert.ToList();
             //await _shiftManagementDb.alerts.ToListAsync();
         }
 
-        public async Task<IEnumerable<Alert>> GetAlertByFilter(string AlertName, DateTime from, DateTime? To)
+        public List<Alert> GetAlertByFilter(string AlertName, DateTime from, DateTime? To)
         {
             if (To == null)
             {
@@ -114,7 +114,7 @@ namespace ET_ShiftManagementSystem.Servises
             return filterAlerts.ToList();
         }
 
-        public async Task<IEnumerable<Alert>> GetAlertByFilter(DateTime from, DateTime To)
+        public List<Alert> GetAlertByFilter(DateTime from, DateTime To)
         {
             var alert = _shiftManagementDb.alerts
                 .Where(a => a.TriggeredTime >= from && a.TriggeredTime < To);

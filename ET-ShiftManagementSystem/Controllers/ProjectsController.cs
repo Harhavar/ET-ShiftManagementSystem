@@ -41,7 +41,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("GETAllProjects")]
         //[Authorize(Roles = "SystemAdmin")]
-        public async Task<ActionResult<IEnumerable<Entities.Projects>>> Get()
+        public async Task<ActionResult<IEnumerable<Entities.Projects>>> GetProjectsData()
         {
             try
             {
@@ -147,15 +147,14 @@ namespace ET_ShiftManagementSystem.Controllers
             }
 
         }
-
-
+       
         /// <summary>
         /// Get Perticular project By giving Id 
         /// </summary>
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("GETSingleProject/{ProjectId}")]
-        public async Task<ActionResult<IEnumerable<Note>>> Get(Guid ProjectId)
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjectById(Guid ProjectId)
         {
             try
             {
@@ -165,9 +164,9 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     return NotFound();
                 }
-                var Notes = new List<ProjectDetailsRequest>();
+                var ProjectDetails = new List<ProjectDetailsRequest>();
 
-                var note = new ProjectDetailsRequest()
+                var projectDetails = new ProjectDetailsRequest()
                 {
                     Name = responce.Name,
                     Description = responce.Description,
@@ -176,10 +175,10 @@ namespace ET_ShiftManagementSystem.Controllers
                     LastModifiedDate = responce.LastModifiedDate,
 
                 };
-                Notes.Add(note);
+                ProjectDetails.Add(projectDetails);
 
 
-                return Ok(Notes);
+                return Ok(ProjectDetails);
             }
             catch (Exception ex)
             {
@@ -228,7 +227,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 _shiftServices.Update(userShifts);
 
 
-                return CreatedAtAction(nameof(Get), new { Id = Project.ProjectId }, Project);
+                return CreatedAtAction(nameof(GetProjectById), new { Id = Project.ProjectId }, Project);
             }
             catch (Exception ex)
             {

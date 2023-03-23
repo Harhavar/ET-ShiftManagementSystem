@@ -32,7 +32,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns>alerts</returns>
         [HttpGet]
         [Route("TimeWarp")]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin,SuperAdmin")]
         public IActionResult GetAlerts(DateTime start, DateTime end)
         {
             try
@@ -58,7 +58,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("filter")]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
         public IActionResult GetAlert(string alertname, DateTime from, DateTime? to)
         {
             try
@@ -94,17 +94,17 @@ namespace ET_ShiftManagementSystem.Controllers
 
 
         /// <summary>
-        /// Get All Alerts 
+        /// Get Todays Alerts 
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [EnableCors("CorePolicy")]
        // [Authorize(Roles = "SystemAdmin")]
-        public async Task<ActionResult<IEnumerable<Alert>>> Get()
+        public async Task<ActionResult<IEnumerable<Alert>>> GetTodaysAlert()
         {
             try
             {
-                var alert = await alertServices.GetAlertAsync();
+                var alert =  alertServices.GetTodaysAlert();
 
                 if (alert == null)
                 {
@@ -142,7 +142,10 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             
         }
-        //GetAllAlertBySeveority(severityLevel severity)
+        /// <summary>
+        /// get all alert
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("all")]
         //[Authorize(Roles = "SystemAdmin")]
@@ -201,8 +204,7 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-
-                var alert = await alertServices.GetAllAlertBySeveority(severity);
+                var alert =  alertServices.GetAllAlertBySeveority(severity);
 
                 if (alert == null)
                 {
@@ -258,8 +260,6 @@ namespace ET_ShiftManagementSystem.Controllers
                     return BadRequest();
                 }
                 
-
-
                  await alertServices.AddAlert(ProjectID ,alert.alertRequest, alert.severity);
 
                 return Ok();
@@ -312,9 +312,6 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 return Ok(ex.Message);
             }   
-            
         }
-
-
     }
 }

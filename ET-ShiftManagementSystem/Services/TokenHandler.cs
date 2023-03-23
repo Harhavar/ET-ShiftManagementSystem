@@ -18,8 +18,6 @@ namespace ET_ShiftManagementSystem.Servises
         Token SaveToken(Token token);
 
         Token VerifyUserToken(string tokenId,string email);
-
-
     }
     public class TokenHandler : ITokenHandler
     {
@@ -72,9 +70,7 @@ namespace ET_ShiftManagementSystem.Servises
             shiftManagementDb.SaveChanges();
             return token;
         }
-
         
-
         public Token VerifyUserToken(string tokenId,string email)
         {
             var token = shiftManagementDb.Tokens.First(x => x.UserToken == tokenId && x.Useremail == email);
@@ -85,6 +81,7 @@ namespace ET_ShiftManagementSystem.Servises
 
             return token;
         }
+
         public class myResponce
         {
             public Guid id { get; set; }

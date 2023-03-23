@@ -6,7 +6,6 @@ using ET_ShiftManagementSystem.Servises;
 using System.Data;
 using Microsoft.AspNetCore.Cors;
 using ET_ShiftManagementSystem.Models.ShiftModel;
-//using Microsoft.Graph;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -17,7 +16,11 @@ namespace ET_ShiftManagementSystem.Controllers
     {
         private readonly IShiftServices shiftServices;
         private readonly IMapper mapper;
-
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="shiftServices"></param>
+        /// <param name="mapper"></param>
         public ShiftController(IShiftServices shiftServices, IMapper mapper)
         {
             this.shiftServices = shiftServices;

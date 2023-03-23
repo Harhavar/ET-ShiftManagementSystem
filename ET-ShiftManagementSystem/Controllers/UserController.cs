@@ -312,7 +312,17 @@ namespace ET_ShiftManagementSystem.Controllers
             
 
         }
+        [HttpGet("Assigned-Project")]
+        public IActionResult GetAssignedProject(Guid userid)
+        {
+            var Responce = userRepository.AssignedProject(userid);
+            if (Responce == null)
+            {
+                return null;
+            }
 
+            return Ok(Responce.Count);
+        }
         //[HttpDelete]
         //public async Task<IActionResult> DeleteUser(Guid UserId)
         //{

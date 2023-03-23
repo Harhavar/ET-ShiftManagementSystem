@@ -11,9 +11,9 @@ namespace ET_ShiftManagementSystem.Services
     public interface ITasksServices
     {
         public Task<IEnumerable<Tasks>> GetAllTasks();
-
-
-        public Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, string TaskGivento);
+        public int GetuserTaskToDo(Guid userId);
+        public int GetuserTaskInProgress(Guid userId);
+        public Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento);
         Task UpdateTask(Guid TaskID , UpdateTask updateTask);
     }
 
@@ -32,19 +32,32 @@ namespace ET_ShiftManagementSystem.Services
             return await _dbContext.Tasks.ToListAsync();
         }
 
-        public async Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, string TaskGivento)
+        public int GetuserTaskToDo(Guid userId)
+        {
+            var responce = _dbContext.Tasks.Where(x => x.TaskGivenToID== userId).Where( x => x.Actions == Actions.ToDo).ToList();
+           
+            return responce.Count;
+        }
+        public int GetuserTaskInProgress(Guid userId)
+        {
+            var responce = _dbContext.Tasks.Where(x => x.TaskGivenToID == userId).Where(x => x.Actions == Actions.inProgress).ToList();
+
+            return responce.Count;
+        }
+
+        public async Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento)
         {
 
             try
             {
                 var username = _dbContext.users.Where(x => x.id == UserId).Select(x => x.username).FirstOrDefault();
                 var TenantId = _dbContext.users.Where(x => x.id == UserId).Select(x => x.TenentID).FirstOrDefault();
-
+                var assingnedUser = _dbContext.users.Where(x => x.id == TaskGivento).Select(x => x.username).FirstOrDefault();
                 var Task = new Tasks()
                 {
                     Id = Guid.NewGuid(),
                     TenantId = TenantId,
-                    Text = $"Task given by {username} to @{TaskGivento} Description :{text}",
+                    Text = $"Task given by {username} to {TaskGivento} Description :{text}",
                     Actions = Actions,
                     DueDate = dueDate,
                     // if(dueDate => DateTime.Now) 
@@ -52,7 +65,8 @@ namespace ET_ShiftManagementSystem.Services
                     FileName = fileDetails.FileName,
                     FileType = fileType,
                     CreatedDate = DateTime.Now,
-                    TaskGivenTo = TaskGivento,
+                    TaskGivenTo = assingnedUser,
+                    TaskGivenToID = TaskGivento,
                     CreatedBy = username
 
                 };

@@ -35,6 +35,7 @@ namespace ET_ShiftManagementSystem.Servises
        
         void UpdateUser(Guid userId, string pasword);
         public Task<User> DeleteUser(Guid id);
+        public List<UserShift>  AssignedProject(Guid userid);
     }
     public class UserRepository : IUserRepository
 
@@ -302,6 +303,20 @@ namespace ET_ShiftManagementSystem.Servises
             _ShiftManagementDbContext.users.Remove(deleteUser);
             _ShiftManagementDbContext.SaveChanges();
             return deleteUser;
+
         }
+
+        public List<UserShift> AssignedProject(Guid Userid)
+        {
+            var responce = _ShiftManagementDbContext.UserShifts.Where(x => x.UserId == Userid).ToList();
+
+            if (responce == null)
+            {
+                return null;
+            }
+            return responce;
+        }
+
+
     }
 }

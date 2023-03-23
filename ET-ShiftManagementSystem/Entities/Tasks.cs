@@ -33,6 +33,7 @@ namespace ET_ShiftManagementSystem.Entities
 
         public string TaskGivenTo { get; set; }
 
+        public Guid? TaskGivenToID { get; set; }
         public List<TaskComment> TaskComments { get; set; }
     }
 }
