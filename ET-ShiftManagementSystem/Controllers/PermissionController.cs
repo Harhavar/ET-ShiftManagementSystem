@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
     [ApiController]
     public class PermissionController : Controller

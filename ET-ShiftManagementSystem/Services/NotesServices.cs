@@ -80,6 +80,21 @@ namespace ET_ShiftManagementSystem.Services
                     fileDetails.CopyTo(stream);
                     Note.FileData = stream.ToArray();
                 }
+                //var fileDataList = new List<byte[]>();
+
+                //foreach (var file in fileDetails)
+                //{
+                //    if (file.Length > 0)
+                //    {
+                //        using (var ms = new MemoryStream())
+                //        {
+                //            await file.CopyToAsync(ms);
+                //            fileDataList.Add(ms.ToArray());
+                //        }
+                //    }
+                //}
+
+                //return fileDataList;
 
                 var result = _dbContext.Notes.Add(Note);
                 await _dbContext.SaveChangesAsync();

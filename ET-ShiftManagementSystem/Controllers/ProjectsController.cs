@@ -19,7 +19,7 @@ using static ET_ShiftManagementSystem.Servises.ShiftServices;
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
     public class ProjectsController : Controller
     {
@@ -39,7 +39,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("GETAllProjects")]
+        [Route("AllProjects")]
         //[Authorize(Roles = "SystemAdmin")]
         public async Task<ActionResult<IEnumerable<Entities.Projects>>> GetProjectsData()
         {
@@ -153,7 +153,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <param name="ProjectId"></param>
         /// <returns></returns>
-        [HttpGet("GETSingleProject/{ProjectId}")]
+        [HttpGet("SingleProject/{ProjectId}")]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjectById(Guid ProjectId)
         {
             try

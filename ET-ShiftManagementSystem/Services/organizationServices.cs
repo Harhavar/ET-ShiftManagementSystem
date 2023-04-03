@@ -7,7 +7,7 @@ namespace ET_ShiftManagementSystem.Services
 {
     public interface IorganizationServices
     {
-        public Task<IEnumerable<Organization>> GetOrganizationData();
+        public List<Organization> GetOrganizationData();
 
         public Task<Organization> AddOrgnization(Organization organization);
 
@@ -63,42 +63,48 @@ namespace ET_ShiftManagementSystem.Services
             return delete;
         }
 
-        public   async Task<IEnumerable<Organization>> GetOrganizationData()
+        public   List<Organization> GetOrganizationData()
         {
-            return await shiftManagementDb.Organizations.ToListAsync();
+            return  shiftManagementDb.Organizations.ToList();
         }
 
         public async Task<Organization> GetOrgByID(Guid id)
         {
-            return await shiftManagementDb.Organizations.FirstOrDefaultAsync( x => x.TenentID==id);
+
+          var responce = await shiftManagementDb.Organizations.FirstOrDefaultAsync( x => x.TenentID==id);
+            if (responce == null)
+            {
+                return null;
+            }
+            return responce;
         }
 
         public async Task<Organization> UpdateOrganization(Guid id, Organization organization)
         {
-            var ExistingOrganization = shiftManagementDb.Organizations.FirstOrDefault(x => x.TenentID == id);
+            var ExistingOrganization = await shiftManagementDb.Organizations.FirstOrDefaultAsync(x => x.TenentID == id);
 
-            if (ExistingOrganization == null)
+            if (ExistingOrganization != null)
             {
-                return null;
+
+                ExistingOrganization.OrganizationLogo = organization.OrganizationLogo;
+                ExistingOrganization.OrganizationName = organization.OrganizationName;
+                ExistingOrganization.StreetLandmark = organization.StreetLandmark;
+                ExistingOrganization.PhoneNumber = organization.PhoneNumber;
+                ExistingOrganization.HouseBuildingNumber = organization.HouseBuildingNumber;
+                ExistingOrganization.Country = organization.Country;
+                ExistingOrganization.PhoneNumber = organization.PhoneNumber;
+                ExistingOrganization.Adminemailaddress = organization.Adminemailaddress;
+                ExistingOrganization.Adminfullname = organization.Adminfullname;
+                ExistingOrganization.EmailAddress = organization.EmailAddress;
+                ExistingOrganization.CityTown = organization.CityTown;
+                ExistingOrganization.StateProvince = organization.StateProvince;
+                ExistingOrganization.LastModifiedDate = DateTime.Now;
+
+                await shiftManagementDb.SaveChangesAsync();
+
+                return ExistingOrganization;
             }
-
-            ExistingOrganization.OrganizationLogo = organization.OrganizationLogo;
-            ExistingOrganization.OrganizationName = organization.OrganizationName;
-            ExistingOrganization.StreetLandmark = organization.StreetLandmark;
-            ExistingOrganization.PhoneNumber = organization.PhoneNumber;
-            ExistingOrganization.HouseBuildingNumber = organization.HouseBuildingNumber;
-            ExistingOrganization.Country= organization.Country;
-            ExistingOrganization.PhoneNumber= organization.PhoneNumber;
-            ExistingOrganization.Adminemailaddress= organization.Adminemailaddress;
-            ExistingOrganization.Adminfullname= organization.Adminfullname;
-            ExistingOrganization.EmailAddress= organization.EmailAddress;
-            ExistingOrganization.CityTown= organization.CityTown;
-            ExistingOrganization.StateProvince= organization.StateProvince;
-            ExistingOrganization.LastModifiedDate = DateTime.Now;
-
-            await shiftManagementDb.SaveChangesAsync();
-
-            return ExistingOrganization;
+            return null;
 
         }
     }

@@ -44,7 +44,7 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-                var Organization = await _services.GetOrganizationData();
+                var Organization =  _services.GetOrganizationData();
 
                 if (Organization == null)
                 {
@@ -71,7 +71,7 @@ namespace ET_ShiftManagementSystem.Controllers
             catch (Exception ex)
             {
 
-                return Ok(ex.Message);
+                return NotFound(ex.Message);
             }
            
 
@@ -89,7 +89,7 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-                var Organization = await _services.GetOrganizationData();
+                var Organization =  _services.GetOrganizationData();
 
                 if (Organization == null)
                 {
@@ -127,7 +127,7 @@ namespace ET_ShiftManagementSystem.Controllers
             catch (Exception ex)
             {
 
-                return Ok(ex.Message);
+                return BadRequest(ex.Message);
 
             }
             
@@ -148,19 +148,19 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 var Organization = await _services.GetOrgByID(id);
 
-                if (Organization == null)
+                if (Organization != null)
                 {
-                    return NotFound();
+                    var organizationDTO = mapper.Map<Models.organizationModels.Organization>(Organization);
+
+                    return Ok(organizationDTO);
                 }
-
-                var organizationDTO = mapper.Map<Models.organizationModels.Organization>(Organization);
-
-                return Ok(organizationDTO);
+                return NotFound();
+                
             }
             catch (Exception ex)
             {
 
-                return Ok(ex.Message);
+                return BadRequest(ex.Message);
             }
             
         }
@@ -265,7 +265,7 @@ namespace ET_ShiftManagementSystem.Controllers
             catch (Exception ex)
             {
 
-                return Ok(ex.Message);
+                return BadRequest(ex.Message);
             }
 
 
@@ -305,10 +305,10 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 organization = await _services.UpdateOrganization(id, organization);
 
-                if (organization == null)
-                {
-                    return NotFound();
-                }
+                //if (organization == null)
+                //{
+                //    return NotFound();
+                //}
 
                 var updateOrg = new Models.organizationModels.Organization()
                 {
@@ -360,8 +360,7 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-
-                return Ok(ex.Message);
+                return BadRequest(ex.Message);
             }
            
         }

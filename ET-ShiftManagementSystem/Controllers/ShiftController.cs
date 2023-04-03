@@ -10,7 +10,7 @@ using ET_ShiftManagementSystem.Models.ShiftModel;
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
     public class ShiftController : Controller
     {
@@ -62,7 +62,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <param name="TenatID"></param>
         /// <returns></returns>
-        [HttpGet("GetTenantShift")]
+        [HttpGet("TenantShift")]
         //[Route("All/")]
         // [Authorize(Roles = "Admin")]
         public IActionResult GetAllShift(Guid TenatID)

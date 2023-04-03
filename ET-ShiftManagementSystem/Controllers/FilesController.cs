@@ -32,32 +32,34 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet("View")]
         public async Task<ActionResult<IEnumerable<FileDetails>>> Get(Guid TenentId)
         {
-            var document = await _uploadService.GetallDocs(TenentId);
-
-            if (document == null)
-            {
-                return NotFound();
-            }
             try
             {
-                var Doc = new List<ViewDocument>();
+                var document = await _uploadService.GetallDocs(TenentId);
 
-                document.ToList().ForEach(document =>
+                if (document != null)
                 {
-                    var doc = new ViewDocument()
+
+                    var Doc = new List<ViewDocument>();
+
+                    document.ToList().ForEach(document =>
                     {
-                        FileName = document.FileName,
-                        UpdateDate = document.UpdateDate,
-                    };
-                    Doc.Add(doc);
+                        var doc = new ViewDocument()
+                        {
+                            FileName = document.FileName,
+                            UpdateDate = document.UpdateDate,
+                        };
+                        Doc.Add(doc);
 
-                });
+                    });
 
-                return Ok(Doc);
+                    return Ok(Doc);
+                }
+
+                return NotFound();
             }
             catch (Exception ex)
             {
-                throw;
+                return NotFound(ex);
             }
 
         }
@@ -93,7 +95,7 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 return Ok(ex.Message);
             }
-            
+
         }
 
         /// <summary>
@@ -104,19 +106,24 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost("PostSingleFile")]
         public async Task<ActionResult> PostSingleFile(Guid TenentId, [FromForm] FileUploadModel fileDetails)
         {
-            if (fileDetails == null)
-            {
-                return BadRequest();
-            }
-
             try
             {
-                await _uploadService.PostFileAsync(TenentId, fileDetails.FileDetails, fileDetails.FileType);
+                if (fileDetails == null)
+                {
+                    return BadRequest();
+                }
+                if (fileDetails == null || TenentId == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+
+                 await _uploadService.PostFileAsync(TenentId, fileDetails.FileDetails, fileDetails.FileType);
                 return Ok();
             }
             catch (Exception)
             {
-                throw;
+                return BadRequest();
             }
         }
 
@@ -164,7 +171,7 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception)
             {
-                throw;
+                return BadRequest();
             }
 
         }
@@ -192,7 +199,7 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 return Ok(ex.Message);
             }
-            
+
         }
     }
 }

@@ -12,6 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="nlog.config\**" />
+    <Content Remove="nlog.config\**" />
+    <EmbeddedResource Remove="nlog.config\**" />
+    <None Remove="nlog.config\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AuthPermissions.AspNetCore" Version="4.1.0" />
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
@@ -38,7 +45,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.2.2" />
     <PackageReference Include="SendGrid" Version="9.28.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.1-dev-00295" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
   </ItemGroup>

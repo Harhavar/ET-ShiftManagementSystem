@@ -48,6 +48,7 @@ namespace ET_ShiftManagementSystem.Services
 
                 var result = dbContextClass.FileDetails.Add(fileDetails);
                 await dbContextClass.SaveChangesAsync();
+               // return result;
             }
             catch (Exception)
             {

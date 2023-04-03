@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
+using Serilog;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
     [EnableCors("CorePolicy")]
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     public class AlertController : Controller
     {
         private readonly IAlertServices alertServices;
@@ -104,6 +105,7 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
+                Log.Information("LoggerInfo");
                 var alert =  alertServices.GetTodaysAlert();
 
                 if (alert == null)
@@ -200,46 +202,46 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("BySeverity")]
         //[Authorize(Roles = "SystemAdmin")]
-        public async Task<ActionResult<IEnumerable<Alert>>> GetAllAlertBySeveority(severityLevel severity)
-        {
-            try
+            public async Task<ActionResult<IEnumerable<Alert>>> GetAllAlertBySeveority(severityLevel severity)
             {
-                var alert =  alertServices.GetAllAlertBySeveority(severity);
-
-                if (alert == null)
+                try
                 {
-                    return NotFound();
-                }
+                    var alert =  alertServices.GetAllAlertBySeveority(severity);
 
-                var AlertDto = new List<AlertsDTO>();
-                alert.ToList().ForEach(alert =>
-                {
-                    var alertDTO = new Models.AlertModel.AlertsDTO()
+                    if (alert == null)
                     {
-                        severity = (int)alert.severity,
-                        CreatedDate = alert.CreatedDate,
-                        AlertName = alert.AlertName,
-                        RCA = alert.RCA,
-                        TriggeredTime = alert.TriggeredTime,
-                        Description = alert.Description,
-                        ReportedBy = alert.ReportedBy,
-                        ReportedTo = alert.ReportedTo,
-                        Id = alert.Id,
-                        lastModifiedDate = alert.lastModifiedDate,
-                        Status = alert.Status,
-                        TenantId = alert.TenantId,
-                        ProjectId = alert.ProjectId,
-                    };
-                    AlertDto.Add(alertDTO);
+                        return NotFound();
+                    }
 
-                });
-                return Ok(AlertDto);
+                    var AlertDto = new List<AlertsDTO>();
+                    alert.ToList().ForEach(alert =>
+                    {
+                        var alertDTO = new Models.AlertModel.AlertsDTO()
+                        {
+                            severity = (int)alert.severity,
+                            CreatedDate = alert.CreatedDate,
+                            AlertName = alert.AlertName,
+                            RCA = alert.RCA,
+                            TriggeredTime = alert.TriggeredTime,
+                            Description = alert.Description,
+                            ReportedBy = alert.ReportedBy,
+                            ReportedTo = alert.ReportedTo,
+                            Id = alert.Id,
+                            lastModifiedDate = alert.lastModifiedDate,
+                            Status = alert.Status,
+                            TenantId = alert.TenantId,
+                            ProjectId = alert.ProjectId,
+                        };
+                        AlertDto.Add(alertDTO);
+
+                    });
+                    return Ok(AlertDto);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                return Ok(ex.Message);
-            }
-        }
 
 
         /// <summary>

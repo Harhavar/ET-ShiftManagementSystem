@@ -1,17 +1,18 @@
 ﻿using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph;
 
 namespace ET_ShiftManagementSystem.Services
 {
     public interface IOrganizationRoleServices
     {
-        public Task<IEnumerable<OrganizationRole>> GetRoles();
-        public Task<OrganizationRole> GetRoles(Guid guid);
+        public List<OrganizationRole> GetRoles();
+        public OrganizationRole GetRoles(Guid guid);
         public Task<OrganizationRole> PostRole(OrganizationRole organization);
         public Task<OrganizationRole> EditRoleRequest(Guid guid , OrganizationRole organization );
         public Task<OrganizationRole> DeleteRoleRequest(Guid guid);
-        public Task<IEnumerable<GlobalRole>> GetGlobalRoles();
+        public List<GlobalRole> GetGlobalRoles();
         public Task<GlobalRole> GetGlobalRoles(Guid guid);
        
         public Task<GlobalRole> EditGlobalRoleRequest(Guid guid, GlobalRole organization);
@@ -99,9 +100,9 @@ namespace ET_ShiftManagementSystem.Services
             return exisingRole;
         }
 
-        public async Task<IEnumerable<GlobalRole>> GetGlobalRoles()
+        public  List<GlobalRole> GetGlobalRoles()
         {
-            return await _dbContext.GlobalRoles.ToListAsync();
+            return  _dbContext.GlobalRoles.ToList();
         }
 
         public async Task<GlobalRole> GetGlobalRoles(Guid guid)
@@ -111,14 +112,14 @@ namespace ET_ShiftManagementSystem.Services
             return role;
         }
 
-        public async Task<IEnumerable<OrganizationRole>> GetRoles()
+        public  List<OrganizationRole> GetRoles()
         {
-            return await _dbContext.OrganizationRoles.ToListAsync();
+            return  _dbContext.OrganizationRoles.ToList();
         }
 
-        public async Task<OrganizationRole> GetRoles(Guid guid)
+        public OrganizationRole GetRoles(Guid guid)
         {
-            var role = await _dbContext.OrganizationRoles.FirstOrDefaultAsync(x => x.Id
+            var role = _dbContext.OrganizationRoles.FirstOrDefault(x => x.Id
              == guid);
             return role;
         }

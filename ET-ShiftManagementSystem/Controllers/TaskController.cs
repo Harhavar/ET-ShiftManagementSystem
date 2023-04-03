@@ -14,7 +14,7 @@ using ET_ShiftManagementSystem.Data;
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
     public class TaskController : Controller
     {
@@ -225,8 +225,6 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     return NotFound();
                 }
-
-
                 return Ok(Task);
             }
             catch (Exception ex)
@@ -247,7 +245,7 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 return NotFound();
             }
-            return Ok(responce);
+            return Ok(responce); 
         }
         [HttpGet]
         [Route("[Action]")]

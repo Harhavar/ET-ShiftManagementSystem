@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Cors;
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
     public class EmailController : Controller
     {

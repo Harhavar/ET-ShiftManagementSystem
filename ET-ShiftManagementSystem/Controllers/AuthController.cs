@@ -23,11 +23,11 @@ namespace ET_ShiftManagementSystem.Controllers
     [EnableCors("CorePolicy")]
     public class AuthController : Controller
     {
-        private readonly IUserRepository userRepository;
-        private readonly ITokenHandler tokenHandler;
-        private readonly IEmailSender emailSender;
-        private readonly ITenateServices tenateServices;
-        private readonly IorganizationServices iorganizationServices;
+        public readonly IUserRepository userRepository;
+        public readonly ITokenHandler tokenHandler;
+        public readonly IEmailSender emailSender;
+        public readonly ITenateServices tenateServices;
+        public readonly IorganizationServices iorganizationServices;
 
         //private readonly IEmailServices emailServices;
 
@@ -356,17 +356,17 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 // Generate a password reset token and send an email to the user
 
-                var token = Guid.NewGuid();
-                var save = new Token
-                {
-                    Useremail = user.Email,
-                    UserId = user.id,
-                    UserToken = token.ToString(),
-                    ExpirationDate = DateTime.UtcNow.AddDays(1),
-                    TokenUsed = false
+                //var token = Guid.NewGuid();
+                //var save = new Token
+                //{
+                //    Useremail = user.Email,
+                //    UserId = user.id,
+                //    UserToken = token.ToString(),
+                //    ExpirationDate = DateTime.UtcNow.AddDays(1),
+                //    TokenUsed = false
 
-                };
-                tokenHandler.SaveToken(save);
+                //};
+                //tokenHandler.SaveToken(save);
 
                 //var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email = user.Email }, Request.Scheme);
                 await emailSender.SendEmailAsync(request.Email, "Reset your password",
@@ -377,7 +377,7 @@ namespace ET_ShiftManagementSystem.Controllers
             catch (Exception ex)
             {
 
-                return Ok(ex.Message);
+                return BadRequest(ex.Message);
             }
            
         }
@@ -419,7 +419,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 }
                 // Verify that the provided token is valid
                 userRepository.UpdateUser(userId, model.Password);
-                return Ok("Password updated succesfully");
+                return Ok("Password updated successfully");
             }
             catch (Exception ex)
             {

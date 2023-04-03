@@ -15,7 +15,7 @@ namespace ET_ShiftManagementSystem.Servises
     {
         Task<string> CreateToken(User user);
 
-        Token SaveToken(Token token);
+        //Token SaveToken(Token token);
 
         Token VerifyUserToken(string tokenId,string email);
     }
@@ -63,13 +63,13 @@ namespace ET_ShiftManagementSystem.Servises
             return  t;
         }
 
-        public Token SaveToken(Token token)
-        {
+        //public Token SaveToken(Token token)
+        //{
 
-            shiftManagementDb.Tokens.Add(token);
-            shiftManagementDb.SaveChanges();
-            return token;
-        }
+        //    shiftManagementDb.Tokens.Add(token);
+        //    shiftManagementDb.SaveChanges();
+        //    return token;
+        //}
         
         public Token VerifyUserToken(string tokenId,string email)
         {

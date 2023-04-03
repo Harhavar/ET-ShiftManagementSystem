@@ -14,8 +14,10 @@ using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Data;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using ET_ShiftManagementSystem.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -71,6 +73,14 @@ builder.Services.AddSwaggerGen(options =>
 
 //    c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, filePath));
 //});
+builder.Services.AddHttpLogging(HttpLogging =>
+{
+    HttpLogging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+});
+
+var _logger = new LoggerConfiguration().WriteTo.File("C:\\ET-ShiftManagementSystem\\Logs\\APILogs-", rollingInterval: RollingInterval.Day).CreateLogger();
+builder.Logging.AddSerilog(_logger);
+
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 
@@ -216,6 +226,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
     app.UseSwaggerUI();
 }
 
+app.UseHttpLogging();
 app.UseCors("CorePolicy");
 
 //app.UseHttpsRedirection();

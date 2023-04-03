@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
     public class OrganizationRoleController : Controller
     {
@@ -24,11 +24,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetOrganizationRole()
+        public IActionResult GetOrganizationRole()
         {
             try
             {
-                var role = await _roleServices.GetRoles();
+                var role = _roleServices.GetRoles();
 
                 if (role == null)
                 {
@@ -59,7 +59,6 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
 
         }
 
@@ -69,11 +68,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet("Global")]
 
-        public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetGlobalRole()
+        public IActionResult GetGlobalRole()
         {
             try
             {
-                var role = await _roleServices.GetGlobalRoles();
+                var role =  _roleServices.GetGlobalRoles();
 
                 if (role == null)
                 {
@@ -105,8 +104,6 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 return BadRequest(ex.Message);
             }
-            
-
         }
 
 
@@ -117,11 +114,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet("ViewOrgRole")]
         //[Route("{id:guid}")]
-        public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetOrganizationViewRole(Guid guid)
+        public IActionResult GetOrganizationViewRole(Guid guid)
         {
             try
             {
-                var role = await _roleServices.GetRoles(guid);
+                var role = _roleServices.GetRoles(guid);
 
                 if (role == null)
                 {
