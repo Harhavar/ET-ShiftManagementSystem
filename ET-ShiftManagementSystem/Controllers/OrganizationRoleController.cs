@@ -160,35 +160,40 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet("ViewGlobalRole")]
         //[Route("{id:guid}")]
-        public async Task<ActionResult<IEnumerable<OrganizationRole>>> GetGlobalViewRole(Guid guid)
+        public IActionResult GetGlobalViewRole(Guid roleId)
         {
-            var role = await _roleServices.GetGlobalRoles(guid);
-
-            if (role == null)
+            if (Guid.Empty == roleId)
             {
-                return NotFound();
+                return BadRequest();
             }
-            //retur dto organizationrole
-            //var OrganizationDTO = new List<OrganizationCustomRoleViewRequest>();
-            //role.ToList().ForEach(role =>
-            //{
-            var organizationDTO = new Models.OrganizationRoleModel.GlobalCustomRoleViewRequest()
+            try
             {
-                RoleName = role.RoleName,
-                Description = role.Description,
-                //RoleType = role.RoleType,
-                CreatedDate = role.CreatedDate,
-                LinkedPermission = role.LinkedPermission,
-                LastModifiedDate = role.LastModifiedDate,
+                var role = _roleServices.GetGlobalRoles(roleId);
 
-            };
-            //OrganizationDTO.Add(organizationDTO);
+                if (role == null)
+                {
+                    return NotFound();
+                }
 
+                var organizationDTO = new Models.OrganizationRoleModel.GlobalCustomRoleViewRequest()
+                {
+                    RoleName = role.RoleName,
+                    Description = role.Description,
 
-            //});
+                    CreatedDate = role.CreatedDate,
+                    LinkedPermission = role.LinkedPermission,
+                    LastModifiedDate = role.LastModifiedDate,
 
-            return Ok(organizationDTO);
+                };
 
+                return Ok(organizationDTO);
+            }
+            catch (Exception ex )
+            {
+
+                return BadRequest(ex.Message);
+            }
+            
         }
 
 
@@ -199,25 +204,34 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="editRole"></param>
         /// <returns></returns>
         [HttpPut]
-
-        public async Task<IActionResult> UpdateRole(Guid guid, EditRoleRequest editRole)
+        public IActionResult UpdateRole(Guid guid, EditRoleRequest editRole)
         {
-            var role = new Entities.OrganizationRole
+            if (editRole.RoleName == null || editRole.Description == null || editRole.LinkedPermission == null)
             {
-                RoleName = editRole.RoleName,
-                Description = editRole.Description,
-                LinkedPermission = editRole.LinkedPermission,
-
-            };
-             await _roleServices.EditRoleRequest(guid, role);
-
-            if (role == null)
+                return BadRequest();
+            }
+            try
             {
+                var role = new Entities.OrganizationRole
+                {
+                    RoleName = editRole.RoleName,
+                    Description = editRole.Description,
+                    LinkedPermission = editRole.LinkedPermission,
+                };
+                var responce = _roleServices.EditRoleRequest(guid, role);
+
+                if (responce != null)
+                {
+                    return Ok(role);
+                }
+
                 return NotFound();
             }
+            catch (Exception ex)
+            {
 
-            return Ok(role);
-
+                return BadRequest(ex.Message);
+            }         
         }
 
 
@@ -228,25 +242,31 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="editRole"></param>
         /// <returns></returns>
         [HttpPut("global")]
-
-        public async Task<IActionResult> UpdateGolbalRole(Guid guid, EditRoleRequest editRole)
+        public IActionResult UpdateGolbalRole(Guid guid, EditRoleRequest editRole)
         {
-            var role = new Entities.GlobalRole
+            try
             {
-                Id= guid,
-                RoleName = editRole.RoleName,
-                Description = editRole.Description,
-                LinkedPermission = editRole.LinkedPermission,
-                
-            };
-            await _roleServices.EditGlobalRoleRequest(guid, role);
+                var role = new Entities.GlobalRole
+                {
+                    Id = guid,
+                    RoleName = editRole.RoleName,
+                    Description = editRole.Description,
+                    LinkedPermission = editRole.LinkedPermission,
 
-            if (role == null)
-            {
-                return NotFound();
+                };
+                role = _roleServices.EditGlobalRoleRequest(guid, role);
+
+                if (role == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(role);
             }
-
-            return Ok(role);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
         /// <summary>
@@ -255,24 +275,33 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="editRole"></param>
         /// <returns></returns>
         [HttpPost]
-
-        public async Task<IActionResult> PostNewRole(EditRoleRequest editRole)
+        public IActionResult PostNewRole(EditRoleRequest editRole)
         {
-            if(editRole== null)
+
+            if(editRole.RoleName == null || editRole.LinkedPermission == null || editRole.Description == null)
             {
                 return BadRequest();
             }
-
-            var role = new Entities.OrganizationRole
+            try
             {
-                RoleName = editRole.RoleName,
-                Description = editRole.Description,
-                LinkedPermission = editRole.LinkedPermission,
+                var role = new Entities.OrganizationRole
+                {
+                    RoleName = editRole.RoleName,
+                    Description = editRole.Description,
+                    LinkedPermission = editRole.LinkedPermission,
 
-            };
-            await _roleServices.PostRole(role);
-
-            return CreatedAtAction(nameof(GetOrganizationViewRole), new { Id = role.Id }, role);
+                };
+                role = _roleServices.PostRole(role);
+                if (role == null)
+                {
+                    return BadRequest();
+                }
+                return CreatedAtAction(nameof(GetOrganizationViewRole), new { Id = role.Id }, role);
+            }
+            catch (Exception ex)  
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         /// <summary>
@@ -282,15 +311,23 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpDelete]
 
-        public async Task<IActionResult> DeleteRole(Guid id)
+        public IActionResult DeleteRole(Guid id)
         {
-            var delete = await _roleServices.DeleteRoleRequest(id);
-
-            if(delete == null)
+            try
             {
-                return NotFound();
+                var delete = _roleServices.DeleteRoleRequest(id);
+
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+                return Ok(delete);
             }
-            return Ok(delete);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
         }
 
         /// <summary>
@@ -300,15 +337,25 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpDelete("Global")]
         
-        public async Task<IActionResult> DeleteGlobalRole(Guid id)
+        public IActionResult DeleteGlobalRole(Guid id)
         {
-            var delete = await _roleServices.DeleteGlobalRoleRequest(id);
-
-            if (delete == null)
+            try
             {
-                return NotFound();
+                var delete =  _roleServices.DeleteGlobalRoleRequest(id);
+
+                if (delete == null)
+                {
+                    return NotFound();
+                }
+                return Ok(delete);
             }
-            return Ok(delete);
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+            
         }
+
     }
 }

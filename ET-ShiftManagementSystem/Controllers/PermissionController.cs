@@ -28,21 +28,21 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[Controller]")]
-        public async Task<ActionResult<IEnumerable<Entities.Permission>>> Get()
+        public  IActionResult GetGlobalPermission()
         {
             try
             {
-                var perm = await permissionServises.GetPermissions();
+                var perm =  permissionServises.GetPermissions();
 
-                if (perm == null)
+                if (perm.Count == 0)
                 {
                     return NotFound();
                 }
-                var PermissionRequest = new List<GetGlobalPermission>();
+                var PermissionRequest = new List<Permission>();
 
                 perm.ToList().ForEach(permission =>
                 {
-                    var permissionRequest = new GetGlobalPermission()
+                    var permissionRequest = new Permission()
                     {
                         PermissionName = permission.PermissionName,
                         Description = permission.Description,
@@ -51,15 +51,16 @@ namespace ET_ShiftManagementSystem.Controllers
                     PermissionRequest.Add(permissionRequest);
 
                 });
-
+                if(PermissionRequest == null)
+                {
+                    return NotFound();
+                }
                 return Ok(PermissionRequest);
             }
             catch (Exception ex)
             {
                 return Ok(ex.Message);
             }
-            
-
         }
 
         /// <summary>
@@ -69,7 +70,6 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[Controller]/{id:guid}")]
-
         public async Task<IActionResult> GetPermissions(Guid id)
         {
             try
@@ -91,7 +91,6 @@ namespace ET_ShiftManagementSystem.Controllers
                 return Ok(ex.Message);
             }
            
-
         }
 
 
@@ -104,12 +103,12 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("[Controller]")]
         public async Task<IActionResult> Addpermission(AddPermissionRequest addPermission)
         {
+            if (addPermission == null)
+            {
+                return BadRequest("Should not be null");
+            }
             try
             {
-                if (addPermission == null)
-                {
-                    return BadRequest("Should not be null");
-                }
                 var perm = new Permission
                 {
                     PermissionName = addPermission.PermissionName,
@@ -118,8 +117,12 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 perm = await permissionServises.AddPermission(perm);
 
+                if (perm == null)
+                {
+                    return BadRequest();
+                }
                 return Ok(perm);
-            }
+            }   
             catch (Exception ex)
             {
 
@@ -139,6 +142,10 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public async Task<IActionResult> UpdatePermission([FromRoute] Guid id, [FromBody] UpdatePermissionRequest updatePermission)
         {
+            if (updatePermission == null)
+            {
+                return BadRequest("Should not be null");
+            }
             try
             {
                 var parm = new Permission
@@ -185,20 +192,17 @@ namespace ET_ShiftManagementSystem.Controllers
         {
             try
             {
-                var parm = permissionServises.GetPermissionById(id);
-                if (parm == null)
+                var delete = await permissionServises.DeletePermission(id);
+                if (delete == null)
                 {
                     return NotFound();
                 }
-
-                var delete = permissionServises.DeletePermission(id);
-
                 return Ok(delete);
             }
             catch (Exception ex)
             {
 
-                throw;
+                return BadRequest();
             }
            
         }
@@ -208,11 +212,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("org/[Controller]")]
-        public async Task<ActionResult<IEnumerable<Entities.Permission>>> GetOrg()
+        public IActionResult GetOrganizationPermission()
         {
             try
             {
-                var perm = await permissionServises.GetOrgPermissions();
+                var perm =  permissionServises.GetOrgPermissions();
 
                 if (perm == null)
                 {
@@ -238,7 +242,6 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-
                 throw;
             }
            
@@ -253,38 +256,37 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
 
         [Route("org/[Controller]/{id:guid}")]
-        public async Task<IActionResult> GetOrgPermissions(Guid id)
+        public  IActionResult GetOrgPermissions(Guid id)
         {
+            if (Guid.Empty == id)
+            {
+                return BadRequest();
+            }
             try
             {
-                var perm = await permissionServises.GetOrgPermissionById(id);
+                var perm = permissionServises.GetOrgPermissionById(id);
                 if (perm == null)
                 {
                     return NotFound();
                 }
 
                 var PermissionRequest = new List<GetOrgPermissionview>();
-
-                // perm.ToList().ForEach(permission =>
-                //{
+                
                 var permissionRequest = new GetOrgPermissionview()
                 {
                     PermissionName = perm.PermissionName,
                     Description = perm.Description,
                     CreatedDate = perm.CreatedDate,
-                    //PermissionType = perm.PermissionType,
                     LastModifiedDate = perm.LastModifiedDate,
 
                 };
                 PermissionRequest.Add(permissionRequest);
 
-                // });
-
                 return Ok(PermissionRequest);
             }
             catch (Exception ex)
             {
-                throw;
+                return Ok(ex.Message);
             }
         }
 
@@ -295,15 +297,15 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("org/[Controller]")]
-
         public async Task<IActionResult> AddOrgpermission(AddOrgPermission addPermission)
         {
+
+            if (addPermission == null)
+            {
+                return BadRequest("Should not be null");
+            }
             try
             {
-                if (addPermission == null)
-                {
-                    return BadRequest("Should not be null");
-                }
                 var perm = new OrgPermission
                 {
                     PermissionName = addPermission.PermissionName,
@@ -316,7 +318,6 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-
                 throw;
             }
             
@@ -334,6 +335,10 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("org/[Controller]/{id:guid}")]
         public async Task<IActionResult> UpdateOrgPermission([FromRoute] Guid id, [FromBody] UpdateOrgPermission updatePermission)
         {
+            if (updatePermission == null || Guid.Empty == id)
+            {
+                return BadRequest();
+            }
             try
             {
                 var parm = new OrgPermission
@@ -376,12 +381,16 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("org/[Controller]")]
-        public async Task<IActionResult> DeleteOrgPermission(Guid id)
+        public IActionResult DeleteOrgPermission(Guid id)
         {
+            if (Guid.Empty == id)
+            {
+                return BadRequest();
+            }
             try
             {
-                var delete = await permissionServises.DeleteOrgPermission(id);
-                if (delete == null)
+                var delete = permissionServises.DeleteOrgPermission(id);
+                if (delete == false)
                 {
                     return NotFound();
                 }
@@ -390,7 +399,7 @@ namespace ET_ShiftManagementSystem.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                return Ok(ex.Message);
             }
             
         }

@@ -17,7 +17,7 @@ namespace ET_ShiftManagementSystem.Servises
 {
     public interface IShiftServices
     {
-        public Task<IEnumerable<Shift>> GetAllShiftAsync();
+        public List<Shift> GetAllShiftAsync();
         public List<Shift> GetAllShift(Guid TenatID);
         Shift GetShiftDetails(Guid ShiftId);
 
@@ -28,10 +28,11 @@ namespace ET_ShiftManagementSystem.Servises
         Task<List<User>> userShiftsDetails(Guid ShiftId);
         Task<List<Shift>> UserShiftName(Guid ProjectId);
 
-        void UpdateShiftAsync(Shift shift);
+        Task<Shift> UpdateShiftAsync(Guid id , UpdateShiftRequest shift);
 
-        Task<bool> DeleteShiftAsync(Guid ShiftId);
+         public Shift DeleteShiftAsync(Guid ShiftId);
         void Update(List<UserShift> projectUser);
+         public List<UserShift> UpdateExisting(Guid ProjectId ,List<UserShift> projectUser);
         void UpdateExisting(Guid ProjectID , List<addShift> projectUser);
     }
     public class ShiftServices : IShiftServices
@@ -42,14 +43,15 @@ namespace ET_ShiftManagementSystem.Servises
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Shift>> GetAllShiftAsync()
+        public List<Shift> GetAllShiftAsync()
         {
-            return await _dbContext.Shifts.ToListAsync();
+            return  _dbContext.Shifts.ToList();
         }
 
         public async Task<Shift> GetShiftById(Guid ShiftId)
         {
-            return await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == ShiftId);
+           var responce = await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == ShiftId);
+            return responce;
         }
 
         public Shift GetShiftDetails(Guid shiftId)
@@ -67,9 +69,10 @@ namespace ET_ShiftManagementSystem.Servises
             return shift;
         }
 
-        public async void UpdateShiftAsync(Shift shift)
+        public async Task<Shift> UpdateShiftAsync( Guid id , UpdateShiftRequest shift)
         {
-            var ExistingShift = await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == shift.ShiftID);
+            var ExistingShift = await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == id);
+
             if (ExistingShift != null)
             {
                 ExistingShift.ShiftName = shift.ShiftName;
@@ -77,20 +80,21 @@ namespace ET_ShiftManagementSystem.Servises
                 ExistingShift.EndTime = shift.EndTime;
                 await _dbContext.SaveChangesAsync();
             }
+            return null;
         }
 
 
-        public async Task<bool> DeleteShiftAsync(Guid ShiftId)
+        public Shift DeleteShiftAsync(Guid ShiftId)
         {
-            var Shift = await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == ShiftId);
+            var Shift = _dbContext.Shifts.FirstOrDefault(x => x.ShiftID == ShiftId);
 
             if (Shift != null)
             {
                 _dbContext.Shifts.Remove(Shift);
-                await _dbContext.SaveChangesAsync();
-                return true;
+                _dbContext.SaveChanges();
+                return Shift;
             }
-            return false;
+            return null;
 
         }
 
@@ -102,7 +106,27 @@ namespace ET_ShiftManagementSystem.Servises
                 _dbContext.SaveChanges();
             }
 
+        }
+        public List<UserShift> UpdateExisting( Guid ProjectId , List<UserShift> projectUser)
+        {
+            var existingUserShift = _dbContext.UserShifts.Where(x => x.ProjectId == ProjectId).ToList();
 
+            if (existingUserShift.Any())
+            {
+
+                foreach (var item in existingUserShift)
+                {
+                    var a = existingUserShift.Where(x => x.ProjectId == ProjectId).Select(x => x.ShiftId).FirstOrDefault();
+                    var b = projectUser.Select(x => x.ShiftId).FirstOrDefault();
+                    var c = existingUserShift.Where(x => x.ProjectId == ProjectId).Select(x => x.UserId).FirstOrDefault();
+                    var d = projectUser.Select(x => x.UserId).FirstOrDefault();
+                    a = b;
+                    c = d;
+                     _dbContext.SaveChanges();
+                }
+                return existingUserShift;
+            }
+            return null;
         }
         public async  void UpdateExisting(Guid ProjectID, List<addShift> projectUser)
         {
@@ -171,7 +195,7 @@ namespace ET_ShiftManagementSystem.Servises
             return users;
         }
 
-       
+        
 
         public class UserShiftResponce
         {

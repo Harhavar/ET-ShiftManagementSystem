@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 using org.apache.zookeeper.data;
 using ShiftMgtDbContext.Entities;
 using static System.Net.WebRequestMethods;
@@ -21,13 +22,13 @@ namespace ET_ShiftManagementSystem.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository userRepository;
-        private readonly ShiftManagementDbContext shiftManagementDb;
+       // private readonly ShiftManagementDbContext shiftManagementDb;
         private readonly IEmailSender emailSender;
 
-        public UserController(IUserRepository userRepository, ShiftManagementDbContext shiftManagementDb , IEmailSender emailSender)
+        public UserController(IUserRepository userRepository, IEmailSender emailSender)
         {
             this.userRepository = userRepository;
-            this.shiftManagementDb = shiftManagementDb;
+            //this.shiftManagementDb = shiftManagementDb;
             this.emailSender = emailSender;
         }
 
@@ -36,11 +37,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetUser()
+        public IActionResult GetUser()
         {
             try
             {
-                var user = await userRepository.GetUser();
+                var user =  userRepository.GetUser();
                 if (user == null)
                 {
                     return NotFound();
@@ -81,19 +82,19 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("CountUsers/{tenantId}")]
-        public async Task<IActionResult> GetUser(Guid tenantId)
+        public IActionResult GetUser(Guid tenentId)
         {
+            if (Guid.Empty  == tenentId)
+            {
+                return BadRequest();
+
+            }
             try
             {
-                var user = await shiftManagementDb.users.Where(u => u.TenentID == tenantId).ToListAsync();
-                if (user == null)
-                {
-                    return NotFound();
+                var user =  userRepository.GetUserCount(tenentId);
 
-                }
-                var result = $"{user.Count} ";
 
-                return Ok(user.Count());
+                return Ok(user);
             }
             catch (Exception ex)
             {
@@ -110,7 +111,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="TenentID"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Tenant/users/{TenentID}")]
+        [Route("Tenent/users/{TenentID}")]
         public async Task<IActionResult> GetUsers(Guid TenentID)
         {
             try
@@ -158,7 +159,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("users/{UserId}")]
+        [Route("Tenent/users/{UserId}")]
         public async  Task<IActionResult> Getuser(Guid UserId)
         {
             try
@@ -171,8 +172,6 @@ namespace ET_ShiftManagementSystem.Controllers
                 }
                 var OrganizationRequest = new List<GetUserRequest>();
 
-                // user.ToList().ForEach(user =>
-                //{
                 var organizationRequest = new GetUserRequest()
                 {
                     username = user.username,
@@ -181,12 +180,8 @@ namespace ET_ShiftManagementSystem.Controllers
                     Email = user.Email,
                     ContactNumber = user.ContactNumber,
                     AlternateContactNumber = user.AlternateContactNumber,
-
-                    //CreatedDate = user.CreatedDate,
                 };
                 OrganizationRequest.Add(organizationRequest);
-
-                //});
 
                 return Ok(OrganizationRequest);
             }
@@ -201,13 +196,17 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <summary>
         /// adding user inside the organization by Admin
         /// </summary>
-        /// <param name="Tenantid"></param>
+        /// <param name="Tenentid"></param>
         /// <param name="userRequest"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("AddUser/{Tenantid}")]
-        public async Task<IActionResult> AddUser( Guid Tenantid ,AddUserRequest userRequest)
+        [Route("AddUser/{Tenentid}")]
+        public async Task<IActionResult> AddUser( Guid Tenentid ,AddUserRequest userRequest)
         {
+            if(Guid.Empty == Tenentid || userRequest == null)
+            {
+                return BadRequest();
+            }
             try
             {
                 //request DTO to Domine Model
@@ -220,13 +219,17 @@ namespace ET_ShiftManagementSystem.Controllers
                     ContactNumber = userRequest.ContactNumber,
                     AlternateContactNumber = userRequest.AlternateContactNumber,
                     username = userRequest.FirstName,
-                    TenentID = Tenantid
+                    TenentID = Tenentid
                 };
 
                 // pass details to repository 
 
                 user = await userRepository.RegisterUserAsync(user);
 
+                if(user == null)
+                {
+                    return BadRequest();
+                }
                 //convert back to DTO
                 var UserDTO = new Models.UserModel.UserDto
                 {
@@ -268,6 +271,10 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("{UserId:guid}")]
         public async Task<IActionResult> UpdateUser(Guid UserId ,[FromBody] UpdateUserRequest updateUserRequest)
         {
+            if (Guid.Empty == UserId || updateUserRequest == null)
+            {
+                return BadRequest();
+            }
             try
             {
                 var user = new User()
@@ -309,19 +316,30 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-            
-
         }
         [HttpGet("Assigned-Project")]
         public IActionResult GetAssignedProject(Guid userid)
         {
-            var Responce = userRepository.AssignedProject(userid);
-            if (Responce == null)
+            if (Guid.Empty == userid)
             {
-                return null;
+                return BadRequest();
             }
+            try
+            {
+                var Responce = userRepository.AssignedProject(userid);
+                if (Responce == null)
+                {
+                    return null;
+                }
 
-            return Ok(Responce.Count);
+                return Ok(Responce.Count);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
         }
         //[HttpDelete]
         //public async Task<IActionResult> DeleteUser(Guid UserId)

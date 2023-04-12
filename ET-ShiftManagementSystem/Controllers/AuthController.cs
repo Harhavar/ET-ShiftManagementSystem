@@ -192,6 +192,10 @@ namespace ET_ShiftManagementSystem.Controllers
                 // pass details to repository 
 
                 user = await userRepository.RegisterUserAsync(user);
+                if (user == null)
+                {
+                    return BadRequest();
+                }
 
                 //convert back to DTO
                 var UserDTO = new Models.UserModel.UserDto

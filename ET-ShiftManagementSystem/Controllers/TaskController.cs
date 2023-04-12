@@ -16,20 +16,14 @@ namespace ET_ShiftManagementSystem.Controllers
     [ApiController]
     [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
-    public class TaskController : Controller
+    public class TaskController : Controller 
     {
-        private readonly ITaskServices taskServices;
-        private readonly IMapper mapper;
         private readonly ITasksServices _tasksServices;
-        private readonly ShiftManagementDbContext _dbContext;
-        private readonly TaskCommentServices _commentServices;
+        private readonly ITaskCommentServices _commentServices;
 
-        public TaskController(ITaskServices taskServices, IMapper mapper , ITasksServices tasksServices , ShiftManagementDbContext dbContext , TaskCommentServices commentServices)
+        public TaskController(ITasksServices tasksServices , ITaskCommentServices commentServices)
         {
-            this.taskServices = taskServices;
-            this.mapper = mapper;
             _tasksServices = tasksServices;
-             _dbContext = dbContext;
             _commentServices = commentServices;
         }
 
@@ -115,11 +109,35 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Task")]
-        public async Task<ActionResult<IEnumerable<Tasks>>> GetTasks()
+        public IActionResult GetTasks()
         {
             try
             {
-                var responce = await _tasksServices.GetAllTasks();
+                var responce =  _tasksServices.GetAllTasks();
+                if (responce == null)
+                {
+                    return NotFound();
+                }
+                return Ok(responce);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
+        }
+        
+         [HttpGet("Task/{TenantId}")]
+        public IActionResult GetTasksByOrg(Guid TenantId)
+        {
+            if (Guid.Empty == TenantId )
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var responce = _tasksServices.GetAllTasksOfOneOrg(TenantId);
                 if (responce == null)
                 {
                     return NotFound();
@@ -131,9 +149,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-            
         }
-
         /// <summary>
         /// Add task by user or admin 
         /// </summary>
@@ -143,7 +159,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost("AddTask")]
         public async Task<ActionResult> PostTask(Guid UserId, [FromForm] TaskUploadModel TaskDetails)
         {
-            if (TaskDetails == null)
+            if (TaskDetails == null || Guid.Empty == UserId)
             {
                 return BadRequest();
             }
@@ -168,14 +184,14 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPut("Update-Task")]
         public async Task<ActionResult> AddCommentsUpdateTask(Guid TaskID ,[FromForm]UpdateTask updateTask)
         {
+
+            if (Guid.Empty == TaskID || updateTask == null)
+            {
+                return BadRequest();
+            }
             try
             {
-                var Task = _dbContext.Tasks.FirstOrDefault(x => x.Id == TaskID);
-                if (Task == null)
-                {
-                    return BadRequest();
-                }
-                await _tasksServices.UpdateTask(TaskID, updateTask);
+                 await _tasksServices.UpdateTask(TaskID, updateTask);
                 return Ok();
             }
             catch (Exception ex)
@@ -192,13 +208,21 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="UserId"></param>
         /// <param name="taskVm"></param>
         /// <returns></returns>
-        [HttpPost("TaskComment")]
+            [HttpPost("TaskComment")]
         public IActionResult AddTask(Guid UserId , [FromForm] TaskCommentVM taskVm)
         {
+            if (Guid.Empty == UserId || taskVm == null)
+            {
+                return BadRequest();
+            }
             try
             {
-                _commentServices.addComment(UserId, taskVm);
-                return Ok();
+                var responce = _commentServices.addComment(UserId, taskVm);
+                if (responce == null)
+                {
+                    return NotFound("User not found");
+                }
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -218,6 +242,10 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public IActionResult GetTask(Guid TaskID)
         {
+            if (Guid.Empty == TaskID)
+            {
+                return BadRequest();
+            }
             try
             {
                 var Task = _commentServices.GetAllComment(TaskID);
@@ -239,24 +267,50 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("[Action]")]
         public IActionResult GetuserTaskToDo(Guid UserId)
         {
-            var responce = _tasksServices.GetuserTaskToDo(UserId);
-
-            if(responce == null)
+            if(UserId == Guid.Empty)
             {
-                return NotFound();
+                return BadRequest();
             }
-            return Ok(responce); 
+            try
+            {
+                var responce = _tasksServices.GetuserTaskToDo(UserId);
+
+                if (responce == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(responce);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+             
         }
         [HttpGet]
         [Route("[Action]")]
         public IActionResult GetuserTaskInProgress(Guid UserId)
         {
-            var responce = _tasksServices.GetuserTaskInProgress(UserId);
-            if (responce == null)
+            if (UserId == Guid.Empty)
             {
-                return NotFound();
+                return BadRequest();
             }
-            return Ok(responce);
+            try
+            {
+                var responce = _tasksServices.GetuserTaskInProgress(UserId);
+                if (responce == 0)
+                {
+                    return NotFound();
+                }
+                return Ok(responce);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
         }
     }
 }

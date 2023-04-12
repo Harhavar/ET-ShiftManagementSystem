@@ -7,11 +7,13 @@ namespace ET_ShiftManagementSystem.Services
 {
     public interface IProjectServices
     {
-        Task<Projects> AddProject(Guid tenantId, Projects project);
-        Task<Projects> DeleteProject(Guid projectId);
-        Task<Projects> EditProject(Guid ProjectId, Projects project /*, List<UserShift>  userShifts*/);
-        Task<Projects> GetProjectById(Guid projectId);
-        public Task<IEnumerable<Projects>> GetProjectsData();
+        public Task<Projects> AddProject(Guid tenantId, Projects project);
+        public Task<Projects> DeleteProject(Guid projectId);
+        public Task<Projects> EditProject(Guid ProjectId, Projects project/*, List<UserShift> userShifts*/);
+        public Projects GetProjectById(Guid projectId);
+        public List<Projects> GetProjectsData();
+        public List<Projects> GetProjectsData(Guid tenentId);
+        public int GetProjectsCount(Guid tenentId);
         object UserShift(Guid projectId);
         //  UserShift(Guid projectId);
     }
@@ -26,10 +28,10 @@ namespace ET_ShiftManagementSystem.Services
 
         public async Task<Projects> AddProject(Guid tenantId, Projects project)
         {
-            project.ProjectId=Guid.NewGuid();
+            project.ProjectId = Guid.NewGuid();
             project.TenentId = tenantId;
-            project.CreatedDate= DateTime.Now;
-            project.LastModifiedDate= DateTime.Now;
+            project.CreatedDate = DateTime.Now;
+            project.LastModifiedDate = DateTime.Now;
             project.Status = "active";
             await _dbContext.Projects.AddAsync(project);
             await _dbContext.SaveChangesAsync();
@@ -39,7 +41,7 @@ namespace ET_ShiftManagementSystem.Services
 
         public async Task<Projects> DeleteProject(Guid projectId)
         {
-            var Remove = await _dbContext.Projects.FirstOrDefaultAsync(x => x.ProjectId==projectId);
+            var Remove = await _dbContext.Projects.FirstOrDefaultAsync(x => x.ProjectId == projectId);
 
             if (Remove == null)
             {
@@ -47,47 +49,33 @@ namespace ET_ShiftManagementSystem.Services
             }
 
             _dbContext.Projects.Remove(Remove);
-            await  _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return Remove;
         }
 
-        public async Task<Projects> EditProject(Guid ProjectId, Projects project /*, List<UserShift> userShifts*/)
+        public async Task<Projects> EditProject(Guid ProjectId, Projects project/*, List<UserShift> userShifts*/)
         {
-            var existingProject =await  _dbContext.Projects.FirstOrDefaultAsync(x => x.ProjectId == ProjectId);
+            var existingProject = await _dbContext.Projects.FirstOrDefaultAsync(x => x.ProjectId == ProjectId);
 
-            if( existingProject != null)
+            if (existingProject != null)
             {
                 existingProject.Name = project.Name;
                 existingProject.Description = project.Description;
                 existingProject.LastModifiedDate = DateTime.Now;
                 existingProject.Status = project.Status;
                 await _dbContext.SaveChangesAsync();
+
                 return existingProject;
 
-                //var existingUserShift = _dbContext.UserShifts.Where(x => x.ProjectId == ProjectId).ToList();
-
-                //if (existingUserShift.Any())
-                //{
-                //    foreach (var item in existingUserShift)
-                //    {
-                //        var a = existingUserShift.Where(x=> x.ProjectId == ProjectId).Select(x => x.ShiftId).FirstOrDefault();
-                //        var b = userShifts.Select(x => x.ShiftId).FirstOrDefault();
-                //        a. = b;
-                //        _dbContext.SaveChanges();
-                //    }
-                //    return
-                //     existingProject;
-                //}
             }
-            
-            
+
             return null;
 
         }
 
-        public async Task<Projects> GetProjectById(Guid projectId)
+        public Projects GetProjectById(Guid projectId)
         {
-            var project = await _dbContext.Projects.FirstOrDefaultAsync(x => x.ProjectId == projectId);
+            var project = _dbContext.Projects.FirstOrDefault(x => x.ProjectId == projectId);
 
             if (project == null)
             {
@@ -96,9 +84,25 @@ namespace ET_ShiftManagementSystem.Services
             return project;
         }
 
-        public async Task<IEnumerable<Projects>> GetProjectsData()
+        public int GetProjectsCount(Guid tenentId)
         {
-            return await _dbContext.Projects.ToListAsync();
+            return _dbContext.Projects.Where(x => x.TenentId == tenentId).Count();
+        }
+
+        public List<Projects> GetProjectsData()
+        {
+            return _dbContext.Projects.ToList();
+        }
+
+        public List<Projects> GetProjectsData(Guid tenentId)
+        {
+            var responce = _dbContext.Projects.Where(x => x.TenentId == tenentId).ToList();
+            if (responce == null)
+            {
+                return null;
+
+            }
+            return responce;
         }
 
         public object UserShift(Guid projectId)

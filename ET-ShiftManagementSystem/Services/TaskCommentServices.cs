@@ -4,7 +4,12 @@ using ET_ShiftManagementSystem.Models.TaskModel;
 
 namespace ET_ShiftManagementSystem.Services
 {
-    public class TaskCommentServices
+    public interface ITaskCommentServices
+    {
+        public TaskComment addComment(Guid UserId, TaskCommentVM taskComment);
+        public CommentVM GetAllComment(Guid TaskID);
+    }
+    public class TaskCommentServices : ITaskCommentServices
     {
         private readonly ShiftManagementDbContext _dbContext;
 
@@ -13,9 +18,13 @@ namespace ET_ShiftManagementSystem.Services
             _dbContext = dbContext;
         }
 
-        public void addComment( Guid UserId, TaskCommentVM taskComment)
+        public TaskComment addComment( Guid UserId, TaskCommentVM taskComment)
         {
             var user = _dbContext.users.Where(x => x.id == UserId).Select(x => x.username).FirstOrDefault();
+            if (user == null)
+            {
+                return null;
+            }
             var comment = new TaskComment
             {
                 Id = Guid.NewGuid(),
@@ -27,6 +36,7 @@ namespace ET_ShiftManagementSystem.Services
             };
             _dbContext.TaskComments.Add(comment);
             _dbContext.SaveChanges();
+            return comment;
 
         }
         public CommentVM GetAllComment(Guid TaskID)

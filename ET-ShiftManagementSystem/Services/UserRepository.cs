@@ -18,7 +18,7 @@ namespace ET_ShiftManagementSystem.Servises
         Task<User> RegisterSubscriber(User user ,Tenate tenate);
         Task<User> RegisterUserAsync(User user);
 
-        User Get(Guid userId);
+         public User Get(Guid userId);
 
         Task<User> EditUser(Guid userId, User user);
 
@@ -26,7 +26,7 @@ namespace ET_ShiftManagementSystem.Servises
         Task<User> RegisterORGAdminAsync(User user);
 
         //Task Update(User user);
-        public Task<IEnumerable<User>> GetUser();
+        public List<User> GetUser();
         public Task<IEnumerable<User>> GetUser(Guid guid);
 
        
@@ -36,6 +36,7 @@ namespace ET_ShiftManagementSystem.Servises
         void UpdateUser(Guid userId, string pasword);
         public Task<User> DeleteUser(Guid id);
         public List<UserShift>  AssignedProject(Guid userid);
+        public  int GetUserCount(Guid tenentId);
     }
     public class UserRepository : IUserRepository
 
@@ -79,9 +80,9 @@ namespace ET_ShiftManagementSystem.Servises
         public  User Get(Guid userId)
         {
             
-            var abc =  _ShiftManagementDbContext.users.FirstOrDefault(u => u.id == userId);
+            var responce =  _ShiftManagementDbContext.users.FirstOrDefault(u => u.id == userId);
 
-            return abc;
+            return responce;
         }
 
         public async Task<User> FindByEmailAsync(string email)
@@ -127,6 +128,10 @@ namespace ET_ShiftManagementSystem.Servises
 
         public async Task<User> RegisterUserAsync(User user)
         {
+            if (user.FirstName == "" || user.Email == null || user.ContactNumber== null || user.AlternateContactNumber == null)
+            {
+                return null; 
+            }
             user.id = Guid.NewGuid();
             await _ShiftManagementDbContext.users.AddAsync(user);
             //await _ShiftManagementDbContext.SaveChangesAsync();
@@ -244,9 +249,9 @@ namespace ET_ShiftManagementSystem.Servises
 
         }
 
-        public async Task<IEnumerable<User>> GetUser()
+        public List<User> GetUser()
         {
-           return await _ShiftManagementDbContext.users.ToListAsync();
+           return  _ShiftManagementDbContext.users.ToList();
         }
 
         public async Task<IEnumerable<User>> GetUser(Guid guid)
@@ -317,6 +322,9 @@ namespace ET_ShiftManagementSystem.Servises
             return responce;
         }
 
-
+        public int GetUserCount(Guid tenentId)
+        {
+            return _ShiftManagementDbContext.users.Where(x => x.TenentID == tenentId).Count();
+        }
     }
 }

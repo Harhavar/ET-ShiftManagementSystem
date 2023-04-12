@@ -10,11 +10,12 @@ namespace ET_ShiftManagementSystem.Services
 {
     public interface ITasksServices
     {
-        public Task<IEnumerable<Tasks>> GetAllTasks();
+        public List<Tasks> GetAllTasks();
+        public List<Tasks> GetAllTasksOfOneOrg(Guid TenantId);
         public int GetuserTaskToDo(Guid userId);
         public int GetuserTaskInProgress(Guid userId);
         public Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento);
-        Task UpdateTask(Guid TaskID , UpdateTask updateTask);
+        public Task UpdateTask(Guid TaskID, UpdateTask updateTask);
     }
 
     public class TasksServices : ITasksServices
@@ -27,21 +28,27 @@ namespace ET_ShiftManagementSystem.Services
         }
 
 
-        public async Task<IEnumerable<Tasks>> GetAllTasks()
+        public List<Tasks> GetAllTasks()
         {
-            return await _dbContext.Tasks.ToListAsync();
+            return _dbContext.Tasks.ToList();
         }
 
         public int GetuserTaskToDo(Guid userId)
         {
-            var responce = _dbContext.Tasks.Where(x => x.TaskGivenToID== userId).Where( x => x.Actions == Actions.ToDo).ToList();
-           
+            var responce = _dbContext.Tasks.Where(x => x.TaskGivenToID == userId).Where(x => x.Actions == Actions.ToDo).ToList();
+            if (responce.Count == 0)
+            {
+                return 0;
+            }
             return responce.Count;
         }
         public int GetuserTaskInProgress(Guid userId)
         {
             var responce = _dbContext.Tasks.Where(x => x.TaskGivenToID == userId).Where(x => x.Actions == Actions.inProgress).ToList();
-
+            if (responce.Count == 0)
+            {
+                return 0;
+            }
             return responce.Count;
         }
 
@@ -87,19 +94,22 @@ namespace ET_ShiftManagementSystem.Services
 
         }
 
-        public async Task UpdateTask(Guid TaskID,UpdateTask updateTask)
+        public async Task UpdateTask(Guid TaskID, UpdateTask updateTask)
         {
-           var existingTask = _dbContext.Tasks.FirstOrDefault( x => x.Id == TaskID );
+            var existingTask = _dbContext.Tasks.FirstOrDefault(x => x.Id == TaskID);
 
-            if(existingTask != null )
+            if (existingTask != null)
             {
-                //existingTask.Id = TaskID;
                 existingTask.Actions = updateTask.Actions;
                 existingTask.ModifiedDate = DateTime.Now;
-                //_dbContext.Tasks.Add(existingTask);
                 await _dbContext.SaveChangesAsync();
             }
-            
+
+        }
+
+        public List<Tasks> GetAllTasksOfOneOrg(Guid TenantId)
+        {
+            return _dbContext.Tasks.Where(x => x.TenantId == TenantId).ToList();
         }
     }
 }

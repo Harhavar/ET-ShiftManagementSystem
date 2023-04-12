@@ -9,14 +9,14 @@ namespace ET_ShiftManagementSystem.Services
     {
         public List<OrganizationRole> GetRoles();
         public OrganizationRole GetRoles(Guid guid);
-        public Task<OrganizationRole> PostRole(OrganizationRole organization);
-        public Task<OrganizationRole> EditRoleRequest(Guid guid , OrganizationRole organization );
-        public Task<OrganizationRole> DeleteRoleRequest(Guid guid);
+        public OrganizationRole PostRole(OrganizationRole organization);
+        public OrganizationRole EditRoleRequest(Guid guid , OrganizationRole organization );
+        public OrganizationRole DeleteRoleRequest(Guid guid);
         public List<GlobalRole> GetGlobalRoles();
-        public Task<GlobalRole> GetGlobalRoles(Guid guid);
+        public GlobalRole GetGlobalRoles(Guid guid);
        
-        public Task<GlobalRole> EditGlobalRoleRequest(Guid guid, GlobalRole organization);
-        public Task<GlobalRole> DeleteGlobalRoleRequest(Guid guid);
+        public GlobalRole EditGlobalRoleRequest(Guid guid, GlobalRole organization);
+        public GlobalRole DeleteGlobalRoleRequest(Guid guid);
 
     }
 
@@ -29,9 +29,9 @@ namespace ET_ShiftManagementSystem.Services
             _dbContext = dbContext;
         }
 
-        public async Task<GlobalRole> DeleteGlobalRoleRequest(Guid guid)
+        public GlobalRole DeleteGlobalRoleRequest(Guid guid)
         {
-            var delete = await _dbContext.GlobalRoles.FirstOrDefaultAsync(x => x.Id == guid);
+            var delete =  _dbContext.GlobalRoles.FirstOrDefault(x => x.Id == guid);
 
             if (delete == null)
             {
@@ -39,13 +39,13 @@ namespace ET_ShiftManagementSystem.Services
             }
 
             _dbContext.GlobalRoles.Remove(delete);
-            await _dbContext.SaveChangesAsync();
+             _dbContext.SaveChanges();
             return delete;
         }
 
-        public async Task<OrganizationRole> DeleteRoleRequest(Guid guid)
+        public OrganizationRole DeleteRoleRequest(Guid guid)
         {
-            var delete = await _dbContext.OrganizationRoles.FirstOrDefaultAsync(x => x.Id== guid);
+            var delete =  _dbContext.OrganizationRoles.FirstOrDefault(x => x.Id== guid);
 
             if(delete == null)
             {
@@ -53,20 +53,16 @@ namespace ET_ShiftManagementSystem.Services
             }
 
             _dbContext.OrganizationRoles.Remove(delete);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
             return delete;
 
         }
 
-        public async Task<OrganizationRole> EditRoleRequest(Guid guid, OrganizationRole organization)
+        public  OrganizationRole EditRoleRequest(Guid guid, OrganizationRole organization)
         {
-            //var exist = await _dbContext.OrganizationRoles.Where(x => x.Id == 
-            var exisingRole =await _dbContext.OrganizationRoles.FirstOrDefaultAsync(x => x.Id== guid);
+            
+            var exisingRole = _dbContext.OrganizationRoles.FirstOrDefault(x => x.Id== guid);
 
-            //if(exisingRole.Id == 95A02FB3-A4B2-441C-ADB4-EC1189CF12C7  || exisingRole.Id ==  "B51D5C78-C2FD-4EF6-9316-D746214AB7E6")
-            //{
-            //    return null;
-            //}
             if(exisingRole == null)
             {
                 return null;
@@ -81,9 +77,9 @@ namespace ET_ShiftManagementSystem.Services
             return exisingRole;
         }
 
-        public async Task<GlobalRole> EditGlobalRoleRequest(Guid guid, GlobalRole organization)
+        public GlobalRole EditGlobalRoleRequest(Guid guid, GlobalRole organization)
         {
-            var exisingRole = await _dbContext.GlobalRoles.FirstOrDefaultAsync(x => x.Id == guid);
+            var exisingRole =  _dbContext.GlobalRoles.FirstOrDefault(x => x.Id == guid);
 
             
             if (exisingRole == null)
@@ -105,9 +101,9 @@ namespace ET_ShiftManagementSystem.Services
             return  _dbContext.GlobalRoles.ToList();
         }
 
-        public async Task<GlobalRole> GetGlobalRoles(Guid guid)
+        public  GlobalRole GetGlobalRoles(Guid guid)
         {
-            var role = await _dbContext.GlobalRoles.FirstOrDefaultAsync(x => x.Id
+            var role =  _dbContext.GlobalRoles.FirstOrDefault(x => x.Id
               == guid);
             return role;
         }
@@ -124,8 +120,12 @@ namespace ET_ShiftManagementSystem.Services
             return role;
         }
 
-        public async Task<OrganizationRole> PostRole(OrganizationRole organization)
+        public  OrganizationRole PostRole(OrganizationRole organization)
         {
+            if (organization.RoleName == "" )
+            {
+                return null;
+            }
             organization.Id = Guid.NewGuid();
             organization.RoleName = organization.RoleName;
             organization.Description= organization.Description;
@@ -133,8 +133,8 @@ namespace ET_ShiftManagementSystem.Services
             organization.RoleType = "Custom";
             organization.LastModifiedDate= DateTime.Now;
             organization.CreatedDate = DateTime.Now;
-            await _dbContext.OrganizationRoles.AddAsync(organization);
-            await _dbContext.SaveChangesAsync();
+             _dbContext.OrganizationRoles.Add(organization);
+             _dbContext.SaveChanges();
             return organization;
         }
     }

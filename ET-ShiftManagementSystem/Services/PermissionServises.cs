@@ -7,7 +7,7 @@ namespace ET_ShiftManagementSystem.Services
 {
     public interface IPermissionServises
     {
-       public Task<IEnumerable<Permission>> GetPermissions();
+       public List<Permission> GetPermissions();
 
         public Task<Permission> GetPermissionById(Guid id);
         public Task<Permission> AddPermission(Permission permission);
@@ -16,11 +16,11 @@ namespace ET_ShiftManagementSystem.Services
         public Task<OrgPermission> EditOrgPermission(Guid id , OrgPermission permission);
 
         public Task<Permission> DeletePermission(Guid id);
-        public Task<OrgPermission> DeleteOrgPermission(Guid id);
+        public bool DeleteOrgPermission(Guid id);
 
-        public Task<IEnumerable<OrgPermission>> GetOrgPermissions();
+        public List<OrgPermission> GetOrgPermissions();
 
-        public Task<OrgPermission> GetOrgPermissionById(Guid id);
+        public OrgPermission GetOrgPermissionById(Guid id);
 
     }
     public class PermissionServises : IPermissionServises
@@ -34,6 +34,10 @@ namespace ET_ShiftManagementSystem.Services
 
         public async  Task<Permission> EditPermission(Guid id, Permission permission)
         {
+            if (permission == null)
+            {
+                return null;
+            }
            var existingPermission = await shiftManagementDbContext.Permissions.FirstOrDefaultAsync(x => x.Id == id);
 
             if (existingPermission == null)
@@ -54,9 +58,15 @@ namespace ET_ShiftManagementSystem.Services
 
         }
 
-        public async Task<IEnumerable<Permission>> GetPermissions()
+        public  List<Permission> GetPermissions()
         {
-            return await shiftManagementDbContext.Permissions.ToListAsync();
+            var responce = shiftManagementDbContext.Permissions.ToList();
+            if (responce != null)
+            {
+              return responce;
+
+            }
+            return null;
         }
         public async Task<Permission> GetPermissionById(Guid id)
         {
@@ -76,7 +86,6 @@ namespace ET_ShiftManagementSystem.Services
             if(deletePermission == null )
             {
                 return null;
-                
             }
 
             shiftManagementDbContext.Permissions.Remove(deletePermission);
@@ -99,14 +108,14 @@ namespace ET_ShiftManagementSystem.Services
         }
 
         
-        public async Task<IEnumerable<OrgPermission>> GetOrgPermissions()
+        public  List<OrgPermission> GetOrgPermissions()
         {
-            return await shiftManagementDbContext.OrgPermissions.ToListAsync();
+            return  shiftManagementDbContext.OrgPermissions.ToList();
         }
 
-        public async Task<OrgPermission> GetOrgPermissionById(Guid id)
+        public OrgPermission GetOrgPermissionById(Guid id)
         {
-            var permission = await shiftManagementDbContext.OrgPermissions.FirstOrDefaultAsync(x => x.Id == id);
+            var permission =  shiftManagementDbContext.OrgPermissions.FirstOrDefault(x => x.Id == id);
 
             if (permission == null)
             {
@@ -152,19 +161,19 @@ namespace ET_ShiftManagementSystem.Services
             return permission;
         }
 
-        public async Task<OrgPermission> DeleteOrgPermission(Guid id)
+        public bool DeleteOrgPermission(Guid id)
         {
-            var deletePermission = await shiftManagementDbContext.OrgPermissions.FirstOrDefaultAsync(x => x.Id == id);
+            var deletePermission = shiftManagementDbContext.OrgPermissions.FirstOrDefault(x => x.Id == id);
 
             if (deletePermission == null)
             {
-                return null;
+                return false;
 
             }
 
              shiftManagementDbContext.OrgPermissions.Remove(deletePermission);
              shiftManagementDbContext.SaveChanges();
-             return deletePermission;
+             return true;
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public class UpdateShiftRequest
     {
-        public Guid ShiftID { get; set; }
+        //public Guid ShiftID { get; set; }
         public string ShiftName { get; set; }
 
         public TimeSpan StartTime { get; set; }

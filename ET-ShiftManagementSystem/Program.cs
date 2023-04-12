@@ -117,7 +117,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddScoped<INotesServices, NotesServices>();
 
-builder.Services.AddTransient<TaskCommentServices>();
+builder.Services.AddScoped<ITaskCommentServices , TaskCommentServices>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ShiftManagementDbContext>().AddDefaultTokenProviders();
