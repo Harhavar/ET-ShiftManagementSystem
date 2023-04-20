@@ -58,6 +58,8 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var organizationRequest = new ProjectsViewRequest()
                     {
+                        Id=Organization.ProjectId,
+                        TenantId=Organization.TenentId,
                         Name = Organization.Name,
                         Description = Organization.Description,
                         Status = Organization.Status,
@@ -102,6 +104,8 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var organizationRequest = new ProjectDetailsRequest()
                     {
+                        ProjectId=Organization.ProjectId,
+                        TenantId =Organization.TenentId,
                         Name = Organization.Name,
                         Description = Organization.Description,
                         Status = Organization.Status,
@@ -151,6 +155,8 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var organizationRequest = new ProjectDetailsRequest()
                     {
+                        ProjectId = Organization.ProjectId,
+                        TenantId = Organization.TenentId,
                         Name = Organization.Name,
                         Description = Organization.Description,
                         Status = Organization.Status,
@@ -246,6 +252,8 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 var projectDetails = new ProjectDetailsRequest()
                 {
+                    ProjectId = responce.ProjectId,
+                    TenantId = responce.TenentId,
                     Name = responce.Name,
                     Description = responce.Description,
                     Status = responce.Status,

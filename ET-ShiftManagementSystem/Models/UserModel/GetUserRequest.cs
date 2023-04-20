@@ -2,6 +2,8 @@
 {
     public class GetUserRequest
     {
+        public Guid UserId { get; set; }
+        public Guid TenantId { get; set; }
         public string username { get; set; }
 
         public string? Role { get; set; }

@@ -374,7 +374,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 //var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email = user.Email }, Request.Scheme);
                 await emailSender.SendEmailAsync(request.Email, "Reset your password",
-                    $"Please reset your password : <a href='{$"http://localhost:3000/resetpassword?userId={user.id}"}'><h2>click here</h2></a>.");
+                    $"Please reset your password : <a href='{$"http://localhost:5173/reset-password?userId={user.id}"}'><h2>click here</h2></a>");
 
                 return Ok($"user id :{user.id}");
             }

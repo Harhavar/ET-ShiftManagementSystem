@@ -53,6 +53,9 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var organizationRequest = new GetUserRequest()
                     {
+                        UserId = user.id,
+                        TenantId = user.TenentID,
+
                         username = user.username,
                         Role = user.Role,
                         IsActive = user.IsActive,
