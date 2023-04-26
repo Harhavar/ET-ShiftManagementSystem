@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
 using Pipelines.Sockets.Unofficial.Arenas;
 using System.Drawing.Drawing2D;
 using static ET_ShiftManagementSystem.Servises.ShiftServices;
@@ -33,7 +34,16 @@ namespace ET_ShiftManagementSystem.Controllers
             _userRepository = userRepository;
             _shiftServices = shiftServices;
         }
-
+        [HttpGet]
+        [Route("RecentActivity")]
+        //[Authorize(Roles = "SystemAdmin")]
+        public IActionResult GetRecentActivity()
+        {
+            var guid = Guid.NewGuid();
+            var project = new Projects();
+            var respone = _projectServices.AddProject(guid, project);
+            return Ok(respone);
+        }
         /// <summary>
         /// Get All Peojects in Application
         /// </summary>
@@ -248,7 +258,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     return NotFound();
                 }
-                var ProjectDetails = new List<ProjectDetailsRequest>();
+                //var ProjectDetails = new List<ProjectDetailsRequest>();
 
                 var projectDetails = new ProjectDetailsRequest()
                 {
@@ -261,10 +271,10 @@ namespace ET_ShiftManagementSystem.Controllers
                     LastModifiedDate = responce.LastModifiedDate,
 
                 };
-                ProjectDetails.Add(projectDetails);
+                //ProjectDetails.Add(projectDetails);
 
 
-                return Ok(ProjectDetails);
+                return Ok(projectDetails);
             }
             catch (Exception ex)
             {

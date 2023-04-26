@@ -105,6 +105,15 @@ namespace ET_ShiftManagementSystem.Controllers
         //}
 
         /// <summary>
+        /// Get Recent Activity related to task 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult RecentActivity()
+        {
+            return Ok();
+        }
+        /// <summary>
         /// Get All Task In Organization
         /// </summary>
         /// <returns></returns>
