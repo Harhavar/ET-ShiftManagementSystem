@@ -114,15 +114,19 @@ namespace ET_ShiftManagementSystem.Controllers
             return Ok();
         }
         /// <summary>
-        /// Get All Task In Organization
+        /// Get All Task In Organization/ project
         /// </summary>
         /// <returns></returns>
-        [HttpGet("Task")]
-        public IActionResult GetTasks()
+        [HttpGet("{ProjectId}")]
+        public IActionResult GetTasks(Guid ProjectId)
         {
+            if(Guid.Empty == ProjectId)
+            {
+                return BadRequest();
+            }
             try
             {
-                var responce =  _tasksServices.GetAllTasks();
+                var responce =  _tasksServices.GetAllTasks(ProjectId);
                 if (responce == null)
                 {
                     return NotFound();
@@ -135,8 +139,29 @@ namespace ET_ShiftManagementSystem.Controllers
             }
             
         }
-        
-         [HttpGet("Task/{TenantId}")]
+        [HttpGet("Task")]
+        public IActionResult GetTasks()
+        {
+            try
+            {
+                var responce = _tasksServices.GetAllTasks();
+                if (responce == null)
+                {
+                    return NotFound();
+                }
+                return Ok(responce);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+        }
+        /// <summary>
+        /// Get All Task In Organization
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Task/{TenantId}")]
         public IActionResult GetTasksByOrg(Guid TenantId)
         {
             if (Guid.Empty == TenantId )
@@ -175,7 +200,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
             try
             {
-                await _tasksServices.PostTaskAsync(UserId, TaskDetails.Text, TaskDetails.FileDetails, TaskDetails.FileType , TaskDetails.DueDate , TaskDetails.Actions , TaskDetails.TaskGivenTo);
+                await _tasksServices.PostTaskAsync(UserId, TaskDetails.Text, TaskDetails.FileDetails, TaskDetails.FileType , TaskDetails.DueDate , TaskDetails.Actions , TaskDetails.TaskGivenTo ,TaskDetails.ProjectId);
                 return Ok();
             }
             catch (Exception)

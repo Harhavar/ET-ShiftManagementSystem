@@ -1,4 +1,5 @@
 ﻿using AutoMapper.Configuration.Annotations;
+using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.NotesModel;
 using ET_ShiftManagementSystem.Models.organizationModels;
@@ -27,12 +28,14 @@ namespace ET_ShiftManagementSystem.Controllers
         private readonly IProjectServices _projectServices;
         private readonly IUserRepository _userRepository;
         private readonly IShiftServices _shiftServices;
+        private readonly ShiftManagementDbContext _context;
 
-        public ProjectsController(IProjectServices projectServices, IUserRepository userRepository, IShiftServices shiftServices)
+        public ProjectsController(IProjectServices projectServices, IUserRepository userRepository, IShiftServices shiftServices )
         {
             _projectServices = projectServices;
             _userRepository = userRepository;
             _shiftServices = shiftServices;
+            //_context = context;
         }
         [HttpGet]
         [Route("RecentActivity")]
@@ -78,7 +81,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     OrganizationRequest.Add(organizationRequest);
 
                 });
-
+                
                 return Ok(OrganizationRequest);
 
             }
@@ -199,7 +202,7 @@ namespace ET_ShiftManagementSystem.Controllers
             try
             {
                 var Organization = _projectServices.GetProjectsData();
-
+               
                 return Ok(Organization.Count());
 
             }
@@ -286,14 +289,14 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <summary>
         /// Add Project in Perticular Organization
         /// </summary>
-        /// <param name="tenantId"></param>
+        /// <param name="TenetId"></param>
         /// <param name="addProject"></param>
         /// <returns></returns>
-        [HttpPost("AddProject/{tenantId}")]
+        [HttpPost("AddProject/{TenetId}" , Name = "Post")]
         //[Authorize(Roles = "SystemAdmin")]
-        public async Task<IActionResult> AddProject(Guid tenantId, [FromBody] AddProjectRequest addProject)
+        public async Task<IActionResult> AddProject(Guid TenetId, [FromBody] AddProjectRequest addProject)
         {
-            if (Guid.Empty == tenantId || addProject == null)
+            if (Guid.Empty == TenetId || addProject == null)
             {
                 return BadRequest();
             }
@@ -307,7 +310,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 };
 
-                Project = await _projectServices.AddProject(tenantId, Project);
+                Project = await _projectServices.AddProject(TenetId, Project);
 
                 var userShifts = new List<UserShift>();
 
@@ -325,9 +328,10 @@ namespace ET_ShiftManagementSystem.Controllers
                 });
 
                 _shiftServices.Update(userShifts);
+                
 
 
-                return CreatedAtAction(nameof(GetProjectById), new { Id = Project.ProjectId }, Project);
+                return CreatedAtAction(nameof(AddProject), new { Id = Project.ProjectId }, Project);
             }
             catch (Exception ex)
             {

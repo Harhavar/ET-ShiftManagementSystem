@@ -4,6 +4,7 @@ using ET_ShiftManagementSystem.Models.DocModel;
 using ET_ShiftManagementSystem.Models.NotesModel;
 using ET_ShiftManagementSystem.Models.TaskModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 
 namespace ET_ShiftManagementSystem.Services
@@ -12,7 +13,7 @@ namespace ET_ShiftManagementSystem.Services
     {
         public Task<IEnumerable<Note>> GetAllNotes();
         public Task<IEnumerable<Note>> GetAllNotes(Guid ProjectId);
-        Task PostNotesAsync(Guid userId, string text, IFormFile? fileDetails);
+        Task PostNotesAsync(Guid userId, string text, IFormFile? fileDetails , Guid ProjectId);
     }
     public class NotesServices : INotesServices
     {
@@ -53,12 +54,13 @@ namespace ET_ShiftManagementSystem.Services
 
             return responce;
         }
-        public async Task PostNotesAsync(Guid userId, string text, IFormFile? fileDetails)
+        public async Task PostNotesAsync(Guid userId, string text, IFormFile? fileDetails , Guid ProjectId)
         {
             try
             {
                 var username = _dbContext.users.Where(x => x.id == userId).Select(x => x.username).FirstOrDefault();
                 var TenantId = _dbContext.users.Where(x => x.id == userId).Select(x => x.TenentID).FirstOrDefault();
+                var projectName = _dbContext.Projects.Where(x => x.ProjectId == ProjectId).Select(x => x.Name).FirstOrDefault();
 
                 var Note = new Note()
                 {
@@ -80,21 +82,18 @@ namespace ET_ShiftManagementSystem.Services
                     fileDetails.CopyTo(stream);
                     Note.FileData = stream.ToArray();
                 }
-                //var fileDataList = new List<byte[]>();
-
-                //foreach (var file in fileDetails)
-                //{
-                //    if (file.Length > 0)
-                //    {
-                //        using (var ms = new MemoryStream())
-                //        {
-                //            await file.CopyToAsync(ms);
-                //            fileDataList.Add(ms.ToArray());
-                //        }
-                //    }
-                //}
-
-                //return fileDataList;
+                var activity = new Activity
+                {
+                    ActivityId = Guid.NewGuid(),
+                    ProjectName = projectName,
+                    Action = "Note Added",
+                    Message = $"{text} ",
+                    UserName = "",
+                    TenetId = TenantId,
+                    Timestamp = DateTime.Now,
+                };
+                _dbContext.Activities.Add(activity);
+                _dbContext.SaveChanges();
 
                 var result = _dbContext.Notes.Add(Note);
                 await _dbContext.SaveChangesAsync();

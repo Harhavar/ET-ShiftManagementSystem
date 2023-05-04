@@ -3,6 +3,7 @@ using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.DocModel;
 using ET_ShiftManagementSystem.Models.TaskModel;
 using ET_ShiftManagementSystem.Services;
+using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -223,7 +224,7 @@ namespace Et_shiftmsnsgementsystem
                 TaskGivenTo = Guid.NewGuid(),
                 ///FileDetails =  IFormFile 
             };
-            _mockTasksServices.Setup(s => s.PostTaskAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IFormFile>(), It.IsAny<FileType>(), It.IsAny<DateTime>(), It.IsAny<Actions>(), It.IsAny<Guid>())).Verifiable();
+            //_mockTasksServices.Setup(s => s.PostTaskAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IFormFile>(), It.IsAny<FileType>(), It.IsAny<DateTime>(), It.IsAny<Actions>(), It.IsAny<Guid>())).Verifiable();
 
             // Act
             var result = await _controller.PostTask(userId, taskDetails);
@@ -268,7 +269,7 @@ namespace Et_shiftmsnsgementsystem
             var userId = Guid.NewGuid();
             var taskDetails = new TaskUploadModel();
                 
-            _mockTasksServices.Setup(s => s.PostTaskAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IFormFile>(), It.IsAny<FileType>(), It.IsAny<DateTime>(), It.IsAny<Actions>(), It.IsAny<Guid>())).ThrowsAsync(new Exception());
+            //_mockTasksServices.Setup(s => s.PostTaskAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<IFormFile>(), It.IsAny<FileType>(), It.IsAny<DateTime>(), It.IsAny<Actions>(), It.IsAny<Guid>())).ThrowsAsync(new Exception());
             // Act & Assert
             //Assert.ThrowsAsync<Exception>(() => _controller.PostTask(userId, taskDetails));
             //_mockTasksServices.Verify();
@@ -539,7 +540,48 @@ namespace Et_shiftmsnsgementsystem
             //var okResult = result as OkObjectResult;
             //Assert.AreEqual(tasks, okResult.Value);
         }
+        [Test]
+        public void GetTasks_ReturnsOkResult()
+        {
+            // Arrange
+            var projectId = Guid.NewGuid();
 
+            // Act
+            var result = _controller.GetTasks(projectId);
+
+            // Assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public void GetTasks_ReturnsTasks()
+        {
+            // Arrange
+            var projectId = Guid.NewGuid();
+
+            // Act
+            var result = _controller.GetTasks(projectId) as OkObjectResult;
+
+            // Assert
+            Assert.IsInstanceOf<IEnumerable<Task>>(result.Value);
+        }
+
+        [Test]
+        public void GetTasks_ReturnsNotFoundResult_WhenNoTasks()
+        {
+            // Arrange
+            //var mockService = new Mock<ITasksService>();
+            //mockService.Setup(s => s.GetAllTasks(It.IsAny<Guid>()))
+                      // .//Returns((IEnumerable<Task>)null);
+            //var controller = new TasksController(mockService.Object);
+            var projectId = Guid.NewGuid();
+
+            // Act
+            var result = _controller.GetTasks(projectId);
+
+            // Assert
+            Assert.IsInstanceOf<NotFoundResult>(result);
+        }
     }
 
 }

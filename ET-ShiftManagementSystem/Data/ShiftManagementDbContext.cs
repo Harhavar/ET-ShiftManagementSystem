@@ -107,7 +107,6 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<OrgPermission> OrgPermissions { get; set; }
 
-
         public DbSet<OrganizationRole> OrganizationRoles { get; set; }
 
         public DbSet<GlobalRole> GlobalRoles { get; set; }
@@ -121,5 +120,7 @@ namespace ET_ShiftManagementSystem.Data
         public DbSet<Note> Notes { get; set; }
 
         public DbSet<UserShift> UserShifts { get; set; }
+
+        public DbSet<ET_ShiftManagementSystem.Entities.Activity> Activities { get; set; }
     }
 }

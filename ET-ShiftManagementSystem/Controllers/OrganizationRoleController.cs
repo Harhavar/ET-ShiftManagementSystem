@@ -277,11 +277,15 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPost]
         public IActionResult PostNewRole(EditRoleRequest editRole)
         {
-
-            if(editRole.RoleName == null || editRole.LinkedPermission == null || editRole.Description == null)
+            if (editRole == null)
             {
                 return BadRequest();
             }
+            if (editRole.RoleName == null || editRole.LinkedPermission == null || editRole.Description == null )
+            {
+                return BadRequest();
+            }
+            
             try
             {
                 var role = new Entities.OrganizationRole

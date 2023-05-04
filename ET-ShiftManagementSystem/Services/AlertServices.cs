@@ -5,6 +5,7 @@ using ET_ShiftManagementSystem.Models.AlertModel;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ET_ShiftManagementSystem.Servises
 {
@@ -33,7 +34,8 @@ namespace ET_ShiftManagementSystem.Servises
 
         public async Task AddAlert(Guid ProjectId, AlertRequest alertRequest, severityLevel sevearity)
         {
-            //if (sevearity < 0 && sevearity => 2)
+            var projectName = _shiftManagementDb.Projects.Where(x => x.ProjectId == ProjectId).Select(x => x.Name).FirstOrDefault();
+            var TenantId = _shiftManagementDb.Projects.Where(x => x.ProjectId == ProjectId).Select(x => x.TenentId).FirstOrDefault();
             var alert = new Alert
             {
                 Id = Guid.NewGuid(),
@@ -51,12 +53,23 @@ namespace ET_ShiftManagementSystem.Servises
                 RCA = "",
                 ReportedBy="",
                 ProjectId= ProjectId,
-                TenantId= _shiftManagementDb.Projects.Where(x => x.ProjectId == ProjectId).Select(x=> x.TenentId).FirstOrDefault(),
+                TenantId= TenantId,
 
 
             };
-
-             _shiftManagementDb.alerts.Add(alert);
+            var activity = new Activity
+            {
+                ActivityId = Guid.NewGuid(),
+                ProjectName = projectName,
+                Action = "Alert Added",
+                Message = $"{alertRequest.AlertName} ",
+                UserName = "",
+                TenetId = TenantId,
+                Timestamp = DateTime.Now,
+            };
+            _shiftManagementDb.Activities.Add(activity);
+            _shiftManagementDb.SaveChanges();
+            _shiftManagementDb.alerts.Add(alert);
             await _shiftManagementDb.SaveChangesAsync();
            
         }

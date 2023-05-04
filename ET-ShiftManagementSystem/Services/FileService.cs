@@ -11,7 +11,7 @@ namespace ET_ShiftManagementSystem.Services
         public List<FileDetails> GetFileDetails();
         public Task<IEnumerable<FileDetails>> GetallDocs(Guid TenentId);
         public Task<FileDetails> GetSingleDocs(Guid id);
-        public Task PostFileAsync( Guid TenentId, IFormFile fileData, FileType fileType);
+        public Task PostFileAsync( Guid TenentId, IFormFile fileData, FileType fileType , Guid ProjectId);
 
         public Task PostMultiFileAsync(Guid TenentId, List<FileUploadModel> fileData);
 
@@ -27,10 +27,11 @@ namespace ET_ShiftManagementSystem.Services
             this.dbContextClass = dbContextClass;
         }
 
-        public async Task PostFileAsync(Guid TenentId , IFormFile fileData, FileType fileType)
+        public async Task PostFileAsync(Guid TenentId , IFormFile fileData, FileType fileType , Guid ProjectId)
         {
             try
             {
+                var projectName = dbContextClass.Projects.Where(x => x.ProjectId == ProjectId).Select(x => x.Name).FirstOrDefault();
                 var fileDetails = new FileDetails()
                 {
                     ID = Guid.NewGuid(),
@@ -45,7 +46,18 @@ namespace ET_ShiftManagementSystem.Services
                     fileData.CopyTo(stream);
                     fileDetails.FileData = stream.ToArray();
                 }
-
+                var activity = new Activity
+                {
+                    ActivityId = Guid.NewGuid(),
+                    ProjectName = projectName,
+                    Action = "Document Added",
+                    Message = $"{fileData.FileName} Uploaded",
+                    UserName = "",
+                    TenetId = TenentId,
+                    Timestamp = DateTime.Now,
+                };
+                dbContextClass.Activities.Add(activity);
+                dbContextClass.SaveChanges();
                 var result = dbContextClass.FileDetails.Add(fileDetails);
                 await dbContextClass.SaveChangesAsync();
                // return result;

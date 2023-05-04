@@ -115,7 +115,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
             try
             {
-                await _notesServices.PostNotesAsync(UserId, addNotes.Text, addNotes.FileDetails);
+                await _notesServices.PostNotesAsync(UserId, addNotes.Text, addNotes.FileDetails , addNotes.ProjectId);
                 return Ok();
             }
             catch (Exception)

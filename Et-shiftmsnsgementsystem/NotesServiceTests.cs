@@ -146,9 +146,9 @@ namespace Et_shiftmsnsgementsystem
             // Arrange
             Guid userId = Guid.NewGuid();
             var fileDetails = new FormFile(Mock.Of<Stream>(), 0, 0, "file", "test.pdf");
-            var addNotes = new AddNotesVM { Text = "test note", FileDetails = fileDetails };
+            var addNotes = new AddNotesVM { Text = "test note", FileDetails = fileDetails , ProjectId = Guid.NewGuid()};
             var mockNotesService = new Mock<INotesServices>();
-            mockNotesService.Setup(service => service.PostNotesAsync(userId, addNotes.Text, addNotes.FileDetails))
+            mockNotesService.Setup(service => service.PostNotesAsync(userId, addNotes.Text, addNotes.FileDetails , addNotes.ProjectId))
                 .Returns(Task.CompletedTask);
             var controller = new NotesController(mockNotesService.Object);
 

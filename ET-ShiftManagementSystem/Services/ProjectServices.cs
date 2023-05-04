@@ -2,6 +2,7 @@
 using ET_ShiftManagementSystem.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Helpers.Mail;
 
 namespace ET_ShiftManagementSystem.Services
 {
@@ -32,9 +33,21 @@ namespace ET_ShiftManagementSystem.Services
             project.TenentId = tenantId;
             project.CreatedDate = DateTime.Now;
             project.LastModifiedDate = DateTime.Now;
-            project.Status = "active";
+            project.Status = "Active";
             await _dbContext.Projects.AddAsync(project);
             await _dbContext.SaveChangesAsync();
+            var activity = new Activity
+            {
+                ActivityId = Guid.NewGuid(),
+                ProjectName = project.Name,
+                Action = "Project Added",
+                Message = "",
+                UserName = "",
+                TenetId = tenantId,
+                Timestamp = DateTime.Now,
+            };
+            _dbContext.Activities.Add(activity);
+            _dbContext.SaveChanges();
             return project;
 
         }
@@ -91,6 +104,7 @@ namespace ET_ShiftManagementSystem.Services
 
         public List<Projects> GetProjectsData()
         {
+            
             return _dbContext.Projects.ToList();
         }
 

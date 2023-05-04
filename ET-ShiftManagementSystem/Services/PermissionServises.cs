@@ -15,7 +15,7 @@ namespace ET_ShiftManagementSystem.Services
         public Task<Permission> EditPermission(Guid id , Permission permission);
         public Task<OrgPermission> EditOrgPermission(Guid id , OrgPermission permission);
 
-        public Task<Permission> DeletePermission(Guid id);
+        public Permission DeletePermission(Guid id);
         public bool DeleteOrgPermission(Guid id);
 
         public List<OrgPermission> GetOrgPermissions();
@@ -79,9 +79,9 @@ namespace ET_ShiftManagementSystem.Services
 
             return permission;
         }
-        public async Task<Permission> DeletePermission(Guid id)
+        public Permission DeletePermission(Guid id)
         {
-            var deletePermission = await shiftManagementDbContext.Permissions.FirstOrDefaultAsync(x => x.Id == id);
+            var deletePermission = shiftManagementDbContext.Permissions.FirstOrDefault(x => x.Id == id);
 
             if(deletePermission == null )
             {

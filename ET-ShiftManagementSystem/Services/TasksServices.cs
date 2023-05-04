@@ -4,17 +4,19 @@ using ET_ShiftManagementSystem.Models.DocModel;
 using ET_ShiftManagementSystem.Models.TaskModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pipelines.Sockets.Unofficial.Arenas;
 using ShiftMgtDbContext.Entities;
 
 namespace ET_ShiftManagementSystem.Services
 {
     public interface ITasksServices
     {
+        public List<Tasks> GetAllTasks(Guid ProjectId);
         public List<Tasks> GetAllTasks();
         public List<Tasks> GetAllTasksOfOneOrg(Guid TenantId);
         public int GetuserTaskToDo(Guid userId);
         public int GetuserTaskInProgress(Guid userId);
-        public Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento);
+        public Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento , Guid ProjectId);
         public Task UpdateTask(Guid TaskID, UpdateTask updateTask);
     }
 
@@ -28,11 +30,14 @@ namespace ET_ShiftManagementSystem.Services
         }
 
 
+        public List<Tasks> GetAllTasks(Guid ProjectId)
+        {
+            return _dbContext.Tasks.Where(x => x.ProjectId == ProjectId).ToList();
+        }
         public List<Tasks> GetAllTasks()
         {
             return _dbContext.Tasks.ToList();
         }
-
         public int GetuserTaskToDo(Guid userId)
         {
             var responce = _dbContext.Tasks.Where(x => x.TaskGivenToID == userId).Where(x => x.Actions == Actions.ToDo).ToList();
@@ -52,7 +57,7 @@ namespace ET_ShiftManagementSystem.Services
             return responce.Count;
         }
 
-        public async Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento)
+        public async Task PostTaskAsync(Guid UserId, string text, IFormFile? fileDetails, FileType? fileType, DateTime dueDate, Actions Actions, Guid? TaskGivento , Guid ProjectId)
         {
 
             try
@@ -60,6 +65,7 @@ namespace ET_ShiftManagementSystem.Services
                 var username = _dbContext.users.Where(x => x.id == UserId).Select(x => x.username).FirstOrDefault();
                 var TenantId = _dbContext.users.Where(x => x.id == UserId).Select(x => x.TenentID).FirstOrDefault();
                 var assingnedUser = _dbContext.users.Where(x => x.id == TaskGivento).Select(x => x.username).FirstOrDefault();
+                var projectName = _dbContext.Projects.Where(x => x.ProjectId == ProjectId).Select(x => x.Name).FirstOrDefault();
                 var Task = new Tasks()
                 {
                     Id = Guid.NewGuid(),
@@ -83,7 +89,18 @@ namespace ET_ShiftManagementSystem.Services
                     fileDetails.CopyTo(stream);
                     Task.FileData = stream.ToArray();
                 }
-
+                var activity = new Activity
+                {
+                    ActivityId = Guid.NewGuid(),
+                    ProjectName = projectName,
+                    Action = "Task Added",
+                    Message = $"Task given By {" "} Task Given To {TaskGivento} ",
+                    UserName = "",
+                    TenetId = TenantId,
+                    Timestamp = DateTime.Now,
+                };
+                _dbContext.Activities.Add(activity);
+                _dbContext.SaveChanges();
                 var result = _dbContext.Tasks.Add(Task);
                 await _dbContext.SaveChangesAsync();
             }

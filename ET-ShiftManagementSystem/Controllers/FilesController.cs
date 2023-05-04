@@ -118,7 +118,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 }
 
 
-                 await _uploadService.PostFileAsync(TenentId, fileDetails.FileDetails, fileDetails.FileType);
+                 await _uploadService.PostFileAsync(TenentId, fileDetails.FileDetails, fileDetails.FileType , fileDetails.ProjectId);
                 return Ok();
             }
             catch (Exception)

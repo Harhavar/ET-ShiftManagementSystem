@@ -188,11 +188,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("[Controller]")]
-        public async Task<IActionResult> Delete(Guid id)
+        public IActionResult Delete(Guid id)
         {
             try
             {
-                var delete = await permissionServises.DeletePermission(id);
+                var delete =  permissionServises.DeletePermission(id);
                 if (delete == null)
                 {
                     return NotFound();
