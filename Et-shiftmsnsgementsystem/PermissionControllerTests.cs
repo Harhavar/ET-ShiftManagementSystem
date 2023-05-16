@@ -17,9 +17,9 @@ namespace Et_shiftmsnsgementsystem
 {
     public class PermissionControllerTests
     {
-        private PermissionController _controller;
-        private Mock<IPermissionServises> _permissionServicesMock;
-        private Mock<IMapper> _mapperMock;
+        private readonly PermissionController _controller;
+        private readonly Mock<IPermissionServises> _permissionServicesMock;
+        private readonly Mock<IMapper> _mapperMock;
 
         //[SetUp]
         public PermissionControllerTests()

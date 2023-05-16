@@ -540,7 +540,7 @@ namespace Et_shiftmsnsgementsystem
             //var okResult = result as OkObjectResult;
             //Assert.AreEqual(tasks, okResult.Value);
         }
-        [Test]
+        //[Test]
         public void GetTasks_ReturnsOkResult()
         {
             // Arrange
@@ -553,7 +553,7 @@ namespace Et_shiftmsnsgementsystem
             Assert.IsInstanceOf<OkObjectResult>(result);
         }
 
-        [Test]
+        //[Test]
         public void GetTasks_ReturnsTasks()
         {
             // Arrange

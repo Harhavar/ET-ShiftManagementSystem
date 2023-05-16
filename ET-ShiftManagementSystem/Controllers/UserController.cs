@@ -133,6 +133,8 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var organizationRequest = new GetUserRequest()
                     {
+                        UserId = user.id,
+                        TenantId = user.TenentID,
                         username = user.username,
                         Role = user.Role,
                         IsActive = user.IsActive,
@@ -162,7 +164,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Tenent/users/{UserId}")]
+        [Route("{UserId}")]
         public async  Task<IActionResult> Getuser(Guid UserId)
         {
             try
@@ -177,6 +179,8 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 var organizationRequest = new GetUserRequest()
                 {
+                    UserId = user.id,
+                    TenantId = user.TenentID,
                     username = user.username,
                     Role = user.Role,
                     IsActive = user.IsActive,
