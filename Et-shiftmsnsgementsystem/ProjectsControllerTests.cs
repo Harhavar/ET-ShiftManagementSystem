@@ -597,7 +597,7 @@ namespace Et_shiftmsnsgementsystem
             new UserShift { UserId = Guid.NewGuid() },
             new UserShift { UserId = Guid.NewGuid()  }
         };
-            var shifts = new List<Shift> { new Shift { ShiftName = "shift1" } };
+            var shifts = new List<ET_ShiftManagementSystem.Entities.AddShiftRequest> { new ET_ShiftManagementSystem.Entities.AddShiftRequest { ShiftName = "shift1" } };
             //_shiftServicesMock.Setup(x => x.userShifts(projectId)).Returns(new <Task<List<User>>());
             _shiftServicesMock.Setup(x => x.UserShiftName(projectId)).ReturnsAsync(shifts);
 

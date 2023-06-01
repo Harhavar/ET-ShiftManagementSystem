@@ -1,13 +1,9 @@
-﻿using AutoMapper;
-using ET_ShiftManagementSystem.Entities;
+﻿using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.DocModel;
-using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -30,6 +26,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="TenentId"></param>
         /// <returns></returns>
         [HttpGet("View")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult<IEnumerable<FileDetails>>> Get(Guid TenentId)
         {
             try
@@ -72,6 +70,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet("View-Single")]
         //[Route("{id:Guid}")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<IActionResult> GetOrganizationById(Guid id)
         {
             try
@@ -104,6 +104,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost("PostSingleFile")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult> PostSingleFile(Guid TenentId, [FromForm] FileUploadModel fileDetails)
         {
             try
@@ -133,6 +135,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost("PostMultipleFile")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult> PostMultipleFile([FromRoute] Guid id, [FromForm] List<FileUploadModel> fileDetails)
         {
             if (fileDetails == null)
@@ -157,6 +161,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpGet("DownloadFile")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult> DownloadFile(Guid id)
         {
             if (id == Guid.Empty)
@@ -182,6 +188,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("DeleteDoc")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
 
         public async Task<ActionResult> DeleteDocs(Guid id)
         {

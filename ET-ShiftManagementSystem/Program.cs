@@ -1,18 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Servises.ProjectServises;
-using Microsoft.EntityFrameworkCore.SqlServer;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using ShiftMgtDbContext.Entities;
 using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Data;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using ET_ShiftManagementSystem.Services;
 using Serilog;
 
@@ -207,12 +202,61 @@ builder.Services.AddSession(option =>
 
 //cors (cross origin request service we need when we access from front end application
 //for single domine one url in origin , for two or more known domine we need to include , * for any domine (url)
+//builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
+//{
+//    build.WithOrigins("http://20.204.99.128/etapi/", "http://localhost:5173/")
+//    .AllowAnyMethod().AllowAnyHeader();
+//}));
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(builder =>
+//    {
+//        builder.AllowAnyOrigin()
+//               .AllowAnyHeader()
+//               .AllowAnyMethod()
+//               .WithExposedHeaders("Authorization"); // Add this line to allow the Authorization header
+//    });
+//});
+//builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
+//{
+//    build.WithOrigins("*")
+//    .AllowAnyMethod().AllowAnyHeader();
+//}));
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(
+//        builder =>
+//        {
+//            builder.WithOrigins("http://20.204.99.128/etapi", "http://localhost:5173")
+//                                .AllowAnyHeader()
+//                                .AllowAnyMethod();
+//        });
+//});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("CorePolicy", builder =>
+//    {
+//        builder.AllowAnyOrigin()
+//            .AllowAnyHeader()
+//            .AllowAnyMethod();
+//    });
+//});
+
 builder.Services.AddCors(p => p.AddPolicy("CorePolicy", build =>
 {
-    build.WithOrigins("http://20.204.99.128/etapi/", "https://localhost:7259/", "http://127.0.0.1/etapi/")
-    .AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins("http://20.204.99.128/etapi", "http://20.204.99.128/SMS", "http://localhost:5173")
+    .AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("Authorization");
 }));
-
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(builder =>
+//    {
+//        builder.WithOrigins("http://20.204.99.128/etapi", "http://20.204.99.128/SMS", "http://localhost:5173")
+//               .AllowAnyHeader()
+//               .AllowAnyMethod()
+//               .WithExposedHeaders("Authorization"); // Add this line to allow the Authorization header
+//    });
+//});
 var app = builder.Build();
 
 //middleware 
@@ -227,9 +271,26 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseHttpLogging();
-app.UseCors("CorePolicy");
 
+
+app.UseRouting();
+//app.UseCors();
+app.UseCors("CorePolicy");
+//app.UseCors(x => x
+//            .AllowAnyMethod()
+//            .AllowAnyHeader()
+//            .SetIsOriginAllowed(_ => true)
+//            .AllowCredentials());
 //app.UseHttpsRedirection();
+//app.UseCors();
+//app.UseCors("CorePolicy");
+//app.UseCors(builder =>
+//{
+//    builder
+//    .AllowAnyOrigin()
+//    .AllowAnyMethod()
+//    .AllowAnyHeader();
+//});
 
 app.UseAuthentication();
 

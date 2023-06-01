@@ -2,35 +2,27 @@
 using ET_ShiftManagementSystem.Entities;
 using Microsoft.EntityFrameworkCore;
 using ShiftMgtDbContext.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Net.Http;
 using ET_ShiftManagementSystem.Models.ShiftModel;
 using Pipelines.Sockets.Unofficial.Arenas;
-using Xunit.Extensions.AssertExtensions;
 
 namespace ET_ShiftManagementSystem.Servises
 {
     public interface IShiftServices
     {
-        public List<Shift> GetAllShiftAsync();
-        public List<Shift> GetAllShift(Guid TenatID);
-        Shift GetShiftDetails(Guid ShiftId);
+        public List<Entities.AddShiftRequest> GetAllShiftAsync();
+        public List<Entities.AddShiftRequest> GetAllShift(Guid TenatID);
+        Entities.AddShiftRequest GetShiftDetails(Guid ShiftId);
 
-        Task<Shift> AddSift(Guid tenentId ,Shift shift);
-        Task<Shift> GetShiftById(Guid ShiftId);
+        Task<Entities.AddShiftRequest> AddSift(Guid tenentId , Entities.AddShiftRequest shift);
+        Task<Entities.AddShiftRequest> GetShiftById(Guid ShiftId);
 
         Task<List<User>> userShifts(Guid ProjectId);
         Task<List<User>> userShiftsDetails(Guid ShiftId);
-        Task<List<Shift>> UserShiftName(Guid ProjectId);
+        Task<List<Entities.AddShiftRequest>> UserShiftName(Guid ProjectId);
 
-        Task<Shift> UpdateShiftAsync(Guid id , UpdateShiftRequest shift);
+        Task<Entities.AddShiftRequest> UpdateShiftAsync(Guid id , UpdateShiftRequest shift);
 
-         public Shift DeleteShiftAsync(Guid ShiftId);
+         public Entities.AddShiftRequest DeleteShiftAsync(Guid ShiftId);
         void Update(List<UserShift> projectUser);
          public List<UserShift> UpdateExisting(Guid ProjectId ,List<UserShift> projectUser);
         void UpdateExisting(Guid ProjectID , List<addShift> projectUser);
@@ -43,33 +35,33 @@ namespace ET_ShiftManagementSystem.Servises
             _dbContext = dbContext;
         }
 
-        public List<Shift> GetAllShiftAsync()
+        public List<Entities.AddShiftRequest> GetAllShiftAsync()
         {
             return  _dbContext.Shifts.ToList();
         }
 
-        public async Task<Shift> GetShiftById(Guid ShiftId)
+        public async Task<Entities.AddShiftRequest> GetShiftById(Guid ShiftId)
         {
            var responce = await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == ShiftId);
             return responce;
         }
 
-        public Shift GetShiftDetails(Guid shiftId)
+        public Entities.AddShiftRequest GetShiftDetails(Guid shiftId)
         {
             return _dbContext.Shifts.FirstOrDefault(x => x.ShiftID == shiftId);
         }
 
 
-        public async Task<Shift> AddSift(Guid tenentId , Shift shift)
+        public async Task<Entities.AddShiftRequest> AddSift(Guid tenentId , Entities.AddShiftRequest shift)
         {
             shift.ShiftID = Guid.NewGuid();
             shift.TenantId = tenentId;
             _dbContext.Shifts.Add(shift);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChangesAsync();
             return shift;
         }
 
-        public async Task<Shift> UpdateShiftAsync( Guid id , UpdateShiftRequest shift)
+        public async Task<Entities.AddShiftRequest> UpdateShiftAsync( Guid id , UpdateShiftRequest shift)
         {
             var ExistingShift = await _dbContext.Shifts.FirstOrDefaultAsync(x => x.ShiftID == id);
 
@@ -84,7 +76,7 @@ namespace ET_ShiftManagementSystem.Servises
         }
 
 
-        public Shift DeleteShiftAsync(Guid ShiftId)
+        public Entities.AddShiftRequest DeleteShiftAsync(Guid ShiftId)
         {
             var Shift = _dbContext.Shifts.FirstOrDefault(x => x.ShiftID == ShiftId);
 
@@ -149,7 +141,7 @@ namespace ET_ShiftManagementSystem.Servises
 
         }
 
-        public List<Entities.Shift> GetAllShift(Guid TenatID)
+        public List<Entities.AddShiftRequest> GetAllShift(Guid TenatID)
         {
             return _dbContext.Shifts.Where(x => x.TenantId == TenatID).ToList();
         }
@@ -168,10 +160,10 @@ namespace ET_ShiftManagementSystem.Servises
             return users;
         }
 
-        public async Task<List<Shift>> UserShiftName(Guid ProjectId)
+        public async Task<List<Entities.AddShiftRequest>> UserShiftName(Guid ProjectId)
         {
             var ShiftIds = _dbContext.UserShifts.Where(x => x.ProjectId == ProjectId).Select(x => x.ShiftId).ToList();
-            var ShiftName = new List<Shift>();
+            var ShiftName = new List<Entities.AddShiftRequest>();
             foreach (var item in ShiftIds)
             {
                 var ShiftDetails = _dbContext.Shifts.FirstOrDefault(a => a.ShiftID == item);

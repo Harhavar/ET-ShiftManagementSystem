@@ -51,7 +51,7 @@ namespace ET_ShiftManagementSystem.Servises
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
                 Claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: Credential);
 
             var t =  Task.FromResult(new JwtSecurityTokenHandler().WriteToken(Token));

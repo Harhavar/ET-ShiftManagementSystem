@@ -75,7 +75,7 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<ProjectDetail> projectDetails { get; set; }
 
-        public DbSet<Shift> Shifts { get; set; }
+        public DbSet<AddShiftRequest> Shifts { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
 

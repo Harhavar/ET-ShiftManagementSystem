@@ -346,11 +346,11 @@ namespace Et_shiftmsnsgementsystem
             var userId = Guid.NewGuid();
             var updateUserRequest = new UpdateUserRequest()
             {
-                FirstName = "John",
+                UserName = "John",
                 Email = "john@test.com",
                 ContactNumber = "1234567890",
                 AlternateContactNumber = "0987654321",
-                IsActive = true
+                //IsActive = true
             };
             //var userRepositoryMock = new Mock<IUserRepository>();
             userRepositoryMock.Setup(x => x.EditUser(userId, It.IsAny<User>()))
@@ -378,11 +378,11 @@ namespace Et_shiftmsnsgementsystem
             var userId = Guid.NewGuid();
             var updateUserRequest = new UpdateUserRequest()
             {
-                FirstName = "John",
+                UserName = "John",
                 Email = "john@test.com",
                 ContactNumber = "1234567890",
                 AlternateContactNumber = "0987654321",
-                IsActive = true
+                //IsActive = true
             };
             //var userRepositoryMock = new Mock<IUserRepository>();
             //userRepositoryMock.Setup(x => x.EditUser(userId, It.IsAny<User>()))
@@ -404,11 +404,11 @@ namespace Et_shiftmsnsgementsystem
             var userId = Guid.Empty;
             var updateUserRequest = new UpdateUserRequest()
             {
-                FirstName = "",
+                UserName = "",
                 Email = "",
                 ContactNumber = "",
                 AlternateContactNumber = "",
-                IsActive = true
+                //IsActive = true
             };
             var userRepositoryMock = new Mock<IUserRepository>();
             //var controller = new UserController(userRepositoryMock.Object);

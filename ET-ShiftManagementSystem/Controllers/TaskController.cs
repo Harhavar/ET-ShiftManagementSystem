@@ -1,15 +1,8 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ET_ShiftManagementSystem.Servises;
-using ShiftMgtDbContext.Entities;
-using System.Data;
-using ET_ShiftManagementSystem.Entities;
 using Microsoft.AspNetCore.Cors;
 using ET_ShiftManagementSystem.Models.TaskModel;
 using ET_ShiftManagementSystem.Services;
-using ET_ShiftManagementSystem.Models.DocModel;
-using ET_ShiftManagementSystem.Data;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -118,6 +111,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("{ProjectId}")]
+        [Authorize(Roles ="User,Admin,SystemAdmin")]
         public IActionResult GetTasks(Guid ProjectId)
         {
             if(Guid.Empty == ProjectId)
@@ -140,6 +134,7 @@ namespace ET_ShiftManagementSystem.Controllers
             
         }
         [HttpGet("Task")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
         public IActionResult GetTasks()
         {
             try
@@ -162,6 +157,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Task/{TenantId}")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
         public IActionResult GetTasksByOrg(Guid TenantId)
         {
             if (Guid.Empty == TenantId )
@@ -191,6 +188,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="TaskDetails"></param>
         /// <returns></returns>
         [HttpPost("AddTask")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
+
         public async Task<ActionResult> PostTask(Guid UserId, [FromForm] TaskUploadModel TaskDetails)
         {
             if (TaskDetails == null || Guid.Empty == UserId)
@@ -216,6 +215,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="updateTask"></param>
         /// <returns></returns>
         [HttpPut("Update-Task")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
+
         public async Task<ActionResult> AddCommentsUpdateTask(Guid TaskID ,[FromForm]UpdateTask updateTask)
         {
 
@@ -243,6 +244,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="taskVm"></param>
         /// <returns></returns>
             [HttpPost("TaskComment")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin ,User")]
+
         public IActionResult AddTask(Guid UserId , [FromForm] TaskCommentVM taskVm)
         {
             if (Guid.Empty == UserId || taskVm == null)
@@ -273,6 +276,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="TaskID"></param>
         /// <returns></returns>
         [HttpGet("TaskComments")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
 
         public IActionResult GetTask(Guid TaskID)
         {
@@ -299,6 +303,8 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("[Action]")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
+
         public IActionResult GetuserTaskToDo(Guid UserId)
         {
             if(UserId == Guid.Empty)
@@ -324,6 +330,8 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpGet]
         [Route("[Action]")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
+
         public IActionResult GetuserTaskInProgress(Guid UserId)
         {
             if (UserId == Guid.Empty)

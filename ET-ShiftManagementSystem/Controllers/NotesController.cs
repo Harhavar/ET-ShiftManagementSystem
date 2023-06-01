@@ -1,9 +1,8 @@
 ﻿using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.NotesModel;
-using ET_ShiftManagementSystem.Models.TaskModel;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -25,6 +24,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("NotesAdminView")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult<IEnumerable<Note>>> Get()
         {
             try
@@ -65,6 +66,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("NotesView")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult<IEnumerable<Note>>> Get(Guid ProjectId)
         {
             try
@@ -106,6 +109,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="addNotes"></param>
         /// <returns></returns>
         [HttpPost("AddNotes")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult> PostNotes(Guid UserId, [FromForm] AddNotesVM addNotes)
         {
             if (addNotes == null)

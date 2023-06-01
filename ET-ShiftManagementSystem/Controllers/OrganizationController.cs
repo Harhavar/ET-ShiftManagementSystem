@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models.Authmodel;
 using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Services;
 using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
-using System.Drawing.Drawing2D;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -40,6 +36,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("ViewData")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "SuperAdmin,SystemAdmin")]
+
         public async Task<ActionResult<IEnumerable<Entities.Organization>>> Get()
         {
             try
@@ -84,7 +82,9 @@ namespace ET_ShiftManagementSystem.Controllers
 
         [HttpGet]
         [Route("Details")]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "SuperAdmin,SystemAdmin")]
+
         public async Task<ActionResult<IEnumerable<Entities.Organization>>> GetDetails()
         {
             try
@@ -142,6 +142,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("{id:Guid}")]
         [Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> GetOrganizationById(Guid id)
         {
             try
@@ -173,6 +175,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> AddOrganization(AddOrganizationRequest addOrganization)
         {
             try
@@ -283,6 +287,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> updateOrganization([FromRoute] Guid id , [FromBody]Models.organizationModels.UpdateOrganizationRequest updateOrganization)
         {
             try
@@ -344,7 +350,9 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> Deleteorg(Guid id)
         {
             try

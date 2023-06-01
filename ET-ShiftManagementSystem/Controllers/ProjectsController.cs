@@ -1,9 +1,5 @@
-﻿using AutoMapper.Configuration.Annotations;
-using ET_ShiftManagementSystem.Data;
+﻿using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models.NotesModel;
-using ET_ShiftManagementSystem.Models.organizationModels;
-using ET_ShiftManagementSystem.Models.ProjectModel;
 using ET_ShiftManagementSystem.Models.ProjectsModel;
 using ET_ShiftManagementSystem.Models.ShiftModel;
 using ET_ShiftManagementSystem.Services;
@@ -11,11 +7,7 @@ using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Graph;
 using Pipelines.Sockets.Unofficial.Arenas;
-using System.Drawing.Drawing2D;
 using static ET_ShiftManagementSystem.Servises.ShiftServices;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -39,7 +31,8 @@ namespace ET_ShiftManagementSystem.Controllers
         }
         [HttpGet]
         [Route("RecentActivity")]
-        //[Authorize(Roles = "SystemAdmin")]
+        [EnableCors("CorePolicy")]
+        [Authorize(Roles = "SystemAdmin,Admin,User,SuperAdmin")]
         public IActionResult GetRecentActivity()
         {
             var guid = Guid.NewGuid();
@@ -53,7 +46,9 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("AllProjects")]
+        [EnableCors("CorePolicy")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
         public IActionResult GetProjectsData()
         {
             try
@@ -99,7 +94,10 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("ProjectDetails")]
+        [EnableCors("CorePolicy")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
         public IActionResult GetDetails()
         {
             try
@@ -146,7 +144,10 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("ProjectDetailsWithTenentID")]
+        [EnableCors("CorePolicy")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
         public IActionResult GetTenentProject(Guid tenentId )
         {
             if (Guid.Empty == tenentId)
@@ -197,6 +198,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("ProjectCount")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
         public IActionResult GetCount()
         {
             try
@@ -220,6 +223,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("ProjectCountOfOrganization")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "SystemAdmin,SuperAdmin")]
+
         public IActionResult GetCountOrganization(Guid TenentId)
         {
             if (Guid.Empty == TenentId)
@@ -247,6 +252,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("SingleProject/{ProjectId}")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
         public IActionResult GetProjectById(Guid ProjectId)
         {
             if (ProjectId == Guid.Empty)
@@ -294,6 +301,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost("AddProject/{TenetId}" , Name = "Post")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
         public async Task<IActionResult> AddProject(Guid TenetId, [FromBody] AddProjectRequest addProject)
         {
             if (Guid.Empty == TenetId || addProject == null)
@@ -349,6 +358,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPut("UpdateProject/{ProjectId}")]
         //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> UpdateProject(Guid ProjectId, [FromBody] AddProjectRequest addProject)
         {
             if (Guid.Empty == ProjectId || addProject == null)
@@ -399,6 +410,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpDelete("DeleteProject/{ProjectId}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
 
         public async Task<IActionResult> DeleteProject(Guid ProjectId)
         {
@@ -461,6 +473,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("SREAssignment/{ProjectId}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin, User")]
+
         public async Task<IActionResult> GetShiftUser(Guid ProjectId)
         {
             if(ProjectId == Guid.Empty)
@@ -516,7 +530,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <param name="ShiftId"></param>
         /// <returns></returns>
-        [HttpGet("User_in_Shift/{ShiftId}")]
+        [HttpGet("Users_In_Shift/{ShiftId}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
 
         public async Task<IActionResult> GetUserDetails(Guid ShiftId)
         {
@@ -558,6 +573,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPut("SREAssignment/Alter/{ProjectId}")]
         //[HttpPost("SREAssignment/Add/{ProjectId}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult Update(Guid ProjectId, [FromBody] List<addShift> UpdateExisting)
         {
             try
@@ -598,6 +615,8 @@ namespace ET_ShiftManagementSystem.Controllers
             }
         }
         [HttpPost("SREAssignment/Add/{ProjectId}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult add(Guid ProjectId, [FromBody] List<addShift> UpdateExisting)
         {
             try

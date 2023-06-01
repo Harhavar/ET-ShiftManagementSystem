@@ -1,12 +1,7 @@
-﻿using ET_ShiftManagementSystem.Models;
-using ET_ShiftManagementSystem.Servises;
-using MailKit.Net.Smtp;
+﻿using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit;
-using MimeKit.Text;
 using ET_ShiftManagementSystem.Entities;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
 using Microsoft.AspNetCore.Cors;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -30,6 +25,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         //[Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public IActionResult SendMail(Email request)
         {
             try

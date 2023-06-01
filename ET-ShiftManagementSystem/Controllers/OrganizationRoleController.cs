@@ -1,7 +1,6 @@
-﻿using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models.CommentModel;
-using ET_ShiftManagementSystem.Models.OrganizationRoleModel;
+﻿using ET_ShiftManagementSystem.Models.OrganizationRoleModel;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +22,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
 
         public IActionResult GetOrganizationRole()
         {
@@ -67,6 +67,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Global")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
 
         public IActionResult GetGlobalRole()
         {
@@ -114,6 +115,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet("ViewOrgRole")]
         //[Route("{id:guid}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult GetOrganizationViewRole(Guid guid)
         {
             try
@@ -160,6 +163,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet("ViewGlobalRole")]
         //[Route("{id:guid}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult GetGlobalViewRole(Guid roleId)
         {
             if (Guid.Empty == roleId)
@@ -204,6 +209,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="editRole"></param>
         /// <returns></returns>
         [HttpPut]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult UpdateRole(Guid guid, EditRoleRequest editRole)
         {
             if (editRole.RoleName == null || editRole.Description == null || editRole.LinkedPermission == null)
@@ -242,6 +249,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="editRole"></param>
         /// <returns></returns>
         [HttpPut("global")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult UpdateGolbalRole(Guid guid, EditRoleRequest editRole)
         {
             try
@@ -275,6 +284,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="editRole"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult PostNewRole(EditRoleRequest editRole)
         {
             if (editRole == null)
@@ -314,6 +325,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
 
         public IActionResult DeleteRole(Guid id)
         {
@@ -340,7 +353,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("Global")]
-        
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult DeleteGlobalRole(Guid id)
         {
             try

@@ -2,18 +2,17 @@
 using ET_ShiftManagementSystem.Entities;
 using ET_ShiftManagementSystem.Models.AlertModel;
 using ET_ShiftManagementSystem.Servises;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.WebSockets;
 using Serilog;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
     [ApiController]
-    [EnableCors("CorePolicy")]
+    //[EnableCors("CorePolicy")]
     [Route("api/[Controller]")]
+    [EnableCors("CorePolicy")]
     public class AlertController : Controller
     {
         private readonly IAlertServices alertServices;
@@ -34,6 +33,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("TimeWarp")]
         //[Authorize(Roles = "SystemAdmin,SuperAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public IActionResult GetAlerts(DateTime start, DateTime end)
         {
             try
@@ -44,9 +45,9 @@ namespace ET_ShiftManagementSystem.Controllers
             catch (Exception ex)
             {
 
-               return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
-           
+
         }
 
 
@@ -60,6 +61,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("filter")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public IActionResult GetAlert(string alertname, DateTime from, DateTime? to)
         {
             try
@@ -100,13 +103,15 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [EnableCors("CorePolicy")]
-       // [Authorize(Roles = "SystemAdmin")]
+        // [Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult<IEnumerable<Alert>>> GetTodaysAlert()
         {
             try
             {
                 Log.Information("LoggerInfo");
-                var alert =  alertServices.GetTodaysAlert();
+                var alert = alertServices.GetTodaysAlert();
 
                 if (alert == null)
                 {
@@ -142,7 +147,7 @@ namespace ET_ShiftManagementSystem.Controllers
             {
                 return Ok(ex.Message);
             }
-            
+
         }
         /// <summary>
         /// get all alert
@@ -151,6 +156,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("all")]
         //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult<IEnumerable<Alert>>> GetAllalert()
         {
             try
@@ -168,7 +175,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var alertDTO = new Models.AlertModel.AlertsDTO()
                     {
-                        severity= (int)alert.severity,
+                        severity = (int)alert.severity,
                         CreatedDate = alert.CreatedDate,
                         AlertName = alert.AlertName,
                         RCA = alert.RCA,
@@ -202,46 +209,48 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
         [Route("BySeverity")]
         //[Authorize(Roles = "SystemAdmin")]
-            public async Task<ActionResult<IEnumerable<Alert>>> GetAllAlertBySeveority(severityLevel severity)
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
+        public async Task<ActionResult<IEnumerable<Alert>>> GetAllAlertBySeveority(severityLevel severity)
+        {
+            try
             {
-                try
+                var alert = alertServices.GetAllAlertBySeveority(severity);
+
+                if (alert == null)
                 {
-                    var alert =  alertServices.GetAllAlertBySeveority(severity);
-
-                    if (alert == null)
-                    {
-                        return NotFound();
-                    }
-
-                    var AlertDto = new List<AlertsDTO>();
-                    alert.ToList().ForEach(alert =>
-                    {
-                        var alertDTO = new Models.AlertModel.AlertsDTO()
-                        {
-                            severity = (int)alert.severity,
-                            CreatedDate = alert.CreatedDate,
-                            AlertName = alert.AlertName,
-                            RCA = alert.RCA,
-                            TriggeredTime = alert.TriggeredTime,
-                            Description = alert.Description,
-                            ReportedBy = alert.ReportedBy,
-                            ReportedTo = alert.ReportedTo,
-                            Id = alert.Id,
-                            lastModifiedDate = alert.lastModifiedDate,
-                            Status = alert.Status,
-                            TenantId = alert.TenantId,
-                            ProjectId = alert.ProjectId,
-                        };
-                        AlertDto.Add(alertDTO);
-
-                    });
-                    return Ok(AlertDto);
+                    return NotFound();
                 }
-                catch (Exception ex)
+
+                var AlertDto = new List<AlertsDTO>();
+                alert.ToList().ForEach(alert =>
                 {
-                    return BadRequest(ex.Message);
-                }
+                    var alertDTO = new Models.AlertModel.AlertsDTO()
+                    {
+                        severity = (int)alert.severity,
+                        CreatedDate = alert.CreatedDate,
+                        AlertName = alert.AlertName,
+                        RCA = alert.RCA,
+                        TriggeredTime = alert.TriggeredTime,
+                        Description = alert.Description,
+                        ReportedBy = alert.ReportedBy,
+                        ReportedTo = alert.ReportedTo,
+                        Id = alert.Id,
+                        lastModifiedDate = alert.lastModifiedDate,
+                        Status = alert.Status,
+                        TenantId = alert.TenantId,
+                        ProjectId = alert.ProjectId,
+                    };
+                    AlertDto.Add(alertDTO);
+
+                });
+                return Ok(AlertDto);
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
         /// <summary>
@@ -252,7 +261,9 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         //[Authorize(Roles = "SystemAdmin")]
-        public async Task<ActionResult> addAlert(Guid ProjectID , [FromBody]AddAlertRequest alert)
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
+        public async Task<ActionResult> addAlert(Guid ProjectID, [FromBody] AddAlertRequest alert)
         {
             try
             {
@@ -261,8 +272,8 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     return BadRequest();
                 }
-                
-                 await alertServices.AddAlert(ProjectID ,alert.alertRequest, alert.severity);
+
+                await alertServices.AddAlert(ProjectID, alert.alertRequest, alert.severity);
 
                 return Ok();
             }
@@ -279,7 +290,9 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Authorize(Roles = "SystemAdmin")]
+        //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
         public async Task<ActionResult> deleteAlert(Guid id)
         {
             try
@@ -313,7 +326,7 @@ namespace ET_ShiftManagementSystem.Controllers
             {
 
                 return Ok(ex.Message);
-            }   
+            }
         }
     }
 }

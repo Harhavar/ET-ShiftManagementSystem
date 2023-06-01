@@ -47,8 +47,8 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             var shiftDTOs = new List<ShiftDTO> { new ShiftDTO(), new ShiftDTO() };
-            _shiftServicesMock.Setup(s => s.GetAllShiftAsync()).Returns(new List<Shift>());
-            _mapperMock.Setup(m => m.Map<List<ShiftDTO>>(It.IsAny<List<Shift>>())).Returns(shiftDTOs);
+            _shiftServicesMock.Setup(s => s.GetAllShiftAsync()).Returns(new List<ET_ShiftManagementSystem.Entities.AddShiftRequest>());
+            _mapperMock.Setup(m => m.Map<List<ShiftDTO>>(It.IsAny<List<ET_ShiftManagementSystem.Entities.AddShiftRequest>>())).Returns(shiftDTOs);
             var controller = new ShiftController(_shiftServicesMock.Object, _mapperMock.Object);
 
             // Act
@@ -65,7 +65,7 @@ namespace Et_shiftmsnsgementsystem
             // Arrange
             //var mockShiftServices = new Mock<IShiftServices>();
             //var mockMapper = new Mock<IMapper>();
-            _shiftServicesMock.Setup(s => s.GetAllShiftAsync()).Returns((List<Shift>)null);
+            _shiftServicesMock.Setup(s => s.GetAllShiftAsync()).Returns((List<ET_ShiftManagementSystem.Entities.AddShiftRequest>)null);
             var controller = new ShiftController(_shiftServicesMock.Object, _mapperMock.Object);
 
             // Act
@@ -88,14 +88,14 @@ namespace Et_shiftmsnsgementsystem
         public async Task GetAllShifts_CallsMapper()
         {
             // Arrange
-            _shiftServicesMock.Setup(s => s.GetAllShiftAsync()).Returns(new List<Shift>());
+            _shiftServicesMock.Setup(s => s.GetAllShiftAsync()).Returns(new List<ET_ShiftManagementSystem.Entities.AddShiftRequest>());
             var controller = new ShiftController(_shiftServicesMock.Object, _mapperMock.Object);
 
             // Act
             var result = _controller.GetAllShifts();
 
             // Assert
-            _mapperMock.Verify(m => m.Map<List<ShiftDTO>>(It.IsAny<List<Shift>>()), Times.Once);
+            _mapperMock.Verify(m => m.Map<List<ShiftDTO>>(It.IsAny<List<ET_ShiftManagementSystem.Entities.AddShiftRequest>>()), Times.Once);
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             var mockShiftServices = new Mock<IShiftServices>();
-            mockShiftServices.Setup(s => s.GetAllShift(It.IsAny<Guid>())).Returns((List<Shift>)null);
+            mockShiftServices.Setup(s => s.GetAllShift(It.IsAny<Guid>())).Returns((List<ET_ShiftManagementSystem.Entities.AddShiftRequest>)null);
 
             var controller = new ShiftController(mockShiftServices.Object, null);
 
@@ -173,7 +173,7 @@ namespace Et_shiftmsnsgementsystem
             // Arrange
             var shiftId = Guid.NewGuid();
             var mockShiftServices = new Mock<IShiftServices>();
-            mockShiftServices.Setup(x => x.GetShiftById(shiftId)).ReturnsAsync((Shift)null);
+            mockShiftServices.Setup(x => x.GetShiftById(shiftId)).ReturnsAsync<IShiftServices, ET_ShiftManagementSystem.Entities.AddShiftRequest>((ET_ShiftManagementSystem.Entities.AddShiftRequest)null);
             var controller = new ShiftController(mockShiftServices.Object, null);
 
             // Act
@@ -198,7 +198,7 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             Guid shiftId = Guid.NewGuid();
-            Shift shift = new Shift { ShiftID = shiftId };
+            ET_ShiftManagementSystem.Entities.AddShiftRequest shift = new ET_ShiftManagementSystem.Entities.AddShiftRequest { ShiftID = shiftId };
             ShiftDTO shiftDTO = new ShiftDTO { ShiftID = shiftId };
             _shiftServicesMock.Setup(x => x.GetShiftById(shiftId)).ReturnsAsync(shift);
             _mapperMock.Setup(x => x.Map<ShiftDTO>(shift)).Returns(shiftDTO);
@@ -231,7 +231,7 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             // var controller = new ShiftController(shiftServicesMock.Object, mapper);
-            var shiftDTO = new Shift();
+            var shiftDTO = new ET_ShiftManagementSystem.Models.ShiftModel.AddShiftRequest();
 
             // Act
             var result = _controller.AddShift(Guid.Empty, shiftDTO);
@@ -246,13 +246,13 @@ namespace Et_shiftmsnsgementsystem
             // Arrange
             // var controller = new ShiftController(shiftServicesMock.Object, mapper);
             var tenantId = Guid.NewGuid();
-            var shiftDTO = new Shift
+            var shiftDTO = new ET_ShiftManagementSystem.Models.ShiftModel.AddShiftRequest
             {
                 ShiftName = "Test Shift",
                 StartTime = new TimeSpan(8, 0, 0),
                 EndTime = new TimeSpan(16, 0, 0)
             };
-            _shiftServicesMock.Setup(s => s.AddSift(tenantId, It.IsAny<Shift>()));
+            _shiftServicesMock.Setup(s => s.AddSift(tenantId, It.IsAny<ET_ShiftManagementSystem.Entities.AddShiftRequest>()));
 
             // Act
             var result = _controller.AddShift(tenantId, shiftDTO);
@@ -267,19 +267,19 @@ namespace Et_shiftmsnsgementsystem
             // Arrange
             // var controller = new ShiftController(shiftServicesMock.Object, mapper);
             var tenantId = Guid.NewGuid();
-            var shiftDTO = new Shift
+            var shiftDTO = new ET_ShiftManagementSystem.Models.ShiftModel.AddShiftRequest
             {
                 ShiftName = "Test Shift",
                 StartTime = new TimeSpan(8, 0, 0),
                 EndTime = new TimeSpan(16, 0, 0)
             };
-            _shiftServicesMock.Setup(s => s.AddSift(tenantId, It.IsAny<Shift>()));
+            _shiftServicesMock.Setup(s => s.AddSift(tenantId, It.IsAny<ET_ShiftManagementSystem.Entities.AddShiftRequest>()));
 
             // Act
             var result = _controller.AddShift(tenantId, shiftDTO) as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOf<Shift>(result.Value);
+            Assert.IsInstanceOf<ET_ShiftManagementSystem.Entities.AddShiftRequest>(result.Value);
         }
         [Test]
         public async Task UpdateShift_ValidShiftIdAndShiftDTO_ReturnsOkResult()
@@ -288,7 +288,7 @@ namespace Et_shiftmsnsgementsystem
             var shiftId = Guid.NewGuid();
             var shiftDTO = new UpdateShiftRequest { ShiftName = "Morning Shift", StartTime = new TimeSpan(5, 6, 22), EndTime = new TimeSpan(5, 6, 22) };
             var mockShiftServices = new Mock<IShiftServices>();
-            mockShiftServices.Setup(x => x.UpdateShiftAsync(shiftId, shiftDTO)).ReturnsAsync(new Shift { ShiftID = shiftId, ShiftName = "Morning Shift", StartTime = new TimeSpan(5, 6, 22), EndTime = new TimeSpan(5, 6, 22) });
+            mockShiftServices.Setup(x => x.UpdateShiftAsync(shiftId, shiftDTO)).ReturnsAsync(new ET_ShiftManagementSystem.Entities.AddShiftRequest { ShiftID = shiftId, ShiftName = "Morning Shift", StartTime = new TimeSpan(5, 6, 22), EndTime = new TimeSpan(5, 6, 22) });
             var controller = new ShiftController(mockShiftServices.Object, null);
 
             // Act
@@ -297,8 +297,8 @@ namespace Et_shiftmsnsgementsystem
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
             var okResult = result as OkObjectResult;
-            Assert.That(okResult.Value, Is.TypeOf<Shift>());
-            var shiftResult = okResult.Value as Shift;
+            Assert.That<object>(okResult.Value, Is.TypeOf<ET_ShiftManagementSystem.Entities.AddShiftRequest>());
+            var shiftResult = okResult.Value as ET_ShiftManagementSystem.Entities.AddShiftRequest;
             Assert.That(shiftResult.ShiftID, Is.EqualTo(shiftId));
             Assert.That(shiftResult.ShiftName, Is.EqualTo("Morning Shift"));
             Assert.That(shiftResult.StartTime, Is.EqualTo(new TimeSpan(5, 6, 22)));
@@ -340,7 +340,7 @@ namespace Et_shiftmsnsgementsystem
             var shiftId = Guid.NewGuid();
             var shiftDTO = new UpdateShiftRequest { ShiftName = "Morning Shift", StartTime = new TimeSpan(5, 6, 22), EndTime = new TimeSpan(5, 6, 22) };
             var mockShiftServices = new Mock<IShiftServices>();
-            mockShiftServices.Setup(x => x.UpdateShiftAsync(shiftId, shiftDTO)).ReturnsAsync((Shift)null);
+            mockShiftServices.Setup(x => x.UpdateShiftAsync(shiftId, shiftDTO)).ReturnsAsync<IShiftServices, ET_ShiftManagementSystem.Entities.AddShiftRequest>((ET_ShiftManagementSystem.Entities.AddShiftRequest)null);
             var controller = new ShiftController(mockShiftServices.Object, null);
 
             // Act

@@ -1,19 +1,9 @@
 ﻿using ET_ShiftManagementSystem.Servises;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using ShiftMgtDbContext.Entities;
-using ET_ShiftManagementSystem.Servises;
 using ET_ShiftManagementSystem.Entities;
-using System.Data;
 using ET_ShiftManagementSystem.Services;
-using Org.BouncyCastle.Asn1.Cmp;
-using ET_ShiftManagementSystem.Data;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using static System.Net.WebRequestMethods;
 using ET_ShiftManagementSystem.Models.Authmodel;
-using Azure.Storage.Blobs.Models;
 using static ET_ShiftManagementSystem.Servises.TokenHandler;
 
 namespace ET_ShiftManagementSystem.Controllers
@@ -374,7 +364,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 //var resetUrl = Url.Action("ResetPassword", "Auth", new { token = token.ToString(), email = user.Email }, Request.Scheme);
                 await emailSender.SendEmailAsync(request.Email, "Reset your password",
-                    $"Please reset your password : <a href='{$"http://localhost:5173/reset-password?userId={user.id}"}'><h2>click here</h2></a>");
+                    $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <title>Reset Password</title>\r\n  <link rel=\"stylesheet\" href=\"sms.css\">\r\n</head>\r\n<body>\r\n  <h1>Reset Password</h1>\r\n  <p>\r\n    You are receiving this email because you requested a password reset for your account on the Shift Management System. To reset your password, please click the following link:\r\n    <button><a href=\"https://example.com/reset-password?token=YOUR_TOKEN\">Reset Password</a></button> \r\n  </p>\r\n  <p>\r\n    If you did not request a password reset, please ignore this email. Your password will not be changed.\r\n  </p>\r\n  <p>\r\n    Thank you,\r\n    <br>\r\n    Shift Management System Team\r\n  </p>\r\n</body>\r\n</html>");
 
                 return Ok($"user id :{user.id}");
             }

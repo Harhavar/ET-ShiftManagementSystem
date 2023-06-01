@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ET_ShiftManagementSystem.Entities
 {
-    public class Shift
+    public class AddShiftRequest
     {
         [Key]
         public Guid ShiftID { get; set; }

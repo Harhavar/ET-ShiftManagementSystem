@@ -1,16 +1,17 @@
 ﻿using AutoMapper;
 using ET_ShiftManagementSystem.Entities;
-using ET_ShiftManagementSystem.Models.organizationModels;
 using ET_ShiftManagementSystem.Models.PermissionModel;
 using ET_ShiftManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
+
+    [ApiController]
     [Route("api/[Controller]")]
     [EnableCors("CorePolicy")]
-    [ApiController]
     public class PermissionController : Controller
     {
         private readonly IPermissionServises permissionServises;
@@ -28,7 +29,9 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[Controller]")]
-        public  IActionResult GetGlobalPermission()
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
+        public IActionResult GetGlobalPermission()
         {
             try
             {
@@ -70,6 +73,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[Controller]/{id:guid}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> GetPermissions(Guid id)
         {
             try
@@ -101,6 +106,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("[Controller]")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> Addpermission(AddPermissionRequest addPermission)
         {
             if (addPermission == null)
@@ -139,6 +146,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("[Controller]/{id:guid}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
 
         public async Task<IActionResult> UpdatePermission([FromRoute] Guid id, [FromBody] UpdatePermissionRequest updatePermission)
         {
@@ -188,6 +196,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("[Controller]")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult Delete(Guid id)
         {
             try
@@ -212,6 +222,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("org/[Controller]")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult GetOrganizationPermission()
         {
             try
@@ -256,7 +268,9 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpGet]
 
         [Route("org/[Controller]/{id:guid}")]
-        public  IActionResult GetOrgPermissions(Guid id)
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
+        public IActionResult GetOrgPermissions(Guid id)
         {
             if (Guid.Empty == id)
             {
@@ -297,6 +311,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("org/[Controller]")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> AddOrgpermission(AddOrgPermission addPermission)
         {
 
@@ -333,6 +349,8 @@ namespace ET_ShiftManagementSystem.Controllers
         [HttpPut]
 
         [Route("org/[Controller]/{id:guid}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public async Task<IActionResult> UpdateOrgPermission([FromRoute] Guid id, [FromBody] UpdateOrgPermission updatePermission)
         {
             if (updatePermission == null || Guid.Empty == id)
@@ -381,6 +399,8 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpDelete]
         [Route("org/[Controller]")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+
         public IActionResult DeleteOrgPermission(Guid id)
         {
             if (Guid.Empty == id)

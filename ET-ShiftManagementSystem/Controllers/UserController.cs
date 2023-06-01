@@ -1,18 +1,9 @@
-﻿using ET_ShiftManagementSystem.Data;
-using ET_ShiftManagementSystem.Models.Authmodel;
-using ET_ShiftManagementSystem.Models.organizationModels;
-using ET_ShiftManagementSystem.Models.UserModel;
-using ET_ShiftManagementSystem.Services;
+﻿using ET_ShiftManagementSystem.Models.UserModel;
 using ET_ShiftManagementSystem.Servises;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
-using org.apache.zookeeper.data;
 using ShiftMgtDbContext.Entities;
-using static System.Net.WebRequestMethods;
 
 namespace ET_ShiftManagementSystem.Controllers
 {
@@ -22,7 +13,7 @@ namespace ET_ShiftManagementSystem.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository userRepository;
-       // private readonly ShiftManagementDbContext shiftManagementDb;
+        // private readonly ShiftManagementDbContext shiftManagementDb;
         private readonly IEmailSender emailSender;
 
         public UserController(IUserRepository userRepository, IEmailSender emailSender)
@@ -37,11 +28,14 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [EnableCors("CorePolicy")]
+        //[Authorize(Roles ="SystemAdmin,Admin,User")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
         public IActionResult GetUser()
         {
             try
             {
-                var user =  userRepository.GetUser();
+                var user = userRepository.GetUser();
                 if (user == null)
                 {
                     return NotFound();
@@ -75,7 +69,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-            
+
         }
 
         /// <summary>
@@ -84,17 +78,21 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="tenantId"></param>
         /// <returns></returns>
         [HttpGet]
+        [EnableCors("CorePolicy")]
         [Route("CountUsers/{tenantId}")]
-        public IActionResult GetUser(Guid tenentId)
+        //[Authorize(Roles ="SystemAdmin, Admin,User")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+
+        public IActionResult GetUser(Guid tenantId)
         {
-            if (Guid.Empty  == tenentId)
+            if (Guid.Empty == tenantId)
             {
                 return BadRequest();
 
             }
             try
             {
-                var user =  userRepository.GetUserCount(tenentId);
+                var user = userRepository.GetUserCount(tenantId);
 
 
                 return Ok(user);
@@ -104,7 +102,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-            
+
         }
 
 
@@ -114,7 +112,10 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="TenentID"></param>
         /// <returns></returns>
         [HttpGet]
+        [EnableCors("CorePolicy")]
         [Route("Tenent/users/{TenentID}")]
+        [Authorize(Roles ="SystemAdmin, Admin,User")]
+
         public async Task<IActionResult> GetUsers(Guid TenentID)
         {
             try
@@ -155,7 +156,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-           
+
         }
 
         /// <summary>
@@ -165,7 +166,10 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{UserId}")]
-        public async  Task<IActionResult> Getuser(Guid UserId)
+        [EnableCors("CorePolicy")]
+        [Authorize(Roles ="SystemAdmin, Admin ,User")]
+
+        public async Task<IActionResult> Getuser(Guid UserId)
         {
             try
             {
@@ -175,7 +179,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     return NotFound();
                 }
-                var OrganizationRequest = new List<GetUserRequest>();
+                //var OrganizationRequest = new List<GetUserRequest>();
 
                 var organizationRequest = new GetUserRequest()
                 {
@@ -188,16 +192,16 @@ namespace ET_ShiftManagementSystem.Controllers
                     ContactNumber = user.ContactNumber,
                     AlternateContactNumber = user.AlternateContactNumber,
                 };
-                OrganizationRequest.Add(organizationRequest);
+                // OrganizationRequest.Add(organizationRequest);
 
-                return Ok(OrganizationRequest);
+                return Ok(organizationRequest);
             }
             catch (Exception ex)
             {
 
                 throw;
             }
-            
+
         }
 
         /// <summary>
@@ -208,9 +212,11 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("AddUser/{Tenentid}")]
-        public async Task<IActionResult> AddUser( Guid Tenentid ,AddUserRequest userRequest)
+        [EnableCors("CorePolicy")]
+        [Authorize(Roles ="SystemAdmin, Admin,SuperAdmin")]
+        public async Task<IActionResult> AddUser(Guid Tenentid, AddUserRequest userRequest)
         {
-            if(Guid.Empty == Tenentid || userRequest == null)
+            if (Guid.Empty == Tenentid || userRequest == null)
             {
                 return BadRequest();
             }
@@ -233,7 +239,7 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 user = await userRepository.RegisterUserAsync(user);
 
-                if(user == null)
+                if (user == null)
                 {
                     return BadRequest();
                 }
@@ -250,6 +256,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     ContactNumber = user.ContactNumber,
                     AlternateContactNumber = user.AlternateContactNumber,
                     TenateID = user.TenentID,
+                    Role= user.Role
                 };
 
                 //var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
@@ -265,18 +272,20 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-          
+
         }
 
         /// <summary>
-        /// update User Details 
+        /// update User Profile 
         /// </summary>
         /// <param name="UserId"></param>
         /// <param name="updateUserRequest"></param>
         /// <returns></returns>
         [HttpPut]
-        [Route("{UserId:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid UserId ,[FromBody] UpdateUserRequest updateUserRequest)
+        [EnableCors("CorePolicy")]
+        [Route("UpdateProfile/{UserId}")]
+        [Authorize(Roles = "SystemAdmin , User, Admin")]
+        public async Task<IActionResult> UpdateUser(Guid UserId, [FromBody] UpdateUserProfileRequest updateUserRequest)
         {
             if (Guid.Empty == UserId || updateUserRequest == null)
             {
@@ -290,7 +299,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     Email = updateUserRequest.Email,
                     ContactNumber = updateUserRequest.ContactNumber,
                     AlternateContactNumber = updateUserRequest.AlternateContactNumber,
-                    IsActive = updateUserRequest.IsActive,
+                    //IsActive = updateUserRequest.IsActive,
                 };
 
                 user = await userRepository.EditUser(UserId, user);
@@ -324,7 +333,51 @@ namespace ET_ShiftManagementSystem.Controllers
                 throw;
             }
         }
+        [HttpPut]
+        [Route("UpdateUser/{UserId}")]
+        [EnableCors("CorePolicy")]
+        [Authorize(Roles = "SystemAdmin, Admin,SuperAdmin")]
+        public async Task<IActionResult> UpdateUser(Guid UserId, [FromBody] UpdateUserRequest updateUserRequest)
+        {
+            if (Guid.Empty == UserId || updateUserRequest == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var user = new User()
+                {
+                    FirstName = updateUserRequest.UserName,
+                    Email = updateUserRequest.Email,
+                    ContactNumber = updateUserRequest.ContactNumber,
+                    AlternateContactNumber = updateUserRequest.AlternateContactNumber,
+                    IsActive = updateUserRequest.IsActive,
+                    Role = updateUserRequest.Role,
+                };
+
+                user = await userRepository.UpdateUser(UserId, user);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+
+            }
+        }
+
+        /// <summary>
+        /// Assigned project to the perticular user
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
         [HttpGet("Assigned-Project")]
+        [EnableCors("CorePolicy")]
+        [Authorize(Roles = "SystemAdmin,Admin, User")]
         public IActionResult GetAssignedProject(Guid userid)
         {
             if (Guid.Empty == userid)
@@ -346,18 +399,39 @@ namespace ET_ShiftManagementSystem.Controllers
 
                 throw;
             }
-            
-        }
-        //[HttpDelete]
-        //public async Task<IActionResult> DeleteUser(Guid UserId)
-        //{
-        //    var delete = await userRepository.DeleteUser(UserId);
-        //    if (delete == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    return Ok(delete);
-        //}
+        }
+        /// <summary>
+        /// Delete user 
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <returns></returns>
+
+        [HttpDelete("Delete/{UserId}")]
+        [EnableCors("CorePolicy")]
+        [Authorize(Roles = "SystemAdmin , Admin,SuperAdmin")]
+        public IActionResult DeleteUser(Guid UserId)
+        {
+            if (Guid.Empty == UserId)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var delete = userRepository.DeleteUser(UserId);
+                if (delete == false)
+                {
+                    return NotFound();
+                }
+
+                return Ok(delete);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
     }
 }

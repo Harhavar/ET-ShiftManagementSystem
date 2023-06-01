@@ -8,7 +8,7 @@ namespace ET_ShiftManagementSystem.MapperProfiles
     {
         public ShiftProfile()
         {
-            CreateMap<Shift, ShiftDTO>().ReverseMap();
+            CreateMap<Entities.AddShiftRequest, ShiftDTO>().ReverseMap();
         }
     }
 }

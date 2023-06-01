@@ -33,6 +33,6 @@ namespace ET_ShiftManagementSystem.Entities
         //navigation property 
         public Project project { get; set; }
 
-        public Shift shift { get; set; }
+        public AddShiftRequest shift { get; set; }
     }
 }
