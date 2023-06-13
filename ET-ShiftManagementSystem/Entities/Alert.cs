@@ -1,6 +1,4 @@
 ﻿using ET_ShiftManagementSystem.Models.AlertModel;
-using Microsoft.Graph;
-
 namespace ET_ShiftManagementSystem.Entities
 {
     public class Alert
