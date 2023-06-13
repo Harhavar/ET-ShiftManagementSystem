@@ -19,11 +19,9 @@ namespace Et_shiftmsnsgementsystem
         public AlertControllerTests()
         {
             _alertServicesMock = new Mock<IAlertServices>();
-            //_mockAlertServices = new Mock<IAlertServices>();
             _mapperMock = new Mock<IMapper>();
 
             _controller = new AlertController(_alertServicesMock.Object, _mapperMock.Object);
-            // }
         }
 
         [Test]
@@ -37,22 +35,7 @@ namespace Et_shiftmsnsgementsystem
             // Assert
             Assert.IsNotNull(controller);
         }
-        //public void Setup()
-        //{
-
-        //}
-
-        //[Test]
-        //public void GetAll_ReturnsAllAlerts()
-        //{
-        //    // Act
-        //    var result = _controller.GetAllalert();
-
-        //    // Assert
-        //    Assert.IsInstanceOf<ActionResult<IEnumerable<ET_ShiftManagementSystem.Entities.Alert>>>(result);
-        //    //Assert.AreEqual(3, result.Value.Count());
-        //}
-        [SetUp]
+        
 
         [Test]
         public async Task GetAllAlert_ReturnsOk_WithAlertsDtoList()
@@ -281,8 +264,10 @@ namespace Et_shiftmsnsgementsystem
                 RCA = "Test RCA",
                 TriggeredTime = DateTime.Now,
                 Description = "Test Description",
-                ReportedBy = "Test User",
-                ReportedTo = "Test Team",
+                ReportedBy = Guid.NewGuid(),
+                ReportedTo = Guid.NewGuid(),
+                ReportedToName="",
+                ReportedByName="",
                 Id =Guid.Parse("C48DA508-5A60-4EE5-92FF-9A4B0F35AAD8"),
                 lastModifiedDate = DateTime.Now,
                 Status = "",
@@ -309,6 +294,8 @@ namespace Et_shiftmsnsgementsystem
             Assert.AreEqual(alert.RCA, alertDto.RCA);
             Assert.AreEqual(alert.TriggeredTime, alertDto.TriggeredTime);
             Assert.AreEqual(alert.Description, alertDto.Description);
+            Assert.AreEqual(alert.ReportedToName, alertDto.ReportedToName);
+            Assert.AreEqual(alert.ReportedByName, alertDto.ReportedByName);
             Assert.AreEqual(alert.ReportedBy, alertDto.ReportedBy);
             Assert.AreEqual(alert.ReportedTo, alertDto.ReportedTo);
             Assert.AreEqual(alert.Id, alertDto.Id);
@@ -408,8 +395,11 @@ namespace Et_shiftmsnsgementsystem
                 AlertName = "Test Alert",
                 RCA = "Test RCA",
                 Description = "Test Description",
-                ReportedBy = "Test User",
-                ReportedTo = "Test Team",
+                ReportedBy = Guid.NewGuid(),
+                ReportedTo = Guid.NewGuid(),
+                ReportedByName="",
+                ReportedToName="",
+
                 TriggeredTime = DateTime.Now,
                 lastModifiedDate = DateTime.Now,
                 Status = "Closed",
@@ -437,12 +427,89 @@ namespace Et_shiftmsnsgementsystem
             Assert.AreEqual(alertToDelete.Description, alertDTO.Description);
             Assert.AreEqual(alertToDelete.ReportedBy, alertDTO.ReportedBy);
             Assert.AreEqual(alertToDelete.ReportedTo, alertDTO.ReportedTo);
+            Assert.AreEqual(alertToDelete.ReportedByName, alertDTO.ReportedByName);
+            Assert.AreEqual(alertToDelete.ReportedToName, alertDTO.ReportedToName);
             Assert.AreEqual(alertToDelete.TriggeredTime, alertDTO.TriggeredTime);
             Assert.AreEqual(alertToDelete.lastModifiedDate, alertDTO.lastModifiedDate);
             Assert.AreEqual(alertToDelete.Status, alertDTO.Status);
             Assert.AreEqual(alertToDelete.TenantId, alertDTO.TenantId);
             Assert.AreEqual(alertToDelete.ProjectId, alertDTO.ProjectId);
         }
-        
+        [Test]
+        public void GetAlertUpdates_ValidAlertId_ReturnsOkResult()
+        {
+            // Arrange
+            var alertId = Guid.NewGuid();
+            //var alert = new Alert { Id = alertId, /* Add other properties */ };
+           // _alertServicesMock.StubbedAlert = alert; // Replace with your actual implementation or a mock
+
+            // Act
+            var result = _controller.GetAlertUpdates(alertId) as OkObjectResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            //Assert.AreEqual(alert, result.Value);
+        }
+        [Test]
+        public void GetAlertUpdates_InvalidAlertId_ReturnsBadRequest()
+        {
+            // Arrange
+            var alertId = Guid.Empty;
+
+            // Act
+            var result = _controller.GetAlertUpdates(alertId) as BadRequestResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
+        }
+        [Test]
+        public void PostAlertUpdates_ValidData_ReturnsOkResult()
+        {
+            // Arrange
+            var alertId = Guid.NewGuid();
+            var updateModel = new TimelineUpdateModel { Description="sdv",createdby=Guid.NewGuid() /* Initialize properties */ };
+            //var alert = new Alert { Id = alertId, /* Add other properties */ };
+            //_alertServicesMock.StubbedAlert = alert; // Replace with your actual implementation or a mock
+
+            // Act
+            var result = _controller.PostAlertUpdates(alertId, updateModel) as OkObjectResult;
+
+            // Assert
+            //Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            //Assert.AreEqual(alert, result.Value);
+        }
+
+        [Test]
+        public void PostAlertUpdates_InvalidAlertId_ReturnsBadRequest()
+        {
+            // Arrange
+            var alertId = Guid.Empty;
+            var updateModel = new TimelineUpdateModel { /* Initialize properties */ };
+
+            // Act
+            var result = _controller.PostAlertUpdates(alertId, updateModel) as BadRequestResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [Test]
+        public void PostAlertUpdates_NullUpdateModel_ReturnsBadRequest()
+        {
+            // Arrange
+            var alertId = Guid.NewGuid();
+            TimelineUpdateModel updateModel = null;
+
+            // Act
+            var result = _controller.PostAlertUpdates(alertId, updateModel) as BadRequestResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
+        }
     }
 }

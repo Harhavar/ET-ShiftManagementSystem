@@ -136,6 +136,8 @@ namespace ET_ShiftManagementSystem.Controllers
                         Status = alert.Status,
                         TenantId = alert.TenantId,
                         ProjectId = alert.ProjectId,
+                        ReportedToName = alert.ReportedToName,
+                        ReportedByName = alert.ReportedByName,
 
                     };
                     AlertDto.Add(alertDTO);
@@ -188,7 +190,8 @@ namespace ET_ShiftManagementSystem.Controllers
                         Status = alert.Status,
                         TenantId = alert.TenantId,
                         ProjectId = alert.ProjectId,
-
+                        ReportedByName=alert.ReportedByName,
+                        ReportedToName=alert.ReportedToName,
                     };
                     AlertDto.Add(alertDTO);
 
@@ -201,6 +204,106 @@ namespace ET_ShiftManagementSystem.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("Alert/{ProjectId}")]
+        //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
+        public IActionResult GetAllalert(Guid ProjectId)
+        {
+            if (ProjectId == null)
+            {
+                return BadRequest("ProjectId should not be null");
+            }
+            try
+            {
+
+                var alert = alertServices.GetAllAlert(ProjectId);
+
+                if (alert == null)
+                {
+                    return BadRequest();
+                }
+
+                var AlertDto = new List<AlertsDTO>();
+                alert.ToList().ForEach(alert =>
+                {
+                    var alertDTO = new Models.AlertModel.AlertsDTO()
+                    {
+                        severity = (int)alert.severity,
+                        CreatedDate = alert.CreatedDate,
+                        AlertName = alert.AlertName,
+                        RCA = alert.RCA,
+                        TriggeredTime = alert.TriggeredTime,
+                        Description = alert.Description,
+                        ReportedBy = alert.ReportedBy,
+                        ReportedTo = alert.ReportedTo,
+                        Id = alert.Id,
+                        lastModifiedDate = alert.lastModifiedDate,
+                        Status = alert.Status,
+                        TenantId = alert.TenantId,
+                        ProjectId = alert.ProjectId,
+                        ReportedToName= alert.ReportedToName,
+                        ReportedByName= alert.ReportedByName,
+                    };
+                    AlertDto.Add(alertDTO);
+
+                });
+                return Ok(AlertDto);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("{AlertId}")]
+        //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
+        public IActionResult GetAlertById(Guid AlertId)
+        {
+            if (AlertId == null)
+            {
+                return BadRequest("ProjectId should not be null");
+            }
+            try
+            {
+
+                var alert = alertServices.GetAlertById(AlertId);
+
+                if (alert == null)
+                {
+                    return BadRequest();
+                }
+
+
+                var alertDTO = new Models.AlertModel.AlertsDTO()
+                {
+                    severity = (int)alert.severity,
+                    CreatedDate = alert.CreatedDate,
+                    AlertName = alert.AlertName,
+                    RCA = alert.RCA,
+                    TriggeredTime = alert.TriggeredTime,
+                    Description = alert.Description,
+                    ReportedBy = alert.ReportedBy,
+                    ReportedTo = alert.ReportedTo,
+                    Id = alert.Id,
+                    lastModifiedDate = alert.lastModifiedDate,
+                    Status = alert.Status,
+                    TenantId = alert.TenantId,
+                    ProjectId = alert.ProjectId,
+                    ReportedByName = alert.ReportedByName,
+                    ReportedToName = alert.ReportedToName,
+                };
+
+                return Ok(alertDTO);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
         /// <summary>
         /// Get alerts by giving severity
         /// </summary>
@@ -240,6 +343,8 @@ namespace ET_ShiftManagementSystem.Controllers
                         Status = alert.Status,
                         TenantId = alert.TenantId,
                         ProjectId = alert.ProjectId,
+                        ReportedToName= alert.ReportedToName,
+                        ReportedByName= alert.ReportedByName,
                     };
                     AlertDto.Add(alertDTO);
 
@@ -265,6 +370,10 @@ namespace ET_ShiftManagementSystem.Controllers
 
         public async Task<ActionResult> addAlert(Guid ProjectID, [FromBody] AddAlertRequest alert)
         {
+            if (ProjectID == Guid.Empty || alert == null)
+            {
+                return BadRequest();
+            }
             try
             {
 
@@ -273,15 +382,75 @@ namespace ET_ShiftManagementSystem.Controllers
                     return BadRequest();
                 }
 
-                await alertServices.AddAlert(ProjectID, alert.alertRequest, alert.severity);
+                var responce = await alertServices.AddAlert(ProjectID, alert.alertRequest, alert.severity);
+                if (responce == null)
+                {
+                    return BadRequest();
+                }
 
-                return Ok();
+                return Ok(responce);
             }
             catch (Exception ex)
             {
                 return Ok(ex.Message);
             }
         }
+        /// <summary>
+        /// Update alert Using alert id
+        /// </summary>
+        /// <param name="AlertId"></param>
+        /// <param name="UpdateAlertStatus"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateAlert/{AlertId}")]
+        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
+        public IActionResult UpdateAlertStatus(Guid AlertId, UpdateAlertStatus UpdateAlertStatus)
+        {
+
+            if (AlertId == null || UpdateAlertStatus == null)
+            {
+                return BadRequest("AlertId should not be null");
+            }
+            try
+            {
+                var alert = alertServices.UpdateAlertStatus(AlertId, UpdateAlertStatus);
+                if (alert == null)
+                {
+                    return NotFound("Alert not found");
+                }
+                return Ok("Updated");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        //[HttpPut("EditAlert /{AlertId}")]
+        //[Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+
+        //public IActionResult EditAlert(Guid AlertId, AlertRequest UpdateAlertStatus)
+        //{
+
+        //    if (AlertId == null || UpdateAlertStatus == null)
+        //    {
+        //        return BadRequest("AlertId should not be null");
+        //    }
+        //    try
+        //    {
+        //        var alert = alertServices.UpdateAlertStatus(AlertId, UpdateAlertStatus);
+        //        if (alert == null)
+        //        {
+        //            return NotFound("Alert not found");
+        //        }
+        //        return Ok("Edited");
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
 
 
         /// <summary>
@@ -318,6 +487,10 @@ namespace ET_ShiftManagementSystem.Controllers
                     Status = delete.Status,
                     TenantId = delete.TenantId,
                     ProjectId = delete.ProjectId,
+                    ReportedByName= delete.ReportedByName,
+                    ReportedToName  = delete.ReportedToName,
+                    CreatedDate= delete.CreatedDate,
+
                 };
 
                 return Ok(alertDTO);
@@ -328,5 +501,70 @@ namespace ET_ShiftManagementSystem.Controllers
                 return Ok(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Get timeline and updates of alert 
+        /// </summary>
+        /// <param name="AlertId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAlertUpdates/{AlertId}")]
+        //[Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+        public IActionResult GetAlertUpdates(Guid AlertId)
+        {
+            if (AlertId == Guid.Empty)
+            {
+                return BadRequest();
+            }
+            try
+            {
+
+                var alert = alertServices.GetAlertUpdates(AlertId);
+
+                if (alert == null)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(alert);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+        /// <summary>
+        /// Post timeline and updates
+        /// </summary>
+        /// <param name="AlertId"></param>
+        /// <param name="updateModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("PostAlertUpdates/{AlertId}")]
+        //[Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin,User")]
+        public IActionResult PostAlertUpdates(Guid AlertId, TimelineUpdateModel updateModel)
+        {
+            if (AlertId == Guid.Empty || updateModel == null)
+            {
+                return BadRequest();
+            }
+            try
+            {
+
+                var alert = alertServices.PostAlertUpdates(AlertId, updateModel);
+
+                if (alert == null)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(alert);
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+
     }
 }

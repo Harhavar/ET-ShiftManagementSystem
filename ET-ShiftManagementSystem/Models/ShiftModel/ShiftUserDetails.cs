@@ -2,12 +2,15 @@
 {
     public class ShiftUserDetails
     {
+        public Guid Id { get; set; }
         public string username { get; set; }
         
     }
 
     public class ShiftNames
     {
+        public Guid Id { get; set; }
+
         public string ShiftName { get; set; }
     }
 

@@ -11,4 +11,13 @@ namespace ET_ShiftManagementSystem.Models.ProjectsModel
         public List<UserShiftModel> UserShift { get; set; }
 
     }
+    public class EditProjectRequest
+    {
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public List<UserShiftModel> UserShift { get; set; }
+
+    }
 }

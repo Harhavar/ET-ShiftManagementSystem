@@ -15,9 +15,11 @@ namespace ET_ShiftManagementSystem.Entities
         
         public  string RCA { get; set; }
 
-        public string ReportedBy { get; set; }
+        public Guid ReportedBy { get; set; }
+        public string ReportedByName { get; set; }
 
-        public string ReportedTo { get; set; }
+        public Guid ReportedTo { get; set; }
+        public string ReportedToName { get; set; }
 
         public DateTime CreatedDate { get; set;}
 

@@ -108,12 +108,12 @@ namespace ET_ShiftManagementSystem.Servises
 
                 foreach (var item in existingUserShift)
                 {
-                    var a = existingUserShift.Where(x => x.ProjectId == ProjectId).Select(x => x.ShiftId).FirstOrDefault();
+                    var a = _dbContext.UserShifts.Where(x => x.ProjectId == ProjectId).FirstOrDefault();
                     var b = projectUser.Select(x => x.ShiftId).FirstOrDefault();
-                    var c = existingUserShift.Where(x => x.ProjectId == ProjectId).Select(x => x.UserId).FirstOrDefault();
+                    var c = _dbContext.UserShifts.Where(x => x.ProjectId == ProjectId).FirstOrDefault();
                     var d = projectUser.Select(x => x.UserId).FirstOrDefault();
-                    a = b;
-                    c = d;
+                    a.ShiftId = b;
+                    c.UserId = d;
                      _dbContext.SaveChanges();
                 }
                 return existingUserShift;

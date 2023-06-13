@@ -15,4 +15,8 @@
 
         public DateTime LastModifiedDate { get; set; }
     }
+    public class ProjectIds
+    {
+        public Guid ProjectId { get; set; }
+    }
 }

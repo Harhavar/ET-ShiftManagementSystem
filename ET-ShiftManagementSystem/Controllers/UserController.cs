@@ -259,11 +259,9 @@ namespace ET_ShiftManagementSystem.Controllers
                     Role= user.Role
                 };
 
-                //var resetUrl = Url.Action("LoginAync", "Auth", new { username = user.username, password = user.password }, Request.Scheme);
+                await emailSender.SendEmailAsync(user.Email, "Reset your password",
+                    $"<!DOCTYPE html>\r\n<html>\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n  <title>Reset Password</title>\r\n  <link rel=\"stylesheet\" href=\"sms.css\">\r\n</head>\r\n<body>\r\n  <h1>Reset Password</h1>\r\n  <p>\r\n    You are receiving this email because you requested a password reset for your account on the Shift Management System. To reset your password, please click the following link:<a href='{$"http://sms.stratusviews.com/reset-password?userId={user.id}"}'><h2>Reset Password</h2></a>\r\n  </p>\r\n  <p>\r\n    If you did not request a password reset, please ignore this email. Your password will not be changed.\r\n  </p>\r\n  <p>\r\n    Thank you,\r\n    <br>\r\n    Shift Management System Team\r\n  </p>\r\n</body>\r\n</html>");
 
-
-                await emailSender.SendEmailAsync(user.Email, $"Invitation To Project",
-                    $"use this credential to login UserId :{user.username} \n Please reset ur password  <h1><a href='{"http://localhost:3000/resetpassword"}'>click here</a></h1>.");
 
                 return CreatedAtAction(nameof(Getuser), new { id = UserDTO.id }, UserDTO);
             }

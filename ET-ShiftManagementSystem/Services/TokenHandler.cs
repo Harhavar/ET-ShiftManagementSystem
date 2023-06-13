@@ -86,6 +86,8 @@ namespace ET_ShiftManagementSystem.Servises
         {
             public Guid id { get; set; }
 
+            public string username { get; set; }
+
             public Guid TenentID { get; set; }
             public string Role { get; set; }
 

@@ -48,7 +48,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("AllProjects")]
         [EnableCors("CorePolicy")]
         //[Authorize(Roles = "SystemAdmin")]
-        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
         public IActionResult GetProjectsData()
         {
             try
@@ -96,7 +96,7 @@ namespace ET_ShiftManagementSystem.Controllers
         [Route("ProjectDetails")]
         [EnableCors("CorePolicy")]
         //[Authorize(Roles = "SystemAdmin")]
-        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
 
         public IActionResult GetDetails()
         {
@@ -143,10 +143,59 @@ namespace ET_ShiftManagementSystem.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("ProjectDetailsWithTenentID")]
+        [Route("UserInProject/{UserId}")]
         [EnableCors("CorePolicy")]
         //[Authorize(Roles = "SystemAdmin")]
-        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
+
+        public IActionResult GetDetails(Guid UserId)
+        {
+            try
+            {
+                var Organization = _projectServices.GetProjects(UserId);
+
+                if (Organization == null)
+                {
+                    return NotFound();
+                }
+
+                var OrganizationRequest = new List<ProjectDetailsRequest>();
+
+                Organization.ToList().ForEach(Organization =>
+                {
+                    var organizationRequest = new ProjectDetailsRequest()
+                    {
+                        ProjectId = Organization.ProjectId,
+                        TenantId = Organization.TenentId,
+                        Name = Organization.Name,
+                        Description = Organization.Description,
+                        Status = Organization.Status,
+                        CreatedDate = Organization.CreatedDate,
+                        LastModifiedDate = Organization.LastModifiedDate,
+                    };
+                    OrganizationRequest.Add(organizationRequest);
+
+                });
+
+                return Ok(OrganizationRequest);
+
+            }
+            catch (Exception Ex)
+            {
+
+                return Ok(Ex.Message);
+            }
+
+        }
+        /// <summary>
+        /// Get All Project Details
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ProjectDetails/{tenentId}")]
+        [EnableCors("CorePolicy")]
+        //[Authorize(Roles = "SystemAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
 
         public IActionResult GetTenentProject(Guid tenentId )
         {
@@ -252,7 +301,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <param name="ProjectId"></param>
         /// <returns></returns>
         [HttpGet("SingleProject/{ProjectId}")]
-        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
 
         public IActionResult GetProjectById(Guid ProjectId)
         {
@@ -279,7 +328,6 @@ namespace ET_ShiftManagementSystem.Controllers
                     Status = responce.Status,
                     CreatedDate = responce.CreatedDate,
                     LastModifiedDate = responce.LastModifiedDate,
-
                 };
                 //ProjectDetails.Add(projectDetails);
 
@@ -301,7 +349,7 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPost("AddProject/{TenetId}" , Name = "Post")]
         //[Authorize(Roles = "SystemAdmin")]
-        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin")]
+        [Authorize(Roles = "Admin,SystemAdmin,SuperAdmin,User")]
 
         public async Task<IActionResult> AddProject(Guid TenetId, [FromBody] AddProjectRequest addProject)
         {
@@ -358,44 +406,37 @@ namespace ET_ShiftManagementSystem.Controllers
         /// <returns></returns>
         [HttpPut("UpdateProject/{ProjectId}")]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Roles = "Admin ,SuperAdmin,SystemAdmin")]
+        [Authorize(Roles = "Admin,SuperAdmin,SystemAdmin,User")]
 
-        public async Task<IActionResult> UpdateProject(Guid ProjectId, [FromBody] AddProjectRequest addProject)
+        public IActionResult UpdateProject(Guid ProjectId, [FromBody] EditProjectRequest editProject)
         {
-            if (Guid.Empty == ProjectId || addProject == null)
+            if (Guid.Empty == ProjectId || editProject == null)
             {
                 return BadRequest();
             }
             try
             {
-                var Project = new Entities.Projects()
-                {
+               
 
-                    Name = addProject.Name,
-                    Description = addProject.Description,
-
-                };
-
-
-                Project = await _projectServices.EditProject(ProjectId, Project);
+               var Project = _projectServices.EditProject(ProjectId, editProject);
 
                 var userShifts = new List<UserShift>();
 
-                addProject.UserShift.ToList().ForEach(Organization =>
+                editProject.UserShift.ToList().ForEach(Organization =>
                 {
                     var userShift = new UserShift()
                     {
                         ShiftId = Organization.ShiftId,
                         UserId = Organization.UserId,
-                        ProjectId = Project.ProjectId,
-                        //ID = Guid.NewGuid(),
+                        ProjectId = ProjectId,
+                        ID = Guid.NewGuid(),
                     };
                     userShifts.Add(userShift);
 
                 });
 
-                _shiftServices.UpdateExisting(ProjectId,userShifts);
-                return Ok(Project);
+                var responce = _shiftServices.UpdateExisting(ProjectId,userShifts);
+                return Ok("Updated successfully");
             }
             catch (Exception ex)
             {
@@ -490,6 +531,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var note = new ShiftUserDetails()
                     {
+                        Id = Organization.id,
                         username = Organization.username,
                     };
                     shiftUsers.Add(note);
@@ -503,6 +545,7 @@ namespace ET_ShiftManagementSystem.Controllers
                 {
                     var note = new ShiftNames()
                     {
+                        Id = Organization.ShiftID,
                         ShiftName = Organization.ShiftName
                     };
                     ShiftNames.Add(note);
@@ -514,6 +557,7 @@ namespace ET_ShiftManagementSystem.Controllers
                     Shifts = ShiftNames,
                     Users = shiftUsers,
                 };
+
                 return Ok(responce);
             }
             catch (Exception ex)

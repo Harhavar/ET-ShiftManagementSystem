@@ -450,7 +450,7 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var addProject = new AddProjectRequest
+            var addProject = new EditProjectRequest
             {
                 Name = "Test Project",
                 Description = "Test Description",
@@ -465,7 +465,7 @@ namespace Et_shiftmsnsgementsystem
             };
 
             // Act
-            var result = await _controller.UpdateProject(projectId, addProject) as OkObjectResult;
+            var result = _controller.UpdateProject(projectId, addProject) as OkObjectResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -480,7 +480,7 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             var projectId = Guid.Empty;
-            var addProject = new AddProjectRequest
+            var addProject = new EditProjectRequest
             {
                 Name = "Test Project",
                 Description = "Test Description",
@@ -495,7 +495,7 @@ namespace Et_shiftmsnsgementsystem
             };
 
             // Act
-            var result = await _controller.UpdateProject(projectId, addProject) as BadRequestResult;
+            var result =  _controller.UpdateProject(projectId, addProject) as BadRequestResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -507,10 +507,10 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            AddProjectRequest addProject = null;
+            EditProjectRequest addProject = null;
 
             // Act
-            var result = await _controller.UpdateProject(projectId, addProject) as BadRequestResult;
+            var result =  _controller.UpdateProject(projectId, addProject) as BadRequestResult;
 
             // Assert
             Assert.IsNotNull(result);
@@ -521,7 +521,7 @@ namespace Et_shiftmsnsgementsystem
         {
             // Arrange
             var projectId = Guid.NewGuid();
-            var addProject = new AddProjectRequest
+            var addProject = new EditProjectRequest
             {
                 Name = "Test Project",
                 Description = "Test Description",
@@ -534,10 +534,10 @@ namespace Et_shiftmsnsgementsystem
             }
         }
             };
-            _projectServicesMock.Setup(s => s.EditProject(It.IsAny<Guid>(), It.IsAny<Projects>())).ThrowsAsync(new Exception("Test Exception"));
+            _projectServicesMock.Setup(s => s.EditProject(It.IsAny<Guid>(), It.IsAny<EditProjectRequest>())).ThrowsAsync(new Exception("Test Exception"));
 
             // Act
-            var result = await _controller.UpdateProject(projectId, addProject) as OkObjectResult;
+            var result =  _controller.UpdateProject(projectId, addProject) as OkObjectResult;
 
             // Assert
             Assert.IsNotNull(result);

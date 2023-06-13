@@ -121,6 +121,8 @@ namespace ET_ShiftManagementSystem.Data
 
         public DbSet<UserShift> UserShifts { get; set; }
 
+        public DbSet<TimelineUpdate> TimelineUpdates { get; set; }
+
         public DbSet<ET_ShiftManagementSystem.Entities.Activity> Activities { get; set; }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using ET_ShiftManagementSystem.Data;
 using ET_ShiftManagementSystem.Entities;
+using ET_ShiftManagementSystem.Models.ProjectsModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pipelines.Sockets.Unofficial.Arenas;
 using SendGrid.Helpers.Mail;
 
 namespace ET_ShiftManagementSystem.Services
@@ -10,9 +12,10 @@ namespace ET_ShiftManagementSystem.Services
     {
         public Task<Projects> AddProject(Guid tenantId, Projects project);
         public Task<Projects> DeleteProject(Guid projectId);
-        public Task<Projects> EditProject(Guid ProjectId, Projects project/*, List<UserShift> userShifts*/);
+        public Task EditProject(Guid ProjectId, EditProjectRequest project);
         public Projects GetProjectById(Guid projectId);
         public List<Projects> GetProjectsData();
+        public List<Projects> GetProjects(Guid UserId);
         public List<Projects> GetProjectsData(Guid tenentId);
         public int GetProjectsCount(Guid tenentId);
         object UserShift(Guid projectId);
@@ -66,19 +69,19 @@ namespace ET_ShiftManagementSystem.Services
             return Remove;
         }
 
-        public async Task<Projects> EditProject(Guid ProjectId, Projects project/*, List<UserShift> userShifts*/)
+        public  Task EditProject(Guid ProjectId, EditProjectRequest project)
         {
-            var existingProject = await _dbContext.Projects.FirstOrDefaultAsync(x => x.ProjectId == ProjectId);
+            var existingProject =  _dbContext.Projects.FirstOrDefault(x => x.ProjectId == ProjectId);
 
             if (existingProject != null)
             {
                 existingProject.Name = project.Name;
                 existingProject.Description = project.Description;
                 existingProject.LastModifiedDate = DateTime.Now;
-                existingProject.Status = project.Status;
-                await _dbContext.SaveChangesAsync();
+                existingProject.Status = "Active";
+                _dbContext.SaveChanges();
 
-                return existingProject;
+                return Task.CompletedTask;
 
             }
 
@@ -95,6 +98,31 @@ namespace ET_ShiftManagementSystem.Services
                 return null;
             }
             return project;
+        }
+
+        public List<Projects> GetProjects(Guid UserId)
+        {
+            var ProjectId = _dbContext.UserShifts.Where(x => x.UserId== UserId).Select(x => x.ProjectId).ToList();
+            if (ProjectId == null)
+            {
+                return null;
+            }
+            var Projects = new List<Projects>();
+
+            ProjectId.ToList().ForEach(id =>
+            {
+                var project = _dbContext.Projects.Where(x => x.ProjectId == id).FirstOrDefault();
+                
+                Projects.Add(project);
+
+            });
+            
+            if (Projects == null)
+            {
+                return null;
+            }
+            
+            return Projects;
         }
 
         public int GetProjectsCount(Guid tenentId)
